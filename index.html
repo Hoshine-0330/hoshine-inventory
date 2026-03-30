@@ -538,10 +538,13 @@
                             if(firstBackslash > 0) {
                                 simpleName = simpleName.substring(0, firstBackslash).trim();
                             }
-                            // 简化型号：取最后一部分
-                            let simpleModel = model;
-                            if(model && model.includes('.')) {
-                                simpleModel = model.split('.')[0];
+                            // 从产品名称中提取HS-XXXX格式的型号
+                            let simpleModel = '';
+                            const hsMatch = String(name).match(/HS-\d{4,6}/i);
+                            if(hsMatch) {
+                                simpleModel = hsMatch[0].toUpperCase();
+                            } else if(model) {
+                                simpleModel = String(model).split('.')[0];
                             }
                             // KG转吨
                             products.push({
