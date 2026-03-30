@@ -91,6 +91,16 @@
         .product-name { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
         .product-stock { text-align: right; }
         .stock-num { font-size: 24px; font-weight: bold; color: #1677ff; }
+        .transit-badge { 
+            display: inline-block; 
+            font-size: 12px; 
+            background: #fff7e6; 
+            color: #fa8c16; 
+            padding: 2px 8px; 
+            border-radius: 10px; 
+            margin-left: 8px;
+            font-weight: normal;
+        }
         .stock-unit { font-size: 12px; color: #999; margin-left: 4px; }
         .stock-date { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); }
         .date-item { flex: 1; text-align: center; padding: 8px; border-radius: 8px; font-size: 13px; }
@@ -325,19 +335,34 @@
         function saveData() { localStorage.setItem('hoshine_products', JSON.stringify(products)); }
 
         function initFilters() {
+            // 不传参数时初始化所有选项
+            updateFilterOptions('', '');
+        }
+
+        function onFilterChange() {
+            const whFilter = document.getElementById('warehouseFilter').value;
             const prodFilter = document.getElementById('productFilter').value;
+            updateFilterOptions(whFilter, prodFilter);
+            renderProducts();
+        }
+
+        function updateFilterOptions(whFilter, prodFilter) {
             // 根据产品筛选仓库
             let filtered = [...products];
             if (prodFilter) filtered = filtered.filter(p => p.name === prodFilter);
             const warehouses = [...new Set(filtered.map(p => p.warehouse).filter(Boolean))].sort();
             
             // 根据仓库筛选产品
-            const whFilter = document.getElementById('warehouseFilter').value;
-            if (whFilter) filtered = products.filter(p => p.warehouse === whFilter);
+            filtered = [...products];
+            if (whFilter) filtered = filtered.filter(p => p.warehouse === whFilter);
             const productNames = [...new Set(filtered.map(p => p.name).filter(Boolean))].sort();
             
-            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
-            document.getElementById('productFilter').innerHTML = '<option value="">全部产品</option>' + productNames.map(p => `<option value="${p}">${p}</option>`).join('');
+            // 保存当前选中的值
+            const currentWh = document.getElementById('warehouseFilter').value;
+            const currentProd = document.getElementById('productFilter').value;
+            
+            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}" ${w === currentWh ? 'selected' : ''}>${w}</option>`).join('');
+            document.getElementById('productFilter').innerHTML = '<option value="">全部产品</option>' + productNames.map(p => `<option value="${p}" ${p === currentProd ? 'selected' : ''}>${p}</option>`).join('');
         }
 
         function renderProducts() {
@@ -347,23 +372,46 @@
             if (whFilter) filtered = filtered.filter(p => p.warehouse === whFilter);
             if (prodFilter) filtered = filtered.filter(p => p.name === prodFilter);
 
-            // 按仓库+产品分组（合并型号）
+            // 按仓库+产品分组（合并型号，合并在途仓到主仓库）
             const groupMap = {};
             filtered.forEach(p => {
-                const wh = p.warehouse || '未知仓库';
+                let wh = p.warehouse || '未知仓库';
+                // 合并在途仓到主仓库
+                const isInTransit = wh.includes('在途仓');
+                if (isInTransit) {
+                    // 去掉"在途仓"后缀
+                    wh = wh.replace('在途仓', '').trim();
+                    if (!wh) wh = '未知仓库';
+                }
                 const name = p.name || '未知产品';
                 const key = wh + '||' + name;
                 
                 if (!groupMap[key]) {
-                    groupMap[key] = { warehouse: wh, name: name, models: new Set(), total: 0, within3: 0, month3to9: 0, over9: 0, signed: 0, inTransit: 0, forSale: 0 };
+                    groupMap[key] = { 
+                        warehouse: wh, 
+                        name: name, 
+                        models: new Set(), 
+                        total: 0, 
+                        within3: 0, 
+                        month3to9: 0, 
+                        over9: 0, 
+                        signed: 0, 
+                        inTransit: 0, 
+                        forSale: 0,
+                        isInTransit: false
+                    };
                 }
                 if (p.model) groupMap[key].models.add(p.model);
-                groupMap[key].total += p.quantity || 0;
+                if (isInTransit) {
+                    groupMap[key].inTransit += p.quantity || 0;
+                    groupMap[key].isInTransit = true;
+                } else {
+                    groupMap[key].total += p.quantity || 0;
+                }
                 groupMap[key].within3 += p.within3Months || 0;
                 groupMap[key].month3to9 += p.month3to9 || 0;
                 groupMap[key].over9 += p.over9Months || 0;
                 groupMap[key].signed += p.signed || 0;
-                groupMap[key].inTransit += p.inTransit || 0;
                 groupMap[key].forSale += p.forSale || 0;
             });
             
@@ -392,8 +440,11 @@
                     <div class="product-list">
                         ${g.products.map(p => `
                             <div class="product-item" onclick="showDetail('${p.name}', '${whFilter}')">
-                                <div class="product-info"><div class="product-name">${p.name}</div></div>
-                                <div class="product-stock"><span class="stock-num">${p.total.toFixed(2)}</span><span class="stock-unit">吨</span></div>
+                                <div class="product-info">
+                                    <div class="product-name">${p.name}</div>
+                                    ${p.isInTransit && p.inTransit > 0 ? `<span class="transit-badge">🚚 在途: ${p.inTransit.toFixed(2)}吨</span>` : ''}
+                                </div>
+                                <div class="product-stock"><span class="stock-num">${(p.total + p.inTransit).toFixed(2)}</span><span class="stock-unit">吨</span></div>
                                 <div class="stock-date">
                                     <div class="date-item date-3m"><div class="label">3月内</div><div class="val">${p.within3.toFixed(2)}</div></div>
                                     <div class="date-item date-3to9"><div class="label">3-9月</div><div class="val">${p.month3to9.toFixed(2)}</div></div>
