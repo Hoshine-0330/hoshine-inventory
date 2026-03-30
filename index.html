@@ -378,11 +378,8 @@
                 let wh = p.warehouse || '未知仓库';
                 const isInTransit = wh.includes('在途仓');
                 // 基础仓库名：如果是"XXX在途仓" → "XXX仓"，否则保持不变
-                let baseKey = wh;
-                if (isInTransit) {
-                    baseKey = wh.replace('在途仓', '').trim() + '仓';
-                }
-                // 去掉末尾的"仓"用于分组匹配
+                // 基础仓库名：统一去掉"在途仓"和尾部"仓"用于分组匹配
+                let baseKey = wh.replace('在途仓', '').replace('在途', '').trim();
                 baseKey = baseKey.replace(/仓$/, '').trim();
                 if (!baseKey) baseKey = '未知仓库';
                 const name = p.name || '未知产品';
