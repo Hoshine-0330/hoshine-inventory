@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <title>合盛硅业 - 库存管理</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -188,7 +189,7 @@
                 <button class="btn-import" onclick="document.getElementById('csvInput').click()">📥 导入</button>
                 <button class="btn-import" onclick="exportData()">📤 导出</button>
                 <button class="btn-clear" onclick="clearAllData()">🗑️ 清空</button>
-                <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="importCSV(event)">
+                <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importData(event)">
             </div>
             <table class="admin-table">
                 <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>操作</th></tr></thead>
@@ -456,6 +457,67 @@
         function closeForm() { document.getElementById('formModal').classList.remove('active'); }
         function clearAllData() { if(confirm('确定清空所有数据？')){products=[];saveData();renderAdminTable();initFilters();renderProducts();}}
 
+        function importData(event) {
+            const file = event.target.files[0];
+            if(!file)return;
+            const fileName = file.name.toLowerCase();
+            
+            if(fileName.endsWith('.csv')) {
+                importCSV(event);
+            } else if(fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                importExcel(file);
+            } else {
+                alert('请选择CSV或Excel文件');
+            }
+        }
+        
+        function importExcel(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+                    
+                    if(jsonData.length < 2) { alert('文件内容为空'); return; }
+                    
+                    const headers = jsonData[0].map(h => String(h).trim().toLowerCase());
+                    const nameIdx = headers.findIndex(h => h.includes('商品名称') || h.includes('名称') || h.includes('name'));
+                    const modelIdx = headers.findIndex(h => h.includes('型号') || h.includes('model'));
+                    const warehouseIdx = headers.findIndex(h => h.includes('仓库') || h.includes('warehouse'));
+                    const qtyIdx = headers.findIndex(h => h.includes('数量') || h.includes('quantity'));
+                    const m3Idx = headers.findIndex(h => h.includes('3月内'));
+                    const m39Idx = headers.findIndex(h => h.includes('3-9月') || h.includes('3到9'));
+                    const m9Idx = headers.findIndex(h => h.includes('9月+') || h.includes('9月'));
+                    
+                    let importedCount = 0;
+                    for(let i=1; i<jsonData.length; i++) {
+                        const row = jsonData[i];
+                        if(!row[nameIdx] && !row[modelIdx]) continue;
+                        
+                        products.push({
+                            id: Date.now() + i,
+                            name: row[nameIdx] || '',
+                            model: row[modelIdx] || '',
+                            warehouse: row[warehouseIdx] || '',
+                            quantity: parseFloat(row[qtyIdx]) || 0,
+                            within3Months: parseFloat(row[m3Idx]) || 0,
+                            month3to9: parseFloat(row[m39Idx]) || 0,
+                            over9Months: parseFloat(row[m9Idx]) || 0
+                        });
+                        importedCount++;
+                    }
+                    saveData();
+                    alert(`导入成功，共${importedCount}条`);
+                    initFilters(); renderProducts(); renderAdminTable();
+                } catch(err) {
+                    alert('Excel解析失败: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+        
         function importCSV(event) {
             const file = event.target.files[0];
             if(!file)return;
