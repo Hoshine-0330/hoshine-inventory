@@ -361,7 +361,7 @@
             const currentWh = document.getElementById('warehouseFilter').value;
             const currentProd = document.getElementById('productFilter').value;
             
-            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option><option value="在途">在途库存</option><option value="库存">仓库库存</option>' + warehouses.map(w => `<option value="${w}" ${w === currentWh ? 'selected' : ''}>${w}</option>`).join('');
+            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}" ${w === currentWh ? 'selected' : ''}>${w}</option>`).join('');
             document.getElementById('productFilter').innerHTML = '<option value="">全部产品</option>' + productNames.map(p => `<option value="${p}" ${p === currentProd ? 'selected' : ''}>${p}</option>`).join('');
         }
 
@@ -457,7 +457,7 @@
             const warehouses = [...new Set(items.map(p => p.warehouse).filter(Boolean))].sort();
             
             document.getElementById('detailModelFilter').innerHTML = '<option value="">全部型号</option>' + models.map(m => `<option value="${m}">${m}</option>`).join('');
-            document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option><option value="在途">在途库存</option><option value="库存">仓库库存</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
+            document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
             
             document.getElementById('detailTitle').textContent = name;
             renderDetailTable();
