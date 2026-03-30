@@ -483,50 +483,41 @@
                     if(jsonData.length < 2) { alert('文件内容为空'); return; }
                     
                     const headers = jsonData[0].map(h => String(h).trim());
-                    const getIdx = (names) => headers.findIndex(h => names.some(n => h.includes(n)));
                     
-                    // 标准列名映射
-                    let nameIdx = getIdx(['商品名称', '物料描述', '产品名称', '名称', 'name']);
-                    let modelIdx = getIdx(['型号', '物料号', 'model', 'code']);
-                    let warehouseIdx = getIdx(['仓库', '库存地点', 'warehouse', 'location']);
-                    let qtyIdx = getIdx(['数量', '期末库存', 'quantity', 'stock']);
-                    let m3Idx = getIdx(['3月内', '90天内']);
-                    let m39Idx = getIdx(['3-9月', '90天到180天', '180天到270天']);
-                    let m9Idx = getIdx(['9月+', '270天到360天', '360天到720天', '大于720天']);
+                    // 精确列名映射 - 你的海外汇总格式
+                    const nameIdx = headers.indexOf('物料描述');
+                    const modelIdx = headers.indexOf('物料号');
+                    const warehouseIdx = headers.indexOf('库存地点描述');
+                    const qtyIdx = headers.indexOf('期末库存数');
+                    const idx90 = headers.indexOf('90天内数量');
+                    const idx90to180 = headers.indexOf('90天到180天数量');
+                    const idx180to270 = headers.indexOf('180天到270天数量');
+                    const idx270to360 = headers.indexOf('270天到360天数量');
+                    const idx360to720 = headers.indexOf('360天到720天数量');
+                    const idx720plus = headers.indexOf('大于720天数量');
+                    
+                    if(nameIdx === -1) { alert('未找到"物料描述"列，请检查文件格式'); return; }
                     
                     let importedCount = 0;
                     for(let i=1; i<jsonData.length; i++) {
                         const row = jsonData[i];
-                        const name = row[nameIdx] || row[modelIdx];
-                        if(!name && !row[modelIdx]) continue;
+                        const name = row[nameIdx];
+                        if(!name) continue;
                         
-                        // 处理日期分布：如果只有90天内/90-180/180-270/270-360/360-720/>720天的格式，合并计算
-                        let within3 = parseFloat(row[m3Idx]) || 0;
-                        let month39 = parseFloat(row[m39Idx]) || 0;
-                        let over9 = parseFloat(row[m9Idx]) || 0;
+                        // 计算3月内、3-9月、9月+
+                        const within3 = (parseFloat(row[idx90]) || 0);
+                        const month39 = (parseFloat(row[idx90to180]) || 0) + (parseFloat(row[idx180to270]) || 0);
+                        const over9 = (parseFloat(row[idx270to360]) || 0) + (parseFloat(row[idx360to720]) || 0) + (parseFloat(row[idx720plus]) || 0);
                         
-                        // 如果没有标准的3月内列，检查是否有90天内的列
-                        if(isNaN(within3)) {
-                            const idx90 = getIdx(['90天内数量']);
-                            const idx90to180 = getIdx(['90天到180天数量']);
-                            const idx180to270 = getIdx(['180天到270天数量']);
-                            const idx270to360 = getIdx(['270天到360天数量']);
-                            const idx360to720 = getIdx(['360天到720天数量']);
-                            const idx720plus = getIdx(['大于720天数量']);
-                            
-                            within3 = (parseFloat(row[idx90]) || 0);
-                            month39 = (parseFloat(row[idx90to180]) || 0) + (parseFloat(row[idx180to270]) || 0);
-                            over9 = (parseFloat(row[idx270to360]) || 0) + (parseFloat(row[idx360to720]) || 0) + (parseFloat(row[idx720plus]) || 0);
-                        }
-                        
-                        const warehouse = row[warehouseIdx] || '';
                         const qty = parseFloat(row[qtyIdx]) || 0;
+                        const warehouse = row[warehouseIdx] || '';
+                        const model = row[modelIdx] ? String(row[modelIdx]) : '';
                         
                         if(qty > 0 || within3 > 0 || month39 > 0 || over9 > 0) {
                             products.push({
                                 id: Date.now() + i,
-                                name: String(name).replace(/\\n/g, ' ').trim(),
-                                model: String(row[modelIdx] || ''),
+                                name: String(name).replace(/\\n/g, ' ').replace(/\\r/g, '').trim(),
+                                model: model,
                                 warehouse: String(warehouse).trim(),
                                 quantity: Math.round(qty * 100) / 100,
                                 within3Months: Math.round(within3 * 100) / 100,
