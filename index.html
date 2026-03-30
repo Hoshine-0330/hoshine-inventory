@@ -382,7 +382,6 @@
                 let baseKey = wh.replace('在途仓', '').replace(/仓$/, '').trim();
                 const name = p.name || '未知产品';
                 const key = baseKey + '||' + name;
-                const isInTransit = p.warehouse && p.warehouse.includes('在途仓');
                 
                 if (!groupMap[key]) {
                     groupMap[key] = { warehouse: wh, name: name, models: new Set(), total: 0, within3: 0, month3to9: 0, over9: 0, signed: 0, inTransit: 0, forSale: 0 };
