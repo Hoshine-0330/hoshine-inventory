@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合盛硅业 - 库存管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f5ff 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* 登录页 */
+        .login-page { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        .login-box h2 { margin-bottom: 30px; color: #1677ff; }
+        .login-box input { width: 100%; padding: 15px; margin-bottom: 20px; border: none; border-radius: 10px; background: white; color: #333; border: 1px solid #d9d9d9; font-size: 14px; }
+        .login-btn { width: 100%; padding: 15px; border: none; border-radius: 10px; background: linear-gradient(135deg, #1677ff, #4096ff); color: #fff; font-size: 18px; cursor: pointer; }
+
+        /* 顶部 */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 12px rgba(22,119,255,0.1); }
+        .header h1 { font-size: 28px; color: #1677ff; }
+        .header-right { display: flex; gap: 15px; }
+        .nav-btn { padding: 10px 20px; background: #f0f0f0; border: none; border-radius: 8px; color: #333; cursor: pointer; }
+        .nav-btn:hover, .nav-btn.active { background: #1677ff; }
+
+        .main-container { padding: 20px 40px; }
+
+        /* 筛选栏 */
+        .filter-bar { display: flex; gap: 15px; margin-bottom: 20px; }
+        .filter-bar select {
+            padding: 12px 20px;
+            border: 1px solid #d9d9d9;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            min-width: 180px;
+        }
+
+        /* 统计 */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: white; box-shadow: 0 4px 16px rgba(22,119,255,0.1); border: 1px solid #91d5ff; padding: 25px; border-radius: 16px; text-align: center; }
+        .stat-card .num { font-size: 36px; font-weight: bold; color: #1677ff; margin-bottom: 8px; }
+        .stat-card .label { font-size: 14px; color: #999; }
+
+        /* 快捷操作 */
+        .quick-actions { display: flex; gap: 15px; margin-bottom: 25px; }
+        .quick-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 18px; background: rgba(255,255,255,0.1); border: none; border-radius: 12px; color: #fff; cursor: pointer; }
+        .quick-btn:hover { background: rgba(22,119,255,0.3); }
+        .quick-btn.primary { background: linear-gradient(135deg, #1677ff, #4096ff); }
+        .quick-icon { font-size: 28px; margin-bottom: 5px; }
+
+        /* 仓库分组 */
+        .warehouse-section { background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 16px; border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
+        .warehouse-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: linear-gradient(135deg, #1677ff, #4096ff); }
+        .warehouse-header h3 { font-size: 18px; }
+        .warehouse-header .total { font-size: 16px; color: rgba(255,255,255,0.9); }
+        .product-list { padding: 15px; }
+        .product-item { display: flex; justify-content: space-between; align-items: center; padding: 18px; background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 16px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; }
+        .product-item:hover { background: #e6f7ff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(22,119,255,0.15); }
+        .product-info { flex: 1; }
+        .product-name { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+        .product-stock { text-align: right; }
+        .stock-num { font-size: 24px; font-weight: bold; color: #1677ff; }
+        .stock-unit { font-size: 12px; color: #999; margin-left: 4px; }
+        .stock-date { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .date-item { flex: 1; text-align: center; padding: 8px; border-radius: 8px; font-size: 13px; }
+        .date-item .label { font-size: 11px; color: #999; }
+        .date-item .val { font-weight: bold; margin-top: 4px; }
+        .date-3m { background: #e6f7ff; }
+        .date-3m .val { color: #096dd9; }
+        .date-3to9 { background: #fff7e6; }
+        .date-3to9 .val { color: #fa8c16; }
+        .date-9plus { background: #fff1f0; }
+        .date-9plus .val { color: #ff4d4f; }
+
+        /* 详情弹窗 */
+        .detail-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .detail-modal.active { display: flex; }
+        .detail-box { background: white; border-radius: 20px; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(22,119,255,0.2); }
+        .detail-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: linear-gradient(135deg, #1677ff, #4096ff); border-radius: 20px 20px 0 0; }
+        .detail-header h2 { font-size: 20px; }
+        .detail-close { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; color: #fff; font-size: 20px; cursor: pointer; }
+        .detail-content { padding: 20px; background: #fff; }
+        .detail-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .detail-stat { background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 16px; padding: 12px; border-radius: 10px; text-align: center; }
+        .detail-stat .val { font-size: 20px; font-weight: bold; color: #1677ff; }
+        .detail-stat .label { font-size: 11px; color: #999; margin-top: 4px; }
+        .detail-table { width: 100%; border-collapse: collapse; }
+        .detail-table th, .detail-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
+        .detail-table th { color: #1677ff; }
+
+        /* 后台 */
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+        .toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .toolbar input[type="text"] { flex: 1; min-width: 200px; padding: 12px 20px; border: none; border-radius: 10px; background: white; color: #333; border: 1px solid #d9d9d9; font-size: 14px; }
+        .toolbar button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; }
+        .btn-add { background: #52c41a; color: #fff; }
+        .btn-import { background: #1677ff; color: #fff; }
+        .btn-clear { background: #ff4d4f; color: #fff; }
+        .admin-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 16px; border-radius: 12px; }
+        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .admin-table th { background: rgba(22,119,255,0.2); color: #1677ff; }
+        .action-btns button { padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-right: 5px; }
+        .btn-edit { background: #1677ff; color: #fff; }
+        .btn-delete { background: #ff4d4f; color: #fff; }
+
+        /* 表单弹窗 */
+        .form-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+        .form-modal.active { display: flex; }
+        .form-box { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 450px; box-shadow: 0 8px 32px rgba(22,119,255,0.15); }
+        .form-box h3 { margin-bottom: 15px; color: #1677ff; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 6px; color: #666; font-size: 13px; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 8px; background: #fff; color: #333; }
+        .form-actions { display: flex; gap: 12px; margin-top: 15px; }
+        .form-actions button { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; }
+        .btn-save { background: #1677ff; color: #fff; }
+        .btn-cancel { background: #666; color: #fff; }
+
+        .empty { text-align: center; padding: 40px; color: #999; background: white; border-radius: 12px; }
+
+        @media (max-width: 1200px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .detail-stats { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <!-- 登录 -->
+    <div class="login-page" id="loginPage">
+        <div class="login-box">
+            <h2>🏭 合盛硅业库存管理</h2>
+            <input type="text" id="username" placeholder="请输入用户名">
+            <input type="password" id="password" placeholder="请输入密码">
+            <button class="login-btn" onclick="login()">登录</button>
+        </div>
+    </div>
+
+    <!-- 主页面 -->
+    <div class="main-page" id="mainPage" style="display:none;">
+        <div class="header">
+            <h1>📦 库存管理</h1>
+            <div class="header-right">
+                <button class="nav-btn active" onclick="showPage('dashboard')">首页</button>
+                <button class="nav-btn" onclick="showPage('admin')">后台管理</button>
+                <button class="nav-btn" onclick="logout()">退出</button>
+            </div>
+        </div>
+
+        <!-- 首页 -->
+        <div class="main-container dashboard-section active" id="dashboardSection">
+            <!-- 筛选 -->
+            <div class="filter-bar">
+                <select id="warehouseFilter" onchange="renderProducts()">
+                    <option value="">全部仓库</option>
+                </select>
+                <select id="productFilter" onchange="renderProducts()">
+                    <option value="">全部产品</option>
+                </select>
+            </div>
+
+            <!-- 统计 -->
+            <div class="stats-row">
+                <div class="stat-card"><div class="num" id="statProducts">0</div><div class="label">商品种类</div></div>
+                <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">总库存(吨)</div></div>
+                <div class="stat-card"><div class="num" id="statWarehouses">0</div><div class="label">仓库数</div></div>
+            </div>
+
+            <!-- 快捷操作 -->
+            <div class="quick-actions">
+                <button class="quick-btn primary" onclick="showPage('admin'); showAddModal();"><span class="quick-icon">📥</span><span>入库</span></button>
+                <button class="quick-btn" onclick="alert('出库功能开发中')"><span class="quick-icon">📤</span><span>出库</span></button>
+                <button class="quick-btn" onclick="showPage('admin')"><span class="quick-icon">📋</span><span>库存</span></button>
+            </div>
+
+            <!-- 产品列表 -->
+            <div id="productContainer"></div>
+        </div>
+
+        <!-- 后台 -->
+        <div class="main-container admin-section" id="adminSection">
+            <div class="toolbar">
+                <input type="text" id="searchInput" placeholder="搜索产品..." oninput="renderAdminTable()">
+                <button class="btn-add" onclick="showAddModal()">+ 添加</button>
+                <button class="btn-import" onclick="document.getElementById('csvInput').click()">📥 导入</button>
+                <button class="btn-import" onclick="exportData()">📤 导出</button>
+                <button class="btn-clear" onclick="clearAllData()">🗑️ 清空</button>
+                <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="importCSV(event)">
+            </div>
+            <table class="admin-table">
+                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>操作</th></tr></thead>
+                <tbody id="adminTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div class="detail-modal" id="detailModal">
+        <div class="detail-box">
+            <div class="detail-header">
+                <h2 id="detailTitle">产品详情</h2>
+                <button class="detail-close" onclick="closeDetail()">×</button>
+            </div>
+            <div class="detail-content">
+                <!-- 详情页筛选 -->
+                <div class="filter-bar" style="margin-bottom:15px;">
+                    <select id="detailModelFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
+                        <option value="">全部型号</option>
+                    </select>
+                    <select id="detailWhFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
+                        <option value="">全部仓库</option>
+                    </select>
+                </div>
+                
+                <div class="detail-stats">
+                    <div class="detail-stat"><div class="val" id="detailTotal">0</div><div class="label">总库存(吨)</div></div>
+                    <div class="detail-stat"><div class="val" id="detailSigned">0</div><div class="label">✓ 已签单</div></div>
+                    <div class="detail-stat"><div class="val" id="detailInTransit">0</div><div class="label">🚚 在途</div></div>
+                    <div class="detail-stat"><div class="val" id="detailForSale">0</div><div class="label">📤 待售</div></div>
+                </div>
+                <div class="detail-stats" style="margin-top:10px;">
+                    <div class="detail-stat"><div class="val" id="detail3m">0</div><div class="label">3月内</div></div>
+                    <div class="detail-stat"><div class="val" id="detail3to9">0</div><div class="label">3-9月</div></div>
+                    <div class="detail-stat"><div class="val" id="detail9plus">0</div><div class="label">9月+</div></div>
+                </div>
+                <h4 style="margin:15px 0 10px;color:#1677ff;">📋 库存明细</h4>
+                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
+                <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
+                <table class="detail-table"><thead><tr><th>客户名称</th><th>数量(吨)</th></tr></thead><tbody id="customerTable"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 表单弹窗 -->
+    <div class="form-modal" id="formModal">
+        <div class="form-box">
+            <h3 id="formTitle">添加产品</h3>
+            <div class="form-group"><label>产品名称 *</label><input type="text" id="formName"></div>
+            <div class="form-group"><label>型号</label><input type="text" id="formModel"></div>
+            <div class="form-group"><label>仓库</label><input type="text" id="formWarehouse"></div>
+            <div class="form-group"><label>库存数量(吨)</label><input type="number" id="formQuantity"></div>
+            <div class="form-group"><label>3月内</label><input type="number" id="formWithin3"></div>
+            <div class="form-group"><label>3-9月</label><input type="number" id="formMonth3to9"></div>
+            <div class="form-group"><label>9月+</label><input type="number" id="formOver9"></div>
+            <div class="form-actions">
+                <button class="btn-save" onclick="saveProduct()">保存</button>
+                <button class="btn-cancel" onclick="closeForm()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let products = [];
+        let editingId = null;
+
+        function login() {
+            if (document.getElementById('username').value) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainPage').style.display = 'block';
+                loadData();
+            }
+        }
+        function logout() { document.getElementById('loginPage').style.display = 'flex'; document.getElementById('mainPage').style.display = 'none'; }
+
+        function showPage(page) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            // Find the button that matches the page and add active class
+            const buttons = document.querySelectorAll('.nav-btn');
+            if (page === 'dashboard') buttons[0].classList.add('active');
+            else if (page === 'admin') buttons[1].classList.add('active');
+            
+            if (page === 'dashboard') {
+                document.getElementById('dashboardSection').classList.add('active');
+                document.getElementById('adminSection').classList.remove('active');
+                renderProducts();
+            } else {
+                document.getElementById('dashboardSection').classList.remove('active');
+                document.getElementById('adminSection').classList.add('active');
+                renderAdminTable();
+            }
+        }
+
+        function loadData() {
+            const stored = localStorage.getItem('hoshine_products');
+            if (stored) { products = JSON.parse(stored); }
+            else {
+                products = [
+                    {id:1,name:'混炼硅橡胶',model:'HS-5340',warehouse:'蒙德拉一号仓库',quantity:236.16,within3Months:199.68,month3to9:36.48,over9Months:0},
+                    {id:2,name:'混炼硅橡胶',model:'HS-3441',warehouse:'蒙德拉一号仓库',quantity:133.44,within3Months:22.08,month3to9:111.36,over9Months:0},
+                ];
+                saveData();
+            }
+            initFilters();
+            renderProducts();
+        }
+
+        function saveData() { localStorage.setItem('hoshine_products', JSON.stringify(products)); }
+
+        function initFilters() {
+            const warehouses = [...new Set(products.map(p => p.warehouse).filter(Boolean))];
+            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))];
+            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
+            document.getElementById('productFilter').innerHTML = '<option value="">全部产品</option>' + productNames.map(p => `<option value="${p}">${p}</option>`).join('');
+        }
+
+        function renderProducts() {
+            const whFilter = document.getElementById('warehouseFilter').value;
+            const prodFilter = document.getElementById('productFilter').value;
+            let filtered = [...products];
+            if (whFilter) filtered = filtered.filter(p => p.warehouse === whFilter);
+            if (prodFilter) filtered = filtered.filter(p => p.name === prodFilter);
+
+            // 按仓库+产品分组（合并型号）
+            const groupMap = {};
+            filtered.forEach(p => {
+                const wh = p.warehouse || '未知仓库';
+                const name = p.name || '未知产品';
+                const key = wh + '||' + name;
+                
+                if (!groupMap[key]) {
+                    groupMap[key] = { warehouse: wh, name: name, models: new Set(), total: 0, within3: 0, month3to9: 0, over9: 0, signed: 0, inTransit: 0, forSale: 0 };
+                }
+                if (p.model) groupMap[key].models.add(p.model);
+                groupMap[key].total += p.quantity || 0;
+                groupMap[key].within3 += p.within3Months || 0;
+                groupMap[key].month3to9 += p.month3to9 || 0;
+                groupMap[key].over9 += p.over9Months || 0;
+                groupMap[key].signed += p.signed || 0;
+                groupMap[key].inTransit += p.inTransit || 0;
+                groupMap[key].forSale += p.forSale || 0;
+            });
+            
+            // 再按仓库分组
+            const whGroupMap = {};
+            Object.values(groupMap).forEach(g => {
+                const wh = g.warehouse;
+                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: wh, products: [], total: 0 };
+                whGroupMap[wh].products.push({
+                    name: g.name,
+                    models: Array.from(g.models).join(', '),
+                    total: Math.round(g.total * 100) / 100,
+                    within3: Math.round(g.within3 * 100) / 100,
+                    month3to9: Math.round(g.month3to9 * 100) / 100,
+                    over9: Math.round(g.over9 * 100) / 100,
+                    signed: Math.round(g.signed * 100) / 100,
+                    inTransit: Math.round(g.inTransit * 100) / 100,
+                    forSale: Math.round(g.forSale * 100) / 100
+                });
+                whGroupMap[wh].total += g.total;
+            });
+
+            document.getElementById('productContainer').innerHTML = Object.values(whGroupMap).map(g => `
+                <div class="warehouse-section">
+                    <div class="warehouse-header"><h3>📍 ${g.warehouse}</h3><span class="total">合计: ${Math.round(g.total * 100) / 100}吨</span></div>
+                    <div class="product-list">
+                        ${g.products.map(p => `
+                            <div class="product-item" onclick="showDetail('${p.name}')">
+                                <div class="product-info"><div class="product-name">${p.name}</div></div>
+                                <div class="product-stock"><span class="stock-num">${p.total.toFixed(2)}</span><span class="stock-unit">吨</span></div>
+                                <div class="stock-date">
+                                    <div class="date-item date-3m"><div class="label">3月内</div><div class="val">${p.within3.toFixed(2)}</div></div>
+                                    <div class="date-item date-3to9"><div class="label">3-9月</div><div class="val">${p.month3to9.toFixed(2)}</div></div>
+                                    <div class="date-item date-9plus"><div class="label">9月+</div><div class="val">${p.over9.toFixed(2)}</div></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('') || '<div class="empty">暂无库存</div>';
+
+            const productSet = new Set(filtered.map(p => p.name));
+            const whSet = new Set(filtered.map(p => p.warehouse));
+            const totalQty = filtered.reduce((s,p)=>s+(p.quantity||0),0);
+            document.getElementById('statProducts').textContent = productSet.size;
+            document.getElementById('statTotal').textContent = Math.round(totalQty * 100) / 100;
+            document.getElementById('statWarehouses').textContent = whSet.size;
+        }
+
+        function showDetail(name) {
+            currentDetailProduct = name;
+            const items = products.filter(p => p.name === name);
+            
+            const models = [...new Set(items.map(p => p.model).filter(Boolean))];
+            const warehouses = [...new Set(items.map(p => p.warehouse).filter(Boolean))];
+            
+            document.getElementById('detailModelFilter').innerHTML = '<option value="">全部型号</option>' + models.map(m => `<option value="${m}">${m}</option>`).join('');
+            document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
+            
+            document.getElementById('detailTitle').textContent = name;
+            renderDetailTable();
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        let currentDetailProduct = '';
+
+        function renderDetailTable() {
+            const modelFilter = document.getElementById('detailModelFilter').value;
+            const whFilter = document.getElementById('detailWhFilter').value;
+            
+            let items = products.filter(p => p.name === currentDetailProduct);
+            if (modelFilter) items = items.filter(p => p.model === modelFilter);
+            if (whFilter) items = items.filter(p => p.warehouse === whFilter);
+            
+            const total = items.reduce((s,p)=>s+(p.quantity||0),0);
+            const within3 = items.reduce((s,p)=>s+(p.within3Months||0),0);
+            const month3to9 = items.reduce((s,p)=>s+(p.month3to9||0),0);
+            const over9 = items.reduce((s,p)=>s+(p.over9Months||0),0);
+            const signed = items.reduce((s,p)=>s+(p.signed||0),0);
+            const inTransit = items.reduce((s,p)=>s+(p.inTransit||0),0);
+            const forSale = items.reduce((s,p)=>s+(p.forSale||0),0);
+            
+            // 合并客户数据
+            const customerMap = {};
+            items.forEach(p => {
+                if (p.signedCustomers && p.signedCustomers.length > 0) {
+                    p.signedCustomers.forEach(c => {
+                        if (customerMap[c.customer]) {
+                            customerMap[c.customer] += c.quantity;
+                        } else {
+                            customerMap[c.customer] = c.quantity;
+                        }
+                    });
+                }
+            });
+            const customers = Object.entries(customerMap).map(([name, qty]) => ({name, qty})).sort((a,b) => b.qty - a.qty);
+            
+            document.getElementById('detailTotal').textContent = total.toFixed(2);
+            document.getElementById('detail3m').textContent = within3.toFixed(2);
+            document.getElementById('detail3to9').textContent = month3to9.toFixed(2);
+            document.getElementById('detail9plus').textContent = over9.toFixed(2);
+            document.getElementById('detailSigned').textContent = signed.toFixed(2);
+            document.getElementById('detailInTransit').textContent = inTransit.toFixed(2);
+            document.getElementById('detailForSale').textContent = forSale.toFixed(2);
+            
+            // 明细表
+            document.getElementById('detailTable').innerHTML = items.map(p => `<tr><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td>${(p.signed||0).toFixed(2)}</td><td>${(p.inTransit||0).toFixed(2)}</td><td>${(p.forSale||0).toFixed(2)}</td></tr>`).join('');
+            
+            // 客户明细
+            document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map(c => `<tr><td>${c.name}</td><td style="color:#1677ff;font-weight:bold">${c.qty.toFixed(2)}吨</td></tr>`).join('') : '<tr><td colspan="2">暂无已签单客户</td></tr>';
+        }
+        function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
+
+        function renderAdminTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(search) || (p.model&&p.model.toLowerCase().includes(search)) || (p.warehouse&&p.warehouse.toLowerCase().includes(search)));
+            document.getElementById('adminTable').innerHTML = filtered.map(p => `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td>${(p.quantity||0).toFixed(2)}</td><td>${(p.within3Months||0).toFixed(2)}</td><td>${(p.month3to9||0).toFixed(2)}</td><td>${(p.over9Months||0).toFixed(2)}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`).join('');
+        }
+
+        function showAddModal() { editingId = null; document.getElementById('formTitle').textContent = '添加产品'; ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9'].forEach(id => document.getElementById(id).value = ''); document.getElementById('formModal').classList.add('active'); }
+        function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; document.getElementById('formModal').classList.add('active'); }
+        function saveProduct() { const name = document.getElementById('formName').value; if(!name){alert('请输入产品名称');return;} const product = { id: editingId||Date.now(), name, model: document.getElementById('formModel').value, warehouse: document.getElementById('formWarehouse').value, quantity: parseFloat(document.getElementById('formQuantity').value)||0, within3Months: parseFloat(document.getElementById('formWithin3').value)||0, month3to9: parseFloat(document.getElementById('formMonth3to9').value)||0, over9Months: parseFloat(document.getElementById('formOver9').value)||0 }; if(editingId){const idx=products.findIndex(p=>p.id===editingId); if(idx>-1)products[idx]=product;} else{products.push(product);} saveData(); closeForm(); renderAdminTable(); initFilters(); renderProducts(); }
+        function deleteProduct(id) { if(confirm('确定删除？')){products=products.filter(p=>p.id!==id);saveData();renderAdminTable();initFilters();renderProducts();}}
+        function closeForm() { document.getElementById('formModal').classList.remove('active'); }
+        function clearAllData() { if(confirm('确定清空所有数据？')){products=[];saveData();renderAdminTable();initFilters();renderProducts();}}
+
+        function importCSV(event) {
+            const file = event.target.files[0];
+            if(!file)return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const lines = e.target.result.split('\n').filter(l => l.trim());
+                const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                for(let i=1;i<lines.length;i++) {
+                    const values = lines[i].split(',');
+                    if(values.length < 3) continue;
+                    const row = {}; headers.forEach((h,idx) => row[h] = values[idx]?.trim());
+                    if(row['商品名称']) {
+                        products.push({ id: Date.now()+i, name: row['商品名称'], model: row['型号']||'', warehouse: row['仓库']||'', quantity: parseFloat(row['数量'])||0, within3Months: parseFloat(row['3月内'])||0, month3to9: parseFloat(row['3-9月'])||0, over9Months: parseFloat(row['9月+'])||0 });
+                    }
+                }
+                saveData(); alert(`导入成功，共${products.length}条`); initFilters(); renderProducts(); renderAdminTable();
+            };
+            reader.readAsText(file);
+        }
+
+        function exportData() {
+            if(products.length===0){alert('没有数据');return;}
+            let csv = '商品名称,型号,仓库,数量,3月内,3-9月,9月+\n';
+            products.forEach(p => csv += `${p.name||''},${p.model||''},${p.warehouse||''},${p.quantity||0},${p.within3Months||0},${p.month3to9||0},${p.over9Months||0}\n`);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `库存数据_${new Date().toISOString().split('T')[0]}.csv`; link.click();
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
