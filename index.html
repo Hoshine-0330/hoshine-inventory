@@ -538,13 +538,31 @@
                             if(firstBackslash > 0) {
                                 simpleName = simpleName.substring(0, firstBackslash).trim();
                             }
-                            // 从产品名称中提取HS-XXXX格式的型号
+                            // 从产品名称中提取型号
                             let simpleModel = '';
-                            const hsMatch = String(name).match(/HS-\d{4,6}/i);
-                            if(hsMatch) {
-                                simpleModel = hsMatch[0].toUpperCase();
-                            } else if(model) {
-                                simpleModel = String(model).split('.')[0];
+                            const nameStr = String(name);
+                            // 107胶：匹配107-XX格式
+                            const match107 = nameStr.match(/107[-_](\d+)/i);
+                            if(match107) {
+                                simpleModel = '107-' + match107[1];
+                            }
+                            // 二甲基硅油/硅油：匹配XXXCS格式 (如500CS, 1000CS, 50CS)
+                            else {
+                                const matchCS = nameStr.match(/(\d+)\s*CS/i);
+                                if(matchCS) {
+                                    simpleModel = matchCS[1] + 'CS';
+                                }
+                                // 混炼胶：匹配HS-XXXX格式
+                                else {
+                                    const matchHS = nameStr.match(/HS[-_](\d+)/i);
+                                    if(matchHS) {
+                                        simpleModel = 'HS-' + matchHS[1];
+                                    }
+                                    // 最后用物料号
+                                    else if(model) {
+                                        simpleModel = String(model).split('.')[0];
+                                    }
+                                }
                             }
                             // KG转吨
                             products.push({
