@@ -372,38 +372,22 @@
             if (whFilter) filtered = filtered.filter(p => p.warehouse === whFilter);
             if (prodFilter) filtered = filtered.filter(p => p.name === prodFilter);
 
-            // 按仓库+产品分组（合并型号，合并在途仓到主仓库）
+            // 按仓库+产品分组
             const groupMap = {};
             filtered.forEach(p => {
-                let wh = p.warehouse || '未知仓库';
-                const isInTransit = wh.includes('在途仓');
-                // 基础仓库名：如果是"XXX在途仓" → "XXX仓"，否则保持不变
-                // 基础仓库名：统一去掉"在途仓"和尾部"仓"用于分组匹配
-                let baseKey = wh.replace('在途仓', '').replace('在途', '').trim();
-                baseKey = baseKey.replace(/仓$/, '').trim();
-                if (!baseKey) baseKey = '未知仓库';
+                // 统一仓库名：去掉"在途仓"、"仓"后缀
+                let wh = (p.warehouse || '未知仓库').replace('在途仓', '').replace('在途', '').replace(/仓$/, '').trim() + '仓';
+                if (wh === '仓') wh = '未知仓库';
                 const name = p.name || '未知产品';
-                const key = baseKey + '||' + name;
+                const key = wh + '||' + name;
+                const isInTransit = p.warehouse && p.warehouse.includes('在途仓');
                 
                 if (!groupMap[key]) {
-                    groupMap[key] = { 
-                        warehouse: wh, 
-                        name: name, 
-                        models: new Set(), 
-                        total: 0, 
-                        within3: 0, 
-                        month3to9: 0, 
-                        over9: 0, 
-                        signed: 0, 
-                        inTransit: 0, 
-                        forSale: 0,
-                        isInTransit: false
-                    };
+                    groupMap[key] = { warehouse: wh, name: name, models: new Set(), total: 0, within3: 0, month3to9: 0, over9: 0, signed: 0, inTransit: 0, forSale: 0 };
                 }
                 if (p.model) groupMap[key].models.add(p.model);
                 if (isInTransit) {
                     groupMap[key].inTransit += p.quantity || 0;
-                    groupMap[key].isInTransit = true;
                 } else {
                     groupMap[key].total += p.quantity || 0;
                 }
