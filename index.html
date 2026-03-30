@@ -384,7 +384,7 @@
                 const key = baseKey + '||' + name;
                 
                 if (!groupMap[key]) {
-                    groupMap[key] = { warehouse: wh, name: name, models: new Set(), total: 0, within3: 0, month3to9: 0, over9: 0, signed: 0, inTransit: 0, forSale: 0 };
+                    groupMap[key] = { warehouse: baseKey, name: name, models: new Set(), total: 0, within3: 0, month3to9: 0, over9: 0, signed: 0, inTransit: 0, forSale: 0 };
                 }
                 if (p.model) groupMap[key].models.add(p.model);
                 if (isInTransit) {
