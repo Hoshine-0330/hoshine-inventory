@@ -226,7 +226,7 @@
                 <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importData(event)">
             </div>
             <table class="admin-table">
-                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>操作</th></tr></thead>
+                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>操作</th></tr></thead>
                 <tbody id="adminTable"></tbody>
             </table>
         </div>
@@ -262,7 +262,7 @@
                     <div class="detail-stat"><div class="val" id="detail9plus">0</div><div class="label">9月+</div></div>
                 </div>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">📋 库存明细</h4>
-                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
+                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
                 <table class="detail-table"><thead><tr><th>客户名称</th><th>数量(吨)</th></tr></thead><tbody id="customerTable"></tbody></table>
             </div>
@@ -508,7 +508,7 @@
             document.getElementById('detailForSale').textContent = forSale.toFixed(2);
             
             // 明细表
-            document.getElementById('detailTable').innerHTML = items.map(p => `<tr><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td>${(p.signed||0).toFixed(2)}</td><td>${(p.inTransit||0).toFixed(2)}</td><td>${(p.forSale||0).toFixed(2)}</td></tr>`).join('');
+            document.getElementById('detailTable').innerHTML = items.map(p => `<tr><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td>${p.warehouse && p.warehouse.includes('在途仓') ? '在途' : '库存'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td>${(p.signed||0).toFixed(2)}</td><td>${(p.inTransit||0).toFixed(2)}</td><td>${(p.forSale||0).toFixed(2)}</td></tr>`).join('');
             
             // 客户明细
             document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map(c => `<tr><td>${c.name}</td><td style="color:#1677ff;font-weight:bold">${c.qty.toFixed(2)}吨</td></tr>`).join('') : '<tr><td colspan="2">暂无已签单客户</td></tr>';
