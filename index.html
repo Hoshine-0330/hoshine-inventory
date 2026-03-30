@@ -436,7 +436,7 @@
 
             document.getElementById('productContainer').innerHTML = Object.values(whGroupMap).map(g => `
                 <div class="warehouse-section">
-                    <div class="warehouse-header"><h3>📍 ${g.warehouse}</h3><span class="total">合计: ${Math.round(g.total * 100) / 100}吨</span></div>
+                    <div class="warehouse-header"><h3>📍 ${g.warehouse}仓</h3><span class="total">合计: ${Math.round((g.total + g.inTransit) * 100) / 100}吨</span></div>
                     <div class="product-list">
                         ${g.products.map(p => `
                             <div class="product-item" onclick="showDetail('${p.name}', '${whFilter}')">
