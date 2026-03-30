@@ -508,7 +508,8 @@
             document.getElementById('detailForSale').textContent = forSale.toFixed(2);
             
             // 明细表
-            document.getElementById('detailTable').innerHTML = items.map(p => `<tr><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td>${p.warehouse && p.warehouse.includes('在途仓') ? '在途' : '库存'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td>${(p.signed||0).toFixed(2)}</td><td>${(p.inTransit||0).toFixed(2)}</td><td>${(p.forSale||0).toFixed(2)}</td></tr>`).join('');
+            function getStatus(wh) { if(wh && wh.includes('在途仓')) return '<span style="color:#fa8c16">在途</span>'; return '<span style="color:#52c41a">库存</span>'; }
+            document.getElementById('detailTable').innerHTML = items.map(p => `<tr><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td>${getStatus(p.warehouse)}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td>${(p.signed||0).toFixed(2)}</td><td>${(p.inTransit||0).toFixed(2)}</td><td>${(p.forSale||0).toFixed(2)}</td></tr>`).join('');
             
             // 客户明细
             document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map(c => `<tr><td>${c.name}</td><td style="color:#1677ff;font-weight:bold">${c.qty.toFixed(2)}吨</td></tr>`).join('') : '<tr><td colspan="2">暂无已签单客户</td></tr>';
