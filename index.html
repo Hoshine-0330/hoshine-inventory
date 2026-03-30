@@ -464,7 +464,7 @@
             
             if(fileName.endsWith('.csv')) {
                 importCSV(event);
-            } else if(fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+            } else if(fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.xls')) {
                 importExcel(file);
             } else {
                 alert('请选择CSV或Excel文件');
@@ -528,7 +528,7 @@
                         }
                     }
                     saveData();
-                    alert(`导入成功，共${importedCount}条`);
+                    alert(`导入成功，共${importedCount}条\n商品名称列: ${nameIdx}\n物料号列: ${modelIdx}\n库存地点列: ${warehouseIdx}\n期末库存列: ${qtyIdx}`);
                     initFilters(); renderProducts(); renderAdminTable();
                 } catch(err) {
                     alert('Excel解析失败: ' + err.message);
