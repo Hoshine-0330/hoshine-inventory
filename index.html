@@ -301,8 +301,9 @@
         function saveData() { localStorage.setItem('hoshine_products', JSON.stringify(products)); }
 
         function initFilters() {
-            const warehouses = [...new Set(products.map(p => p.warehouse).filter(Boolean))];
-            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))];
+            // 获取唯一的仓库和产品，按字母排序
+            const warehouses = [...new Set(products.map(p => p.warehouse).filter(Boolean))].sort();
+            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
             document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
             document.getElementById('productFilter').innerHTML = '<option value="">全部产品</option>' + productNames.map(p => `<option value="${p}">${p}</option>`).join('');
         }
@@ -358,7 +359,7 @@
                     <div class="warehouse-header"><h3>📍 ${g.warehouse}</h3><span class="total">合计: ${Math.round(g.total * 100) / 100}吨</span></div>
                     <div class="product-list">
                         ${g.products.map(p => `
-                            <div class="product-item" onclick="showDetail('${p.name}')">
+                            <div class="product-item" onclick="showDetail('${p.name}', '${whFilter}')">
                                 <div class="product-info"><div class="product-name">${p.name}</div></div>
                                 <div class="product-stock"><span class="stock-num">${p.total.toFixed(2)}</span><span class="stock-unit">吨</span></div>
                                 <div class="stock-date">
@@ -380,12 +381,13 @@
             document.getElementById('statWarehouses').textContent = whSet.size;
         }
 
-        function showDetail(name) {
+        function showDetail(name, whFilter) {
             currentDetailProduct = name;
-            const items = products.filter(p => p.name === name);
+            currentDetailWhFilter = whFilter || '';
+            const items = products.filter(p => p.name === name && (!currentDetailWhFilter || p.warehouse === currentDetailWhFilter));
             
-            const models = [...new Set(items.map(p => p.model).filter(Boolean))];
-            const warehouses = [...new Set(items.map(p => p.warehouse).filter(Boolean))];
+            const models = [...new Set(items.map(p => p.model).filter(Boolean))].sort();
+            const warehouses = [...new Set(items.map(p => p.warehouse).filter(Boolean))].sort();
             
             document.getElementById('detailModelFilter').innerHTML = '<option value="">全部型号</option>' + models.map(m => `<option value="${m}">${m}</option>`).join('');
             document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
@@ -396,12 +398,14 @@
         }
 
         let currentDetailProduct = '';
+        let currentDetailWhFilter = '';
 
         function renderDetailTable() {
             const modelFilter = document.getElementById('detailModelFilter').value;
             const whFilter = document.getElementById('detailWhFilter').value;
             
-            let items = products.filter(p => p.name === currentDetailProduct);
+            // Apply the initial warehouse filter from main page
+            let items = products.filter(p => p.name === currentDetailProduct && (!currentDetailWhFilter || p.warehouse === currentDetailWhFilter));
             if (modelFilter) items = items.filter(p => p.model === modelFilter);
             if (whFilter) items = items.filter(p => p.warehouse === whFilter);
             
