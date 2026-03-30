@@ -245,7 +245,7 @@
                     <select id="detailModelFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
                         <option value="">全部型号</option>
                     </select>
-                    <select id="detailWhFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
+                    <select id="detailWhFilter" onchange="renderDetailTable()"><option value="">全部仓库</option> onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
                         <option value="">全部仓库</option>
                     </select>
                 </div>
@@ -376,7 +376,7 @@
             const groupMap = {};
             filtered.forEach(p => {
                 // 统一仓库名：去掉"在途仓"、"仓"后缀
-                let wh = (p.warehouse || '未知仓库').replace('在途仓', '').replace('在途', '').replace(/仓$/, '').trim() + '仓';
+                let wh = (p.warehouse || '未知仓库').replace('在途仓', '').replace('在途', '').replace(/仓$/, '').trim();
                 if (wh === '仓') wh = '未知仓库';
                 const name = p.name || '未知产品';
                 const key = wh + '||' + name;
@@ -419,7 +419,7 @@
 
             document.getElementById('productContainer').innerHTML = Object.values(whGroupMap).map(g => `
                 <div class="warehouse-section">
-                    <div class="warehouse-header"><h3>📍 ${g.warehouse}</h3><span class="total">合计: ${Math.round((g.total + g.inTransit) * 100) / 100}吨</span></div>
+                    <div class="warehouse-header"><h3>📍 ${g.warehouse}</h3><span class="total">合计: ${Math.round((g.total + g.inTransit) * 100) / 100}吨吨</span></div>
                     <div class="product-list">
                         ${g.products.map(p => `
                             <div class="product-item" onclick="showDetail('${p.name}', '${whFilter}')">
