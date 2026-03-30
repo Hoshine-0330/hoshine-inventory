@@ -376,19 +376,17 @@
             const groupMap = {};
             filtered.forEach(p => {
                 let wh = p.warehouse || '未知仓库';
-                // 合并在途仓到主仓库
                 const isInTransit = wh.includes('在途仓');
-                if (isInTransit) {
-                    // 去掉"在途仓"后缀
-                    wh = wh.replace('在途仓', '').trim();
-                    if (!wh) wh = '未知仓库';
-                }
+                // 统一提取基础仓库名：去掉"在途仓"和尾部"仓"
+                let baseKey = wh.replace('在途仓', '').trim();
+                baseKey = baseKey.replace(/仓$/, '').trim();
+                if (!baseKey) baseKey = '未知仓库';
                 const name = p.name || '未知产品';
-                const key = wh + '||' + name;
+                const key = baseKey + '||' + name;
                 
                 if (!groupMap[key]) {
                     groupMap[key] = { 
-                        warehouse: wh, 
+                        warehouse: baseKey, 
                         name: name, 
                         models: new Set(), 
                         total: 0, 
@@ -419,7 +417,7 @@
             const whGroupMap = {};
             Object.values(groupMap).forEach(g => {
                 const wh = g.warehouse;
-                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: wh, products: [], total: 0 };
+                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: baseKey, products: [], total: 0 };
                 whGroupMap[wh].products.push({
                     name: g.name,
                     models: Array.from(g.models).join(', '),
