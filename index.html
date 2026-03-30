@@ -386,7 +386,7 @@
                 
                 if (!groupMap[key]) {
                     groupMap[key] = { 
-                        warehouse: baseKey, 
+                        warehouse: wh, 
                         name: name, 
                         models: new Set(), 
                         total: 0, 
@@ -417,7 +417,7 @@
             const whGroupMap = {};
             Object.values(groupMap).forEach(g => {
                 const wh = g.warehouse;
-                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: baseKey, products: [], total: 0 };
+                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: wh, products: [], total: 0 };
                 whGroupMap[wh].products.push({
                     name: g.name,
                     models: Array.from(g.models).join(', '),
