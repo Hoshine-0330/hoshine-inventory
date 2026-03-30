@@ -361,7 +361,7 @@
             const currentWh = document.getElementById('warehouseFilter').value;
             const currentProd = document.getElementById('productFilter').value;
             
-            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}" ${w === currentWh ? 'selected' : ''}>${w}</option>`).join('');
+            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option><option value="在途">在途库存</option><option value="库存">仓库库存</option>' + warehouses.map(w => `<option value="${w}" ${w === currentWh ? 'selected' : ''}>${w}</option>`).join('');
             document.getElementById('productFilter').innerHTML = '<option value="">全部产品</option>' + productNames.map(p => `<option value="${p}" ${p === currentProd ? 'selected' : ''}>${p}</option>`).join('');
         }
 
@@ -376,10 +376,12 @@
             const groupMap = {};
             filtered.forEach(p => {
                 // 统一仓库名：去掉"在途仓"、"仓"后缀
-                let wh = (p.warehouse || '未知仓库').replace('在途仓', '').replace('在途', '').replace(/仓$/, '').trim();
-                if (wh === '仓') wh = '未知仓库';
+                let wh = p.warehouse || '未知仓库';
+                const isInTransit = wh.includes('在途仓');
+                // 基础名用于分组：去掉在途仓和尾部仓
+                let baseKey = wh.replace('在途仓', '').replace(/仓$/, '').trim();
                 const name = p.name || '未知产品';
-                const key = wh + '||' + name;
+                const key = baseKey + '||' + name;
                 const isInTransit = p.warehouse && p.warehouse.includes('在途仓');
                 
                 if (!groupMap[key]) {
@@ -419,7 +421,7 @@
 
             document.getElementById('productContainer').innerHTML = Object.values(whGroupMap).map(g => `
                 <div class="warehouse-section">
-                    <div class="warehouse-header"><h3>📍 ${g.warehouse}</h3><span class="total">合计: ${Math.round((g.total + g.inTransit) * 100) / 100}吨吨</span></div>
+                    <div class="warehouse-header"><h3>📍 ${g.warehouse}仓${g.inTransit > 0 ? ' (在途' + g.inTransit.toFixed(0) + '吨)' : ''}</h3><span class="total">合计: ${Math.round((g.total + g.inTransit) * 100) / 100}吨</span></div>
                     <div class="product-list">
                         ${g.products.map(p => `
                             <div class="product-item" onclick="showDetail('${p.name}', '${whFilter}')">
@@ -450,13 +452,13 @@
         function showDetail(name, whFilter) {
             currentDetailProduct = name;
             currentDetailWhFilter = whFilter || '';
-            const items = products.filter(p => p.name === name && (!currentDetailWhFilter || p.warehouse === currentDetailWhFilter));
+            const items = products.filter(p => p.name === name && (!currentDetailWhFilter || p.warehouse.includes(currentDetailWhFilter)));
             
             const models = [...new Set(items.map(p => p.model).filter(Boolean))].sort();
             const warehouses = [...new Set(items.map(p => p.warehouse).filter(Boolean))].sort();
             
             document.getElementById('detailModelFilter').innerHTML = '<option value="">全部型号</option>' + models.map(m => `<option value="${m}">${m}</option>`).join('');
-            document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
+            document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option><option value="在途">在途库存</option><option value="库存">仓库库存</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
             
             document.getElementById('detailTitle').textContent = name;
             renderDetailTable();
@@ -471,7 +473,7 @@
             const whFilter = document.getElementById('detailWhFilter').value;
             
             // Apply the initial warehouse filter from main page
-            let items = products.filter(p => p.name === currentDetailProduct && (!currentDetailWhFilter || p.warehouse === currentDetailWhFilter));
+            let items = products.filter(p => p.name === currentDetailProduct && (!currentDetailWhFilter || p.warehouse.includes(currentDetailWhFilter)));
             if (modelFilter) items = items.filter(p => p.model === modelFilter);
             if (whFilter) items = items.filter(p => p.warehouse === whFilter);
             
