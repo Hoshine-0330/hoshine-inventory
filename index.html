@@ -477,36 +477,64 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheetName, {header: 1});
                     
                     if(jsonData.length < 2) { alert('文件内容为空'); return; }
                     
-                    const headers = jsonData[0].map(h => String(h).trim().toLowerCase());
-                    const nameIdx = headers.findIndex(h => h.includes('商品名称') || h.includes('名称') || h.includes('name'));
-                    const modelIdx = headers.findIndex(h => h.includes('型号') || h.includes('model'));
-                    const warehouseIdx = headers.findIndex(h => h.includes('仓库') || h.includes('warehouse'));
-                    const qtyIdx = headers.findIndex(h => h.includes('数量') || h.includes('quantity'));
-                    const m3Idx = headers.findIndex(h => h.includes('3月内'));
-                    const m39Idx = headers.findIndex(h => h.includes('3-9月') || h.includes('3到9'));
-                    const m9Idx = headers.findIndex(h => h.includes('9月+') || h.includes('9月'));
+                    const headers = jsonData[0].map(h => String(h).trim());
+                    const getIdx = (names) => headers.findIndex(h => names.some(n => h.includes(n)));
+                    
+                    // 标准列名映射
+                    let nameIdx = getIdx(['商品名称', '物料描述', '产品名称', '名称', 'name']);
+                    let modelIdx = getIdx(['型号', '物料号', 'model', 'code']);
+                    let warehouseIdx = getIdx(['仓库', '库存地点', 'warehouse', 'location']);
+                    let qtyIdx = getIdx(['数量', '期末库存', 'quantity', 'stock']);
+                    let m3Idx = getIdx(['3月内', '90天内']);
+                    let m39Idx = getIdx(['3-9月', '90天到180天', '180天到270天']);
+                    let m9Idx = getIdx(['9月+', '270天到360天', '360天到720天', '大于720天']);
                     
                     let importedCount = 0;
                     for(let i=1; i<jsonData.length; i++) {
                         const row = jsonData[i];
-                        if(!row[nameIdx] && !row[modelIdx]) continue;
+                        const name = row[nameIdx] || row[modelIdx];
+                        if(!name && !row[modelIdx]) continue;
                         
-                        products.push({
-                            id: Date.now() + i,
-                            name: row[nameIdx] || '',
-                            model: row[modelIdx] || '',
-                            warehouse: row[warehouseIdx] || '',
-                            quantity: parseFloat(row[qtyIdx]) || 0,
-                            within3Months: parseFloat(row[m3Idx]) || 0,
-                            month3to9: parseFloat(row[m39Idx]) || 0,
-                            over9Months: parseFloat(row[m9Idx]) || 0
-                        });
-                        importedCount++;
+                        // 处理日期分布：如果只有90天内/90-180/180-270/270-360/360-720/>720天的格式，合并计算
+                        let within3 = parseFloat(row[m3Idx]) || 0;
+                        let month39 = parseFloat(row[m39Idx]) || 0;
+                        let over9 = parseFloat(row[m9Idx]) || 0;
+                        
+                        // 如果没有标准的3月内列，检查是否有90天内的列
+                        if(isNaN(within3)) {
+                            const idx90 = getIdx(['90天内数量']);
+                            const idx90to180 = getIdx(['90天到180天数量']);
+                            const idx180to270 = getIdx(['180天到270天数量']);
+                            const idx270to360 = getIdx(['270天到360天数量']);
+                            const idx360to720 = getIdx(['360天到720天数量']);
+                            const idx720plus = getIdx(['大于720天数量']);
+                            
+                            within3 = (parseFloat(row[idx90]) || 0);
+                            month39 = (parseFloat(row[idx90to180]) || 0) + (parseFloat(row[idx180to270]) || 0);
+                            over9 = (parseFloat(row[idx270to360]) || 0) + (parseFloat(row[idx360to720]) || 0) + (parseFloat(row[idx720plus]) || 0);
+                        }
+                        
+                        const warehouse = row[warehouseIdx] || '';
+                        const qty = parseFloat(row[qtyIdx]) || 0;
+                        
+                        if(qty > 0 || within3 > 0 || month39 > 0 || over9 > 0) {
+                            products.push({
+                                id: Date.now() + i,
+                                name: String(name).replace(/\\n/g, ' ').trim(),
+                                model: String(row[modelIdx] || ''),
+                                warehouse: String(warehouse).trim(),
+                                quantity: Math.round(qty * 100) / 100,
+                                within3Months: Math.round(within3 * 100) / 100,
+                                month3to9: Math.round(month39 * 100) / 100,
+                                over9Months: Math.round(over9 * 100) / 100
+                            });
+                            importedCount++;
+                        }
                     }
                     saveData();
                     alert(`导入成功，共${importedCount}条`);
