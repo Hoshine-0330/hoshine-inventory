@@ -379,7 +379,7 @@
                 let wh = p.warehouse || '未知仓库';
                 const isInTransit = wh.includes('在途仓');
                 // 基础名用于分组：去掉在途仓和尾部仓
-                let baseKey = wh.replace('在途仓', '').replace(/仓$/, '').trim();
+                let baseKey = wh.replace('在途仓', '').replace(/仓$/, '').replace('印度', '').trim();
                 const name = p.name || '未知产品';
                 const key = baseKey + '||' + name;
                 
