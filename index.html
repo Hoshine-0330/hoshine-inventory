@@ -472,19 +472,33 @@
         }
         
         function importExcel(file) {
+            console.log('Starting Excel import, file:', file.name, 'size:', file.size);
+            if(!XLSX) {
+                alert('XLSX库未加载，请刷新页面重试');
+                return;
+            }
             const reader = new FileReader();
             reader.onload = function(e) {
+                console.log('File read complete, result length:', e.target.result.byteLength);
                 try {
                     const data = new Uint8Array(e.target.result);
+                    console.log('Parsing XLSX...');
                     const workbook = XLSX.read(data, {type: 'array'});
+                    console.log('Workbook sheets:', workbook.SheetNames);
                     const firstSheetName = workbook.SheetNames[0];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheetName, {header: 1});
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                    console.log('Rows parsed:', jsonData.length);
                     
-                    if(jsonData.length < 2) { alert('文件内容为空'); return; }
+                    if(jsonData.length < 2) { 
+                        alert('文件内容为空，请检查文件是否包含数据'); 
+                        console.log('JSON data:', jsonData);
+                        return; 
+                    }
                     
                     const headers = jsonData[0].map(h => String(h).trim());
+                    console.log('Headers:', headers);
                     
-                    // 精确列名映射 - 你的海外汇总格式
                     const nameIdx = headers.indexOf('物料描述');
                     const modelIdx = headers.indexOf('物料号');
                     const warehouseIdx = headers.indexOf('库存地点描述');
@@ -496,7 +510,12 @@
                     const idx360to720 = headers.indexOf('360天到720天数量');
                     const idx720plus = headers.indexOf('大于720天数量');
                     
-                    if(nameIdx === -1) { alert('未找到"物料描述"列，请检查文件格式'); return; }
+                    console.log('Column indexes:', {nameIdx, modelIdx, warehouseIdx, qtyIdx, idx90});
+                    
+                    if(nameIdx === -1) { 
+                        alert('未找到"物料描述"列\n实际列名: ' + headers.slice(0, 10).join(', ')); 
+                        return; 
+                    }
                     
                     let importedCount = 0;
                     for(let i=1; i<jsonData.length; i++) {
@@ -504,7 +523,6 @@
                         const name = row[nameIdx];
                         if(!name) continue;
                         
-                        // 计算3月内、3-9月、9月+
                         const within3 = (parseFloat(row[idx90]) || 0);
                         const month39 = (parseFloat(row[idx90to180]) || 0) + (parseFloat(row[idx180to270]) || 0);
                         const over9 = (parseFloat(row[idx270to360]) || 0) + (parseFloat(row[idx360to720]) || 0) + (parseFloat(row[idx720plus]) || 0);
@@ -527,12 +545,18 @@
                             importedCount++;
                         }
                     }
+                    console.log('Imported:', importedCount, 'products');
                     saveData();
-                    alert(`导入成功，共${importedCount}条\n商品名称列: ${nameIdx}\n物料号列: ${modelIdx}\n库存地点列: ${warehouseIdx}\n期末库存列: ${qtyIdx}`);
+                    alert(`导入成功，共${importedCount}条`);
                     initFilters(); renderProducts(); renderAdminTable();
                 } catch(err) {
+                    console.error('Import error:', err);
                     alert('Excel解析失败: ' + err.message);
                 }
+            };
+            reader.onerror = function(err) {
+                console.error('FileReader error:', err);
+                alert('文件读取失败');
             };
             reader.readAsArrayBuffer(file);
         }
