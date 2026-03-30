@@ -454,7 +454,9 @@
             const items = products.filter(p => p.name === name && (!currentDetailWhFilter || p.warehouse.includes(currentDetailWhFilter)));
             
             const models = [...new Set(items.map(p => p.model).filter(Boolean))].sort();
-            const warehouses = [...new Set(items.map(p => p.warehouse).filter(Boolean))].sort();
+            // Get all original warehouses without grouping
+            const allItems = products.filter(p => p.name === name);
+            const warehouses = [...new Set(allItems.map(p => p.warehouse).filter(Boolean))].sort();
             
             document.getElementById('detailModelFilter').innerHTML = '<option value="">全部型号</option>' + models.map(m => `<option value="${m}">${m}</option>`).join('');
             document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
