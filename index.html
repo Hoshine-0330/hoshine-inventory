@@ -611,7 +611,7 @@
                     html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>-</td><td>${(stock - (signed || 0)).toFixed(2)}</td></tr>`;
                 }
                 if (inTransit > 0) {
-                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>-</td><td>${inTransit.toFixed(2)}</td><td>-</td></tr>`;
+                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td>-</td></tr>`;
                 }
                 return html;
             }
