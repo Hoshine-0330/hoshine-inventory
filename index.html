@@ -478,43 +478,77 @@
             if (modelFilter) items = items.filter(p => p.model === modelFilter);
             if (whFilter) items = items.filter(p => p.warehouse === whFilter);
             
-            const total = items.reduce((s,p)=>s+(p.quantity||0),0);
+            // 合并同仓库库存，区分在途和库存
+            const mergedMap = {};
+            items.forEach(p => {
+                let wh = p.warehouse || '未知仓库';
+                const isInTransit = wh.includes('在途仓');
+                // 基础名用于合并：去掉在途仓和尾部仓
+                let baseKey = wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').trim();
+                const key = baseKey + '||' + (p.model || '无型号');
+                
+                if (!mergedMap[key]) {
+                    mergedMap[key] = { 
+                        warehouse: baseKey, 
+                        model: p.model || '无型号',
+                        stock: 0,  // 库存
+                        inTransit: 0,  // 在途
+                        signed: 0,
+                        forSale: 0
+                    };
+                }
+                if (isInTransit) {
+                    mergedMap[key].inTransit += p.quantity || 0;
+                } else {
+                    mergedMap[key].stock += p.quantity || 0;
+                }
+                mergedMap[key].signed += p.signed || 0;
+                mergedMap[key].forSale += p.forSale || 0;
+            });
+            
+            const mergedList = Object.values(mergedMap);
+            const total = mergedList.reduce((s, p) => s + p.stock + p.inTransit, 0);
+            const totalStock = mergedList.reduce((s, p) => s + p.stock, 0);
+            const totalInTransit = mergedList.reduce((s, p) => s + p.inTransit, 0);
+            const signed = mergedList.reduce((s, p) => s + p.signed, 0);
+            const forSale = mergedList.reduce((s, p) => s + p.forSale, 0);
+            
+            // 时间分布按合并后的库存计算
             const within3 = items.reduce((s,p)=>s+(p.within3Months||0),0);
             const month3to9 = items.reduce((s,p)=>s+(p.month3to9||0),0);
             const over9 = items.reduce((s,p)=>s+(p.over9Months||0),0);
-            const signed = items.reduce((s,p)=>s+(p.signed||0),0);
-            const inTransit = items.reduce((s,p)=>s+(p.inTransit||0),0);
-            const forSale = items.reduce((s,p)=>s+(p.forSale||0),0);
-            
-            // 合并客户数据
-            const customerMap = {};
-            items.forEach(p => {
-                if (p.signedCustomers && p.signedCustomers.length > 0) {
-                    p.signedCustomers.forEach(c => {
-                        if (customerMap[c.customer]) {
-                            customerMap[c.customer] += c.quantity;
-                        } else {
-                            customerMap[c.customer] = c.quantity;
-                        }
-                    });
-                }
-            });
-            const customers = Object.entries(customerMap).map(([name, qty]) => ({name, qty})).sort((a,b) => b.qty - a.qty);
             
             document.getElementById('detailTotal').textContent = total.toFixed(2);
             document.getElementById('detail3m').textContent = within3.toFixed(2);
             document.getElementById('detail3to9').textContent = month3to9.toFixed(2);
             document.getElementById('detail9plus').textContent = over9.toFixed(2);
             document.getElementById('detailSigned').textContent = signed.toFixed(2);
-            document.getElementById('detailInTransit').textContent = inTransit.toFixed(2);
+            document.getElementById('detailInTransit').textContent = totalInTransit.toFixed(2);
             document.getElementById('detailForSale').textContent = forSale.toFixed(2);
             
-            // 明细表
-            function getStatus(wh) { if(wh && wh.includes('在途仓')) return '<span style="color:#fa8c16">在途</span>'; return '<span style="color:#52c41a">库存</span>'; }
-            document.getElementById('detailTable').innerHTML = items.map(p => `<tr><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td>${getStatus(p.warehouse)}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td>${(p.signed||0).toFixed(2)}</td><td>${(p.inTransit||0).toFixed(2)}</td><td>${(p.forSale||0).toFixed(2)}</td></tr>`).join('');
+            // 合并后的明细表
+            function getWarehouseStatusHtml(baseWh, stock, inTransit) {
+                let html = '';
+                if (stock > 0) {
+                    html += `<tr><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(mergedList.find(m => m.warehouse === baseWh)?.signed || 0).toFixed(2)}</td><td>-</td><td>${(stock - (mergedList.find(m => m.warehouse === baseWh)?.signed || 0)).toFixed(2)}</td></tr>`;
+                }
+                if (inTransit > 0) {
+                    html += `<tr><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>-</td><td>${inTransit.toFixed(2)}</td><td>-</td></tr>`;
+                }
+                return html;
+            }
             
-            // 客户明细
-            document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map(c => `<tr><td>${c.name}</td><td style="color:#1677ff;font-weight:bold">${c.qty.toFixed(2)}吨</td></tr>`).join('') : '<tr><td colspan="2">暂无已签单客户</td></tr>';
+            // 去重合并后显示
+            const uniqueWh = [...new Set(mergedList.map(p => p.warehouse))].sort();
+            let detailHtml = '';
+            uniqueWh.forEach(wh => {
+                const whItems = mergedList.filter(p => p.warehouse === wh);
+                const stock = whItems.reduce((s, p) => s + p.stock, 0);
+                const inTransit = whItems.reduce((s, p) => s + p.inTransit, 0);
+                detailHtml += getWarehouseStatusHtml(wh, stock, inTransit);
+            });
+            
+            document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="6">暂无数据</td></tr>';
         }
         function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
 
