@@ -627,6 +627,7 @@
             
             let detailHtml = '';
             rows.forEach(r => {
+                console.log('Rendering row:', r);
                 detailHtml += getRowHtml(r.model, r.warehouse, r.stock, r.inTransit, r.signed);
             });
             
