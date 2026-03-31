@@ -572,10 +572,9 @@
                 } else {
                     mergedMap[key].stock += p.quantity || 0;
                 }
-                mergedMap[key].signed += p.signed || 0;
                 mergedMap[key].forSale += p.forSale || 0;
                 
-                // 计算已签单数量（从signedCustomers数组）
+                // 计算已签单数量（从signedCustomers数组，只计算一次）
                 if (p.signedCustomers) {
                     console.log('Found signedCustomers:', p.signedCustomers);
                     mergedMap[key].signed += p.signedCustomers.reduce((s, c) => s + c.quantity, 0);
