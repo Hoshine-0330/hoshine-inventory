@@ -262,7 +262,7 @@
                     <div class="detail-stat"><div class="val" id="detail9plus">0</div><div class="label">9月+</div></div>
                 </div>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">📋 库存明细</h4>
-                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
+                <table class="detail-table"><thead><tr><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
                 <table class="detail-table"><thead><tr><th>客户名称</th><th>数量(吨)</th></tr></thead><tbody id="customerTable"></tbody></table>
             </div>
@@ -347,14 +347,23 @@
         }
 
         function updateFilterOptions(whFilter, prodFilter) {
-            // 根据产品筛选仓库
+            // 根据产品筛选仓库 - 使用合并后的基础仓库名
             let filtered = [...products];
             if (prodFilter) filtered = filtered.filter(p => p.name === prodFilter);
-            const warehouses = [...new Set(filtered.map(p => p.warehouse).filter(Boolean))].sort();
+            // 合并仓库名
+            const rawWarehouses = filtered.map(p => p.warehouse || '未知仓库');
+            const baseWarehouses = rawWarehouses.map(wh => {
+                const isInTransit = wh.includes('在途仓');
+                return wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+            });
+            const warehouses = [...new Set(baseWarehouses)].sort();
             
             // 根据仓库筛选产品
             filtered = [...products];
-            if (whFilter) filtered = filtered.filter(p => p.warehouse === whFilter);
+            if (whFilter) filtered = filtered.filter(p => {
+                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                return baseWh === whFilter;
+            });
             const productNames = [...new Set(filtered.map(p => p.name).filter(Boolean))].sort();
             
             // 保存当前选中的值
@@ -369,7 +378,10 @@
             const whFilter = document.getElementById('warehouseFilter').value;
             const prodFilter = document.getElementById('productFilter').value;
             let filtered = [...products];
-            if (whFilter) filtered = filtered.filter(p => p.warehouse === whFilter);
+            if (whFilter) filtered = filtered.filter(p => {
+                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                return baseWh === whFilter;
+            });
             if (prodFilter) filtered = filtered.filter(p => p.name === prodFilter);
 
             // 按仓库+产品分组
@@ -451,12 +463,20 @@
         function showDetail(name, whFilter) {
             currentDetailProduct = name;
             currentDetailWhFilter = whFilter || '';
-            const items = products.filter(p => p.name === name && (!currentDetailWhFilter || p.warehouse.includes(currentDetailWhFilter)));
+            const items = products.filter(p => p.name === name && (!currentDetailWhFilter || {
+                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                return baseWh === currentDetailWhFilter;
+            }()));
             
             const models = [...new Set(items.map(p => p.model).filter(Boolean))].sort();
-            // Get all original warehouses without grouping
+            
+            // Get all original warehouses and merge for filter
             const allItems = products.filter(p => p.name === name);
-            const warehouses = [...new Set(allItems.map(p => p.warehouse).filter(Boolean))].sort();
+            const baseWarehouses = allItems.map(p => {
+                const wh = p.warehouse || '未知仓库';
+                return wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+            });
+            const warehouses = [...new Set(baseWarehouses)].sort();
             
             document.getElementById('detailModelFilter').innerHTML = '<option value="">全部型号</option>' + models.map(m => `<option value="${m}">${m}</option>`).join('');
             document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
@@ -473,10 +493,16 @@
             const modelFilter = document.getElementById('detailModelFilter').value;
             const whFilter = document.getElementById('detailWhFilter').value;
             
-            // Apply the initial warehouse filter from main page
-            let items = products.filter(p => p.name === currentDetailProduct && (!currentDetailWhFilter || p.warehouse.includes(currentDetailWhFilter)));
+            // Apply the initial warehouse filter from main page - use merged base name
+            let items = products.filter(p => p.name === currentDetailProduct && (!currentDetailWhFilter || {
+                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                return baseWh === currentDetailWhFilter;
+            }()));
             if (modelFilter) items = items.filter(p => p.model === modelFilter);
-            if (whFilter) items = items.filter(p => p.warehouse === whFilter);
+            if (whFilter) items = items.filter(p => {
+                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                return baseWh === whFilter;
+            });
             
             // 合并同仓库库存，区分在途和库存
             const mergedMap = {};
