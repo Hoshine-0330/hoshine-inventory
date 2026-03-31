@@ -267,6 +267,25 @@
                 <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
                 <table class="detail-table"><thead><tr><th>客户名称</th><th>数量(吨)</th></tr></thead><tbody id="customerTable"></tbody></table>
+                <button class="btn-add" style="margin-top:10px;padding:8px 16px;" onclick="showSignedCustomerModal()">+ 录入已签单客户</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 已签单客户录入弹窗 -->
+    <div class="form-modal" id="signedCustomerModal">
+        <div class="form-box">
+            <h3>录入已签单客户</h3>
+            <div class="form-group">
+                <label>选择客户 *</label>
+                <select id="signedCustomerSelect" style="width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:8px;">
+                    <option value="">请选择客户</option>
+                </select>
+            </div>
+            <div class="form-group"><label>数量(吨) *</label><input type="number" id="signedCustomerQty" placeholder="请输入吨数"></div>
+            <div class="form-actions">
+                <button class="btn-save" onclick="saveSignedCustomer()">保存</button>
+                <button class="btn-cancel" onclick="closeSignedCustomerModal()">取消</button>
             </div>
         </div>
     </div>
@@ -588,6 +607,70 @@
         }
         function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
 
+        // 已签单客户录入
+        let currentSignedProductId = null;
+        
+        function showSignedCustomerModal() {
+            currentSignedProductId = null;
+            document.getElementById('signedCustomerQty').value = '';
+            
+            // 收集所有已签单客户（从所有产品中）
+            const allCustomers = new Set();
+            products.forEach(p => {
+                if (p.signedCustomers) {
+                    p.signedCustomers.forEach(c => allCustomers.add(c.customer));
+                }
+            });
+            
+            // 获取当前产品的客户
+            const currentItem = products.find(p => p.name === currentDetailProduct);
+            if (currentItem && currentItem.signedCustomers) {
+                currentItem.signedCustomers.forEach(c => allCustomers.add(c.customer));
+            }
+            
+            // 填充下拉框
+            const select = document.getElementById('signedCustomerSelect');
+            select.innerHTML = '<option value="">请选择客户</option>';
+            Array.from(allCustomers).sort().forEach(customer => {
+                select.innerHTML += `<option value="${customer}">${customer}</option>`;
+            });
+            
+            document.getElementById('signedCustomerModal').classList.add('active');
+        }
+        
+        function closeSignedCustomerModal() {
+            document.getElementById('signedCustomerModal').classList.remove('active');
+        }
+        
+        function saveSignedCustomer() {
+            const customer = document.getElementById('signedCustomerSelect').value;
+            const qty = parseFloat(document.getElementById('signedCustomerQty').value);
+            
+            if (!customer) { alert('请选择客户'); return; }
+            if (!qty || qty <= 0) { alert('请输入有效的吨数'); return; }
+            
+            // 找到当前产品并更新
+            const product = products.find(p => p.name === currentDetailProduct);
+            if (!product) { alert('未找到产品'); return; }
+            
+            if (!product.signedCustomers) product.signedCustomers = [];
+            
+            // 检查客户是否已存在
+            const existingIdx = product.signedCustomers.findIndex(c => c.customer === customer);
+            if (existingIdx >= 0) {
+                product.signedCustomers[existingIdx].quantity += qty;
+            } else {
+                product.signedCustomers.push({ customer, quantity: qty });
+            }
+            
+            // 更新已签单总量
+            product.signed = product.signedCustomers.reduce((s, c) => s + c.quantity, 0);
+            
+            saveData();
+            closeSignedCustomerModal();
+            renderDetailTable();
+        }
+
         function renderAdminTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const filtered = products.filter(p => p.name.toLowerCase().includes(search) || (p.model&&p.model.toLowerCase().includes(search)) || (p.warehouse&&p.warehouse.toLowerCase().includes(search)));
@@ -595,15 +678,10 @@
         }
 
         function showAddModal() { 
-            console.log('showAddModal called');
             editingId = null; 
             document.getElementById('formTitle').textContent = '添加产品'; 
             ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9','formSignedCustomers'].forEach(id => document.getElementById(id).value = ''); 
-            const modal = document.getElementById('formModal');
-            console.log('modal element:', modal);
-            console.log('modal class before:', modal.className);
-            modal.classList.add('active');
-            console.log('modal class after:', modal.className);
+            document.getElementById('formModal').classList.add('active'); 
         }
         function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; 
             // 将已签单客户转回字符串格式显示
