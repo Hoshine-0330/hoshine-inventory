@@ -574,9 +574,8 @@
                 }
                 mergedMap[key].forSale += p.forSale || 0;
                 
-                // 计算已签单数量（从signedCustomers数组，只计算一次）
-                if (p.signedCustomers) {
-                    console.log('Found signedCustomers:', p.signedCustomers);
+                // 只从signedCustomers数组计算已签单数量
+                if (p.signedCustomers && p.signedCustomers.length > 0) {
                     mergedMap[key].signed += p.signedCustomers.reduce((s, c) => s + c.quantity, 0);
                 }
             });
