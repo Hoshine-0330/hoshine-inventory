@@ -266,7 +266,7 @@
                 <h4 style="margin:15px 0 10px;color:#1677ff;">📋 库存明细</h4>
                 <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
-                <table class="detail-table"><thead><tr><th>型号</th><th>客户名称</th><th>数量(吨)</th></tr></thead><tbody id="customerTable"></tbody></table>
+                <table class="detail-table"><thead><tr><th>型号</th><th>客户名称</th><th>数量(吨)</th><th>操作</th></tr></thead><tbody id="customerTable"></tbody></table>
                 <button class="btn-add" style="margin-top:10px;padding:8px 16px;" onclick="showSignedCustomerModal()">+ 录入已签单客户</button>
             </div>
         </div>
@@ -653,8 +653,30 @@
             const customers = Object.values(customerMap).sort((a,b) => b.quantity - a.quantity);
             
             console.log('Rendering customer table, customers:', customers);
-            document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map(c => `<tr><td>${c.model}</td><td>${c.customer}</td><td style="color:#1677ff;font-weight:bold">${c.quantity.toFixed(2)}吨</td></tr>`).join('') : '<tr><td colspan="3">暂无已签单客户</td></tr>';
+            document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map((c, idx) => `<tr><td>${c.model}</td><td>${c.customer}</td><td style="color:#1677ff;font-weight:bold">${c.quantity.toFixed(2)}吨</td><td><button onclick="deleteSignedRecord('${c.model}', '${c.customer}', ${c.quantity})" style="background:#ff4d4f;color:#fff;padding:4px 8px;border:none;border-radius:4px;cursor:pointer;">删除</button></td></tr>`).join('') : '<tr><td colspan="4">暂无已签单客户</td></tr>';
         }
+        
+        function deleteSignedRecord(model, customer, qty) {
+            if (!confirm('确定删除已签单记录？\n型号：' + model + '\n客户：' + customer + '\n数量：' + qty + '吨')) return;
+            
+            // 找到所有匹配的产品记录，删除对应的客户
+            products.forEach(p => {
+                if (p.name === currentDetailProduct && p.model === model) {
+                    if (p.signedCustomers) {
+                        const idx = p.signedCustomers.findIndex(c => c.customer === customer);
+                        if (idx >= 0) {
+                            p.signedCustomers.splice(idx, 1);
+                            // 更新已签单总量
+                            p.signed = p.signedCustomers.reduce((s, c) => s + c.quantity, 0);
+                        }
+                    }
+                }
+            });
+            
+            saveData();
+            renderDetailTable();
+        }
+        
         function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
 
         // 已签单客户录入
