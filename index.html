@@ -245,7 +245,7 @@
                     <select id="detailModelFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
                         <option value="">全部型号</option>
                     </select>
-                    <select id="detailWhFilter" onchange="renderDetailTable()"><option value="">全部仓库</option> onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
+                    <select id="detailWhFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
                         <option value="">全部仓库</option>
                     </select>
                 </div>
@@ -463,10 +463,11 @@
         function showDetail(name, whFilter) {
             currentDetailProduct = name;
             currentDetailWhFilter = whFilter || '';
-            const items = products.filter(p => p.name === name && (!currentDetailWhFilter || {
+            const currentWhFilter = currentDetailWhFilter;
+            const items = products.filter(p => p.name === name && (!currentWhFilter || (function(){
                 const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                return baseWh === currentDetailWhFilter;
-            }()));
+                return baseWh === currentWhFilter;
+            })()));
             
             const models = [...new Set(items.map(p => p.model).filter(Boolean))].sort();
             
@@ -492,12 +493,13 @@
         function renderDetailTable() {
             const modelFilter = document.getElementById('detailModelFilter').value;
             const whFilter = document.getElementById('detailWhFilter').value;
+            const currentWhFilter = currentDetailWhFilter;
             
             // Apply the initial warehouse filter from main page - use merged base name
-            let items = products.filter(p => p.name === currentDetailProduct && (!currentDetailWhFilter || {
+            let items = products.filter(p => p.name === currentDetailProduct && (!currentWhFilter || (function(){
                 const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                return baseWh === currentDetailWhFilter;
-            }()));
+                return baseWh === currentWhFilter;
+            })()));
             if (modelFilter) items = items.filter(p => p.model === modelFilter);
             if (whFilter) items = items.filter(p => {
                 const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
