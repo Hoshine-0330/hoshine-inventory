@@ -577,6 +577,7 @@
                 
                 // 计算已签单数量（从signedCustomers数组）
                 if (p.signedCustomers) {
+                    console.log('Found signedCustomers:', p.signedCustomers);
                     mergedMap[key].signed += p.signedCustomers.reduce((s, c) => s + c.quantity, 0);
                 }
             });
