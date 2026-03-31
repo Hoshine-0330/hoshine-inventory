@@ -621,9 +621,11 @@
             
             document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="7">暂无数据</td></tr>';
             
-            // 渲染已签单客户明细 - 合并同产品+同客户
+            // 渲染已签单客户明细 - 从所有该产品的记录中获取（包括筛选后的）
             const customerMap = {};
-            items.forEach(p => {
+            // 使用所有符合产品名称的记录，而不仅仅是筛选后的items
+            const allProductItems = products.filter(p => p.name === currentDetailProduct);
+            allProductItems.forEach(p => {
                 if (p.signedCustomers && p.signedCustomers.length > 0) {
                     p.signedCustomers.forEach(c => {
                         if (customerMap[c.customer]) {
@@ -636,6 +638,7 @@
             });
             const customers = Object.entries(customerMap).map(([name, qty]) => ({name, qty})).sort((a,b) => b.qty - a.qty);
             
+            console.log('Rendering customer table, customers:', customers);
             document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map(c => `<tr><td>${c.name}</td><td style="color:#1677ff;font-weight:bold">${c.qty.toFixed(2)}吨</td></tr>`).join('') : '<tr><td colspan="2">暂无已签单客户</td></tr>';
         }
         function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
