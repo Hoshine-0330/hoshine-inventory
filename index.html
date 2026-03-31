@@ -620,6 +620,23 @@
             });
             
             document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="7">暂无数据</td></tr>';
+            
+            // 渲染已签单客户明细 - 合并同产品+同客户
+            const customerMap = {};
+            items.forEach(p => {
+                if (p.signedCustomers && p.signedCustomers.length > 0) {
+                    p.signedCustomers.forEach(c => {
+                        if (customerMap[c.customer]) {
+                            customerMap[c.customer] += c.quantity;
+                        } else {
+                            customerMap[c.customer] = c.quantity;
+                        }
+                    });
+                }
+            });
+            const customers = Object.entries(customerMap).map(([name, qty]) => ({name, qty})).sort((a,b) => b.qty - a.qty);
+            
+            document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map(c => `<tr><td>${c.name}</td><td style="color:#1677ff;font-weight:bold">${c.qty.toFixed(2)}吨</td></tr>`).join('') : '<tr><td colspan="2">暂无已签单客户</td></tr>';
         }
         function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
 
