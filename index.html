@@ -649,26 +649,7 @@
                 whSelect.innerHTML += `<option value="${wh}">${wh}</option>`;
             });
             
-            // 收集所有已签单客户
-            const allCustomers = new Set();
-            products.forEach(p => {
-                if (p.signedCustomers) {
-                    p.signedCustomers.forEach(c => allCustomers.add(c.customer));
-                }
-            });
-            
-            // 收集所有已签单客户（用于参考）
-            const allCustomers = new Set();
-            products.forEach(p => {
-                if (p.signedCustomers) {
-                    p.signedCustomers.forEach(c => allCustomers.add(c.customer));
-                }
-            });
-            
-            // 添加常用客户（如果有的话）
-            if (allCustomers.size > 0) {
-                // 可留空让用户输入新客户
-            }
+            // 收集所有已签单客户（用于参考）- 留空让用户输入新客户
             
             document.getElementById('signedCustomerModal').classList.add('active');
         }
