@@ -454,7 +454,7 @@
             const whGroupMap = {};
             Object.values(groupMap).forEach(g => {
                 const wh = g.warehouse;
-                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: wh, products: [], total: 0 };
+                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: wh, products: [], total: 0, inTransit: 0 };
                 whGroupMap[wh].products.push({
                     name: g.name,
                     models: Array.from(g.models).join(', '),
@@ -467,6 +467,7 @@
                     forSale: Math.round(g.forSale * 100) / 100
                 });
                 whGroupMap[wh].total += g.total;
+                whGroupMap[wh].inTransit += g.inTransit;
             });
 
             document.getElementById('productContainer').innerHTML = Object.values(whGroupMap).map(g => `
