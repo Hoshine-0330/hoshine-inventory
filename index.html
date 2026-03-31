@@ -771,6 +771,7 @@
             // 更新已签单总量
             product.signed = product.signedCustomers.reduce((s, c) => s + c.quantity, 0);
             
+            console.log('Saved signed customer, product:', product);
             saveData();
             closeSignedCustomerModal();
         }
