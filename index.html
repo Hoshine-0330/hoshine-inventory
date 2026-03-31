@@ -671,6 +671,19 @@
             models.forEach(m => {
                 modelSelect.innerHTML += `<option value="${m}" ${m === currentModel ? 'selected' : ''}>${m}</option>`;
             });
+            
+            // 根据选择的产品+型号更新仓库
+            let whFilteredProducts = products;
+            if (name) whFilteredProducts = whFilteredProducts.filter(p => p.name === name);
+            if (model) whFilteredProducts = whFilteredProducts.filter(p => p.model === model);
+            
+            const warehouses = [...new Set(whFilteredProducts.map(p => p.warehouse).filter(Boolean))].sort();
+            const whSelect = document.getElementById('signedWarehouseFilter');
+            const currentWh = whSelect.value;
+            whSelect.innerHTML = '<option value="">请选择仓库</option>';
+            warehouses.forEach(wh => {
+                whSelect.innerHTML += `<option value="${wh}" ${wh === currentWh ? 'selected' : ''}>${wh}</option>`;
+            });
         }
         
         function closeSignedCustomerModal() {
