@@ -580,6 +580,8 @@
             });
             
             const mergedList = Object.values(mergedMap);
+            console.log('mergedList:', mergedList);
+            
             const total = mergedList.reduce((s, p) => s + p.stock + p.inTransit, 0);
             const totalStock = mergedList.reduce((s, p) => s + p.stock, 0);
             const totalInTransit = mergedList.reduce((s, p) => s + p.inTransit, 0);
