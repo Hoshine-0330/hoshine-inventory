@@ -226,7 +226,7 @@
                 <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importData(event)">
             </div>
             <table class="admin-table">
-                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>操作</th></tr></thead>
+                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>操作</th></tr></thead>
                 <tbody id="adminTable"></tbody>
             </table>
         </div>
@@ -280,6 +280,7 @@
             <div class="form-group"><label>3月内</label><input type="number" id="formWithin3"></div>
             <div class="form-group"><label>3-9月</label><input type="number" id="formMonth3to9"></div>
             <div class="form-group"><label>9月+</label><input type="number" id="formOver9"></div>
+            <div class="form-group"><label>已签单客户 (格式: 客户名,吨数)</label><input type="text" id="formSignedCustomers" placeholder="例如: 客户A,10; 客户B,20"></div>
             <div class="form-actions">
                 <button class="btn-save" onclick="saveProduct()">保存</button>
                 <button class="btn-cancel" onclick="closeForm()">取消</button>
@@ -587,12 +588,51 @@
         function renderAdminTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const filtered = products.filter(p => p.name.toLowerCase().includes(search) || (p.model&&p.model.toLowerCase().includes(search)) || (p.warehouse&&p.warehouse.toLowerCase().includes(search)));
-            document.getElementById('adminTable').innerHTML = filtered.map(p => `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td>${(p.quantity||0).toFixed(2)}</td><td>${(p.within3Months||0).toFixed(2)}</td><td>${(p.month3to9||0).toFixed(2)}</td><td>${(p.over9Months||0).toFixed(2)}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`).join('');
+            document.getElementById('adminTable').innerHTML = filtered.map(p => `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${(p.signed||0).toFixed(2)}</td><td>${(p.within3Months||0).toFixed(2)}</td><td>${(p.month3to9||0).toFixed(2)}</td><td>${(p.over9Months||0).toFixed(2)}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`).join('');
         }
 
-        function showAddModal() { editingId = null; document.getElementById('formTitle').textContent = '添加产品'; ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9'].forEach(id => document.getElementById(id).value = ''); document.getElementById('formModal').classList.add('active'); }
-        function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; document.getElementById('formModal').classList.add('active'); }
-        function saveProduct() { const name = document.getElementById('formName').value; if(!name){alert('请输入产品名称');return;} const product = { id: editingId||Date.now(), name, model: document.getElementById('formModel').value, warehouse: document.getElementById('formWarehouse').value, quantity: parseFloat(document.getElementById('formQuantity').value)||0, within3Months: parseFloat(document.getElementById('formWithin3').value)||0, month3to9: parseFloat(document.getElementById('formMonth3to9').value)||0, over9Months: parseFloat(document.getElementById('formOver9').value)||0 }; if(editingId){const idx=products.findIndex(p=>p.id===editingId); if(idx>-1)products[idx]=product;} else{products.push(product);} saveData(); closeForm(); renderAdminTable(); initFilters(); renderProducts(); }
+        function showAddModal() { editingId = null; document.getElementById('formTitle').textContent = '添加产品'; ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9','formSignedCustomers'].forEach(id => document.getElementById(id).value = ''); document.getElementById('formModal').classList.add('active'); }
+        function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; 
+            // 将已签单客户转回字符串格式显示
+            let signedStr = '';
+            if (p.signedCustomers && p.signedCustomers.length > 0) {
+                signedStr = p.signedCustomers.map(c => c.customer + ',' + c.quantity).join('; ');
+            }
+            document.getElementById('formSignedCustomers').value = signedStr;
+            document.getElementById('formModal').classList.add('active'); }
+        function saveProduct() { 
+            const name = document.getElementById('formName').value; 
+            if(!name){alert('请输入产品名称');return;} 
+            
+            // 解析已签单客户
+            const signedInput = document.getElementById('formSignedCustomers').value;
+            const signedCustomers = [];
+            if (signedInput.trim()) {
+                const pairs = signedInput.split(';');
+                pairs.forEach(pair => {
+                    const [customer, qty] = pair.split(',');
+                    if (customer && qty) {
+                        signedCustomers.push({ customer: customer.trim(), quantity: parseFloat(qty) || 0 });
+                    }
+                });
+            }
+            
+            const totalSigned = signedCustomers.reduce((s, c) => s + c.quantity, 0);
+            
+            const product = { 
+                id: editingId||Date.now(), 
+                name, 
+                model: document.getElementById('formModel').value, 
+                warehouse: document.getElementById('formWarehouse').value, 
+                quantity: parseFloat(document.getElementById('formQuantity').value)||0, 
+                within3Months: parseFloat(document.getElementById('formWithin3').value)||0, 
+                month3to9: parseFloat(document.getElementById('formMonth3to9').value)||0, 
+                over9Months: parseFloat(document.getElementById('formOver9').value)||0,
+                signed: totalSigned,
+                signedCustomers: signedCustomers
+            }; 
+            if(editingId){const idx=products.findIndex(p=>p.id===editingId); if(idx>-1)products[idx]=product;} else{products.push(product);} saveData(); closeForm(); renderAdminTable(); initFilters(); renderProducts(); 
+        }
         function deleteProduct(id) { if(confirm('确定删除？')){products=products.filter(p=>p.id!==id);saveData();renderAdminTable();initFilters();renderProducts();}}
         function closeForm() { document.getElementById('formModal').classList.remove('active'); }
         function clearAllData() { if(confirm('确定清空所有数据？')){products=[];saveData();renderAdminTable();initFilters();renderProducts();}}
