@@ -296,9 +296,7 @@
             </div>
             <div class="form-group">
                 <label>客户名称 *</label>
-                <select id="signedCustomerSelect" style="width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:8px;">
-                    <option value="">请选择客户</option>
-                </select>
+                <input type="text" id="signedCustomerName" placeholder="请输入客户名称" style="width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:8px;">
             </div>
             <div class="form-group"><label>数量(吨) *</label><input type="number" id="signedCustomerQty" placeholder="请输入吨数"></div>
             <div class="form-actions">
@@ -659,12 +657,18 @@
                 }
             });
             
-            // 填充客户下拉框
-            const customerSelect = document.getElementById('signedCustomerSelect');
-            customerSelect.innerHTML = '<option value="">请选择客户</option>';
-            Array.from(allCustomers).sort().forEach(customer => {
-                customerSelect.innerHTML += `<option value="${customer}">${customer}</option>`;
+            // 收集所有已签单客户（用于参考）
+            const allCustomers = new Set();
+            products.forEach(p => {
+                if (p.signedCustomers) {
+                    p.signedCustomers.forEach(c => allCustomers.add(c.customer));
+                }
             });
+            
+            // 添加常用客户（如果有的话）
+            if (allCustomers.size > 0) {
+                // 可留空让用户输入新客户
+            }
             
             document.getElementById('signedCustomerModal').classList.add('active');
         }
@@ -696,11 +700,11 @@
             const name = document.getElementById('signedProductFilter').value;
             const model = document.getElementById('signedModelFilter').value;
             const warehouse = document.getElementById('signedWarehouseFilter').value;
-            const customer = document.getElementById('signedCustomerSelect').value;
+            const customer = document.getElementById('signedCustomerName').value.trim();
             const qty = parseFloat(document.getElementById('signedCustomerQty').value);
             
             if (!name) { alert('请选择产品'); return; }
-            if (!customer) { alert('请选择客户'); return; }
+            if (!customer) { alert('请输入客户名称'); return; }
             if (!qty || qty <= 0) { alert('请输入有效的吨数'); return; }
             
             // 找到匹配的产品（根据名称+型号+仓库）
