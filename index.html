@@ -605,10 +605,10 @@
             document.getElementById('detailForSale').textContent = forSale.toFixed(2);
             
             // 合并后的明细表 - 按型号+仓库显示
-            function getRowHtml(model, baseWh, stock, inTransit) {
+            function getRowHtml(model, baseWh, stock, inTransit, signed) {
                 let html = '';
                 if (stock > 0) {
-                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(mergedList.find(m => m.warehouse === baseWh && m.model === model)?.signed || 0).toFixed(2)}</td><td>-</td><td>${(stock - (mergedList.find(m => m.warehouse === baseWh && m.model === model)?.signed || 0)).toFixed(2)}</td></tr>`;
+                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>-</td><td>${(stock - (signed || 0)).toFixed(2)}</td></tr>`;
                 }
                 if (inTransit > 0) {
                     html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>-</td><td>${inTransit.toFixed(2)}</td><td>-</td></tr>`;
@@ -621,13 +621,13 @@
             mergedList.forEach(item => {
                 const exists = rows.find(r => r.warehouse === item.warehouse && r.model === item.model);
                 if (!exists) {
-                    rows.push({ model: item.model, warehouse: item.warehouse, stock: item.stock, inTransit: item.inTransit });
+                    rows.push({ model: item.model, warehouse: item.warehouse, stock: item.stock, inTransit: item.inTransit, signed: item.signed });
                 }
             });
             
             let detailHtml = '';
             rows.forEach(r => {
-                detailHtml += getRowHtml(r.model, r.warehouse, r.stock, r.inTransit);
+                detailHtml += getRowHtml(r.model, r.warehouse, r.stock, r.inTransit, r.signed);
             });
             
             document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="7">暂无数据</td></tr>';
