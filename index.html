@@ -594,7 +594,17 @@
             document.getElementById('adminTable').innerHTML = filtered.map(p => `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${(p.signed||0).toFixed(2)}</td><td>${(p.within3Months||0).toFixed(2)}</td><td>${(p.month3to9||0).toFixed(2)}</td><td>${(p.over9Months||0).toFixed(2)}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`).join('');
         }
 
-        function showAddModal() { editingId = null; document.getElementById('formTitle').textContent = '添加产品'; ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9','formSignedCustomers'].forEach(id => document.getElementById(id).value = ''); document.getElementById('formModal').classList.add('active'); }
+        function showAddModal() { 
+            console.log('showAddModal called');
+            editingId = null; 
+            document.getElementById('formTitle').textContent = '添加产品'; 
+            ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9','formSignedCustomers'].forEach(id => document.getElementById(id).value = ''); 
+            const modal = document.getElementById('formModal');
+            console.log('modal element:', modal);
+            console.log('modal class before:', modal.className);
+            modal.classList.add('active');
+            console.log('modal class after:', modal.className);
+        }
         function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; 
             // 将已签单客户转回字符串格式显示
             let signedStr = '';
