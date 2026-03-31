@@ -262,7 +262,7 @@
                     <div class="detail-stat"><div class="val" id="detail9plus">0</div><div class="label">9月+</div></div>
                 </div>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">📋 库存明细</h4>
-                <table class="detail-table"><thead><tr><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
+                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
                 <table class="detail-table"><thead><tr><th>客户名称</th><th>数量(吨)</th></tr></thead><tbody id="customerTable"></tbody></table>
             </div>
@@ -554,29 +554,33 @@
             document.getElementById('detailInTransit').textContent = totalInTransit.toFixed(2);
             document.getElementById('detailForSale').textContent = forSale.toFixed(2);
             
-            // 合并后的明细表
-            function getWarehouseStatusHtml(baseWh, stock, inTransit) {
+            // 合并后的明细表 - 按型号+仓库显示
+            function getRowHtml(model, baseWh, stock, inTransit) {
                 let html = '';
                 if (stock > 0) {
-                    html += `<tr><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(mergedList.find(m => m.warehouse === baseWh)?.signed || 0).toFixed(2)}</td><td>-</td><td>${(stock - (mergedList.find(m => m.warehouse === baseWh)?.signed || 0)).toFixed(2)}</td></tr>`;
+                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(mergedList.find(m => m.warehouse === baseWh && m.model === model)?.signed || 0).toFixed(2)}</td><td>-</td><td>${(stock - (mergedList.find(m => m.warehouse === baseWh && m.model === model)?.signed || 0)).toFixed(2)}</td></tr>`;
                 }
                 if (inTransit > 0) {
-                    html += `<tr><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>-</td><td>${inTransit.toFixed(2)}</td><td>-</td></tr>`;
+                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>-</td><td>${inTransit.toFixed(2)}</td><td>-</td></tr>`;
                 }
                 return html;
             }
             
-            // 去重合并后显示
-            const uniqueWh = [...new Set(mergedList.map(p => p.warehouse))].sort();
-            let detailHtml = '';
-            uniqueWh.forEach(wh => {
-                const whItems = mergedList.filter(p => p.warehouse === wh);
-                const stock = whItems.reduce((s, p) => s + p.stock, 0);
-                const inTransit = whItems.reduce((s, p) => s + p.inTransit, 0);
-                detailHtml += getWarehouseStatusHtml(wh, stock, inTransit);
+            // 按型号+仓库去重显示
+            const rows = [];
+            mergedList.forEach(item => {
+                const exists = rows.find(r => r.warehouse === item.warehouse && r.model === item.model);
+                if (!exists) {
+                    rows.push({ model: item.model, warehouse: item.warehouse, stock: item.stock, inTransit: item.inTransit });
+                }
             });
             
-            document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="6">暂无数据</td></tr>';
+            let detailHtml = '';
+            rows.forEach(r => {
+                detailHtml += getRowHtml(r.model, r.warehouse, r.stock, r.inTransit);
+            });
+            
+            document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="7">暂无数据</td></tr>';
         }
         function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
 
