@@ -546,6 +546,8 @@
                 return baseWh === whFilter;
             });
             
+            console.log('items:', items.map(p => ({name: p.name, model: p.model, warehouse: p.warehouse, signedCustomers: p.signedCustomers})));
+            
             // 合并同仓库库存，区分在途和库存
             const mergedMap = {};
             items.forEach(p => {
