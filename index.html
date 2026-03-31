@@ -132,6 +132,8 @@
         /* 后台 */
         .admin-section { display: none; }
         .admin-section.active { display: block; }
+        .dashboard-section { display: none; }
+        .dashboard-section.active { display: block; }
         .toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
         .toolbar input[type="text"] { flex: 1; min-width: 200px; padding: 12px 20px; border: none; border-radius: 10px; background: white; color: #333; border: 1px solid #d9d9d9; font-size: 14px; }
         .toolbar button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; }
@@ -186,7 +188,7 @@
         </div>
 
         <!-- 首页 -->
-        <div class="main-container dashboard-section active" id="dashboardSection">
+        <div class="main-container dashboard-section" id="dashboardSection">
             <!-- 筛选 -->
             <div class="filter-bar">
                 <select id="warehouseFilter" onchange="renderProducts()">
@@ -297,6 +299,7 @@
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('mainPage').style.display = 'block';
                 loadData();
+                showPage('dashboard');
             }
         }
         function logout() { document.getElementById('loginPage').style.display = 'flex'; document.getElementById('mainPage').style.display = 'none'; }
