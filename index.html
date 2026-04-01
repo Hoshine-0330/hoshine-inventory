@@ -1654,8 +1654,12 @@
             const file = event.target.files[0];
             if (!file) return;
             
+            console.log('开始导入文件:', file.name, '大小:', file.size);
+            
             const productName = document.getElementById('importCustomerProduct').value;
             const warehouse = document.getElementById('importCustomerWarehouse').value;
+            
+            console.log('产品:', productName, '仓库:', warehouse);
             
             if (!productName) { alert('请先选择产品'); event.target.value = ''; return; }
             
@@ -1666,7 +1670,9 @@
             if (fileName.endsWith('.csv')) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    console.log('CSV文件读取完成');
                     const lines = e.target.result.split('\n').filter(l => l.trim());
+                    console.log('行数:', lines.length);
                     // 跳过表头
                     for (let i = 1; i < lines.length; i++) {
                         const cols = lines[i].split(',').map(c => c.trim());
@@ -1674,12 +1680,15 @@
                             const customer = cols[0];
                             const qty = parseFloat(cols[1]);
                             
+                            console.log('解析行', i, ':', customer, qty);
+                            
                             if (customer && qty && qty > 0) {
                                 addSignedCustomerToProduct(productName, warehouse, customer, qty, now);
                                 importedCount++;
                             }
                         }
                     }
+                    console.log('导入完成，数量:', importedCount);
                     finishCustomerImport(importedCount, now);
                 };
                 reader.readAsText(file);
@@ -1687,12 +1696,16 @@
                 if (!XLSX) { alert('XLSX库未加载，请刷新页面重试'); return; }
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    console.log('Excel文件读取完成');
                     try {
                         const data = new Uint8Array(e.target.result);
+                        console.log('数据长度:', data.length);
                         const workbook = XLSX.read(data, {type: 'array'});
+                        console.log('工作表:', workbook.SheetNames);
                         const firstSheetName = workbook.SheetNames[0];
                         const worksheet = workbook.Sheets[firstSheetName];
                         const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                        console.log('解析行数:', jsonData.length);
                         
                         for (let i = 1; i < jsonData.length; i++) {
                             const row = jsonData[i];
@@ -1705,6 +1718,7 @@
                                 importedCount++;
                             }
                         }
+                        console.log('Excel导入完成，数量:', importedCount);
                         finishCustomerImport(importedCount, now);
                     } catch (err) {
                         alert('Excel解析失败: ' + err.message);
