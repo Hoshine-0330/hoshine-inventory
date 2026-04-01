@@ -1559,41 +1559,320 @@
     <div class="form-modal" id="importCustomerModal">
         <div class="form-box large">
             <h3>📑 导入已签单客户</h3>
+            
+            <!-- 导入方式切换 -->
             <div class="form-group">
-                <label>选择产品 *</label>
-                <select id="importCustomerProduct" onchange="renderImportCustomerTable()">
-                    <option value="">请选择产品</option>
-                </select>
+                <label>导入方式</label>
+                <div style="display:flex;gap:12px;margin-top:8px;">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                        <input type="radio" name="importMode" value="file" checked onchange="toggleImportMode()"> 📁 从文件导入
+                    </label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                        <input type="radio" name="importMode" value="manual" onchange="toggleImportMode()"> ✏️ 手动录入
+                    </label>
+                </div>
             </div>
-            <div class="form-group">
-                <label>选择仓库</label>
-                <select id="importCustomerWarehouse" onchange="renderImportCustomerTable()">
-                    <option value="">全部仓库</option>
-                </select>
+            
+            <!-- 文件导入模式 -->
+            <div id="fileImportMode">
+                <div class="form-group">
+                    <label>选择产品 *</label>
+                    <select id="importCustomerProduct">
+                        <option value="">请选择产品</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>选择仓库</label>
+                    <select id="importCustomerWarehouse">
+                        <option value="">全部仓库</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>选择文件 (CSV/Excel)</label>
+                    <input type="file" id="customerFileInput" accept=".csv,.xlsx,.xls" style="margin-top:8px;" onchange="importCustomerFromFile(event)">
+                    <p class="import-hint">💡 文件格式：客户名称, 数量(吨) <br>📥 示例：ABC公司, 50</p>
+                </div>
             </div>
             
-            <table class="import-customer-table">
-                <thead>
-                    <tr>
-                        <th style="width:30%">客户名称 *</th>
-                        <th style="width:25%">数量(吨) *</th>
-                        <th style="width:30%">备注</th>
-                        <th style="width:15%">操作</th>
-                    </tr>
-                </thead>
-                <tbody id="importCustomerTableBody">
-                    <!-- 动态生成的行 -->
-                </tbody>
-            </table>
-            
-            <button class="btn-add" style="padding:10px 16px;margin-top:8px;" onclick="addImportCustomerRow()">+ 添加一行</button>
-            <p class="import-hint">💡 提示：直接输入客户名称和数量，可添加多行</p>
-            
-            <div class="import-actions">
-                <button class="btn-save" onclick="saveImportCustomers()">保存全部</button>
-                <button class="btn-cancel" onclick="document.getElementById('importCustomerModal').classList.remove('active')">取消</button>
+            <!-- 手动录入模式 -->
+            <div id="manualImportMode" style="display:none;">
+                <div class="form-group">
+                    <label>选择产品 *</label>
+                    <select id="importCustomerProductManual" onchange="renderImportCustomerTable()">
+                        <option value="">请选择产品</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>选择仓库</label>
+                    <select id="importCustomerWarehouseManual" onchange="renderImportCustomerTable()">
+                        <option value="">全部仓库</option>
+                    </select>
+                </div>
+                
+                <table class="import-customer-table">
+                    <thead>
+                        <tr>
+                            <th style="width:30%">客户名称 *</th>
+                            <th style="width:25%">数量(吨) *</th>
+                            <th style="width:30%">备注</th>
+                            <th style="width:15%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="importCustomerTableBody">
+                        <!-- 动态生成的行 -->
+                    </tbody>
+                </table>
+                
+                <button class="btn-add" style="padding:10px 16px;margin-top:8px;" onclick="addImportCustomerRow()">+ 添加一行</button>
+                <p class="import-hint">💡 提示：直接输入客户名称和数量，可添加多行</p>
+                
+                <div class="import-actions">
+                    <button class="btn-save" onclick="saveImportCustomers()">保存全部</button>
+                    <button class="btn-cancel" onclick="document.getElementById('importCustomerModal').classList.remove('active')">取消</button>
+                </div>
             </div>
         </div>
     </div>
-</body>
-</html>
+    
+    <script>
+        // 切换导入模式
+        function toggleImportMode() {
+            const mode = document.querySelector('input[name="importMode"]:checked').value;
+            document.getElementById('fileImportMode').style.display = mode === 'file' ? 'block' : 'none';
+            document.getElementById('manualImportMode').style.display = mode === 'manual' ? 'block' : 'none';
+            
+            if (mode === 'file') {
+                // 初始化产品下拉框
+                const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
+                document.getElementById('importCustomerProduct').innerHTML = '<option value="">请选择产品</option>' + 
+                    productNames.map(p => `<option value="${p}">${p}</option>`).join('');
+            }
+        }
+        
+        // 从文件导入已签单客户
+        function importCustomerFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const productName = document.getElementById('importCustomerProduct').value;
+            const warehouse = document.getElementById('importCustomerWarehouse').value;
+            
+            if (!productName) { alert('请先选择产品'); event.target.value = ''; return; }
+            
+            const fileName = file.name.toLowerCase();
+            const now = new Date().toISOString();
+            let importedCount = 0;
+            
+            if (fileName.endsWith('.csv')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const lines = e.target.result.split('\n').filter(l => l.trim());
+                    // 跳过表头
+                    for (let i = 1; i < lines.length; i++) {
+                        const cols = lines[i].split(',').map(c => c.trim());
+                        if (cols.length >= 2) {
+                            const customer = cols[0];
+                            const qty = parseFloat(cols[1]);
+                            
+                            if (customer && qty && qty > 0) {
+                                addSignedCustomerToProduct(productName, warehouse, customer, qty, now);
+                                importedCount++;
+                            }
+                        }
+                    }
+                    finishCustomerImport(importedCount, now);
+                };
+                reader.readAsText(file);
+            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                if (!XLSX) { alert('XLSX库未加载，请刷新页面重试'); return; }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                        
+                        for (let i = 1; i < jsonData.length; i++) {
+                            const row = jsonData[i];
+                            if (!row || row.length < 2) continue;
+                            const customer = String(row[0]).trim();
+                            const qty = parseFloat(row[1]);
+                            
+                            if (customer && qty && qty > 0) {
+                                addSignedCustomerToProduct(productName, warehouse, customer, qty, now);
+                                importedCount++;
+                            }
+                        }
+                        finishCustomerImport(importedCount, now);
+                    } catch (err) {
+                        alert('Excel解析失败: ' + err.message);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                alert('请选择CSV或Excel文件');
+            }
+        }
+        
+        function addSignedCustomerToProduct(productName, warehouse, customer, qty, timestamp) {
+            let targetProducts = products.filter(p => p.name === productName);
+            if (warehouse) {
+                targetProducts = targetProducts.filter(p => {
+                    const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                    return baseWh === warehouse;
+                });
+            }
+            
+            if (targetProducts.length > 0) {
+                const product = targetProducts[0];
+                if (!product.signedCustomers) product.signedCustomers = [];
+                
+                const existingIdx = product.signedCustomers.findIndex(c => c.customer === customer);
+                if (existingIdx >= 0) {
+                    product.signedCustomers[existingIdx].quantity += qty;
+                } else {
+                    product.signedCustomers.push({ customer, quantity: qty });
+                }
+                product.signed = product.signedCustomers.reduce((s, c) => s + c.quantity, 0);
+                product.lastUpdate = timestamp;
+            }
+        }
+        
+        function finishCustomerImport(count, timestamp) {
+            if (count > 0) {
+                localStorage.setItem('hoshine_lastUpdate', timestamp);
+                saveData();
+                document.getElementById('importCustomerModal').classList.remove('active');
+                alert('✅ 成功导入 ' + count + ' 条已签单客户记录！');
+                renderProducts();
+                initFilters();
+            } else {
+                alert('未找到有效数据，请检查文件格式');
+            }
+            // 重置文件输入
+            document.getElementById('customerFileInput').value = '';
+        }
+        
+        // 手动录入模式函数
+        function showSignedCustomerImportModal() {
+            toggleImportMode();
+            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
+            document.getElementById('importCustomerProduct').innerHTML = '<option value="">请选择产品</option>' + 
+                productNames.map(p => `<option value="${p}">${p}</option>`).join('');
+            document.getElementById('importCustomerProductManual').innerHTML = '<option value="">请选择产品</option>' + 
+                productNames.map(p => `<option value="${p}">${p}</option>`).join('');
+            document.getElementById('importCustomerWarehouse').innerHTML = '<option value="">全部仓库</option>';
+            document.getElementById('importCustomerWarehouseManual').innerHTML = '<option value="">全部仓库</option>';
+            document.getElementById('importCustomerModal').classList.add('active');
+        }
+        
+        // 原有函数保留兼容
+        function showSignedCustomerImportModalOld() {
+            // 初始化产品下拉框
+            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
+            document.getElementById('importCustomerProduct').innerHTML = '<option value="">请选择产品</option>' + 
+                productNames.map(p => `<option value="${p}">${p}</option>`).join('');
+            document.getElementById('importCustomerWarehouse').innerHTML = '<option value="">全部仓库</option>';
+            document.getElementById('importCustomerModal').classList.add('active');
+            renderImportCustomerTable();
+        }
+
+        function renderImportCustomerTable() {
+            const product = document.getElementById('importCustomerProductManual').value;
+            const warehouse = document.getElementById('importCustomerWarehouseManual').value;
+            
+            if (product) {
+                let filtered = products.filter(p => p.name === product);
+                if (warehouse) {
+                    filtered = filtered.filter(p => {
+                        const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                        return baseWh === warehouse;
+                    });
+                }
+                const warehouses = [...new Set(filtered.map(p => {
+                    const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                    return baseWh;
+                }))].sort();
+                document.getElementById('importCustomerWarehouseManual').innerHTML = '<option value="">全部仓库</option>' + 
+                    warehouses.map(w => `<option value="${w}" ${w === warehouse ? 'selected' : ''}>${w}</option>`).join('');
+            }
+            
+            const tbody = document.getElementById('importCustomerTableBody');
+            const rowCount = tbody.querySelectorAll('tr').length || 3;
+            let html = '';
+            for (let i = 0; i < Math.max(rowCount, 3); i++) {
+                html += `<tr>
+                    <td><input type="text" class="customer-name" placeholder="请输入客户名称"></td>
+                    <td><input type="number" class="customer-qty" placeholder="请输入吨数" min="0" step="0.01"></td>
+                    <td><input type="text" class="customer-note" placeholder="备注(可选)"></td>
+                    <td><button class="btn-delete" style="padding:6px 12px;" onclick="this.closest('tr').remove()">删除</button></td>
+                </tr>`;
+            }
+            tbody.innerHTML = html;
+        }
+
+        function addImportCustomerRow() {
+            const tbody = document.getElementById('importCustomerTableBody');
+            const html = `<tr>
+                <td><input type="text" class="customer-name" placeholder="请输入客户名称"></td>
+                <td><input type="number" class="customer-qty" placeholder="请输入吨数" min="0" step="0.01"></td>
+                <td><input type="text" class="customer-note" placeholder="备注(可选)"></td>
+                <td><button class="btn-delete" style="padding:6px 12px;" onclick="this.closest('tr').remove()">删除</button></td>
+            </tr>`;
+            tbody.insertAdjacentHTML('beforeend', html);
+        }
+
+        function saveImportCustomers() {
+            const productName = document.getElementById('importCustomerProductManual').value;
+            const warehouse = document.getElementById('importCustomerWarehouseManual').value;
+            
+            if (!productName) { alert('请选择产品'); return; }
+            
+            const rows = document.querySelectorAll('#importCustomerTableBody tr');
+            let savedCount = 0;
+            const now = new Date().toISOString();
+            
+            rows.forEach(row => {
+                const customer = row.querySelector('.customer-name').value.trim();
+                const qty = parseFloat(row.querySelector('.customer-qty').value);
+                
+                if (customer && qty && qty > 0) {
+                    let targetProducts = products.filter(p => p.name === productName);
+                    if (warehouse) {
+                        targetProducts = targetProducts.filter(p => {
+                            const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                            return baseWh === warehouse;
+                        });
+                    }
+                    
+                    if (targetProducts.length > 0) {
+                        const product = targetProducts[0];
+                        if (!product.signedCustomers) product.signedCustomers = [];
+                        
+                        const existingIdx = product.signedCustomers.findIndex(c => c.customer === customer);
+                        if (existingIdx >= 0) {
+                            product.signedCustomers[existingIdx].quantity += qty;
+                        } else {
+                            product.signedCustomers.push({ customer, quantity: qty });
+                        }
+                        product.signed = product.signedCustomers.reduce((s, c) => s + c.quantity, 0);
+                        product.lastUpdate = now;
+                        savedCount++;
+                    }
+                }
+            });
+            
+            if (savedCount > 0) {
+                localStorage.setItem('hoshine_lastUpdate', now);
+                saveData();
+                document.getElementById('importCustomerModal').classList.remove('active');
+                alert('✅ 成功导入 ' + savedCount + ' 条已签单客户记录！');
+                renderProducts();
+                initFilters();
+            } else {
+                alert('请输入有效的客户名称和数量');
+            }
+        }
+    </script>
