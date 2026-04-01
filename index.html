@@ -335,21 +335,128 @@
         .date-9plus { background: #fff1f0; }
         .date-9plus .val { color: #ff4d4f; }
 
-        /* 详情弹窗 */
-        .detail-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        /* 详情弹窗 - PC端宽屏样式 */
+        .detail-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; padding: 40px; }
         .detail-modal.active { display: flex; }
-        .detail-box { background: white; border-radius: 20px; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(22,119,255,0.2); }
-        .detail-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: linear-gradient(135deg, #1677ff, #4096ff); border-radius: 12px 12px 0 0; }
-        .detail-header h2 { font-size: 18px; font-weight: 500; }
-        .detail-close { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; color: #fff; font-size: 18px; cursor: pointer; }
-        .detail-content { padding: 16px; background: #fff; }
-        .detail-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-        .detail-stat { background: #f5f5f5; border-radius: 8px; padding: 12px; text-align: center; }
-        .detail-stat .val { font-size: 18px; font-weight: 600; color: #1677ff; }
-        .detail-stat .label { font-size: 12px; color: #888; margin-top: 2px; }
-        .detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .detail-table th, .detail-table td { padding: 10px; text-align: left; border-bottom: 1px solid #f0f0f0; }
-        .detail-table th { color: #1677ff; font-weight: 500; }
+        .detail-box { 
+            background: white; 
+            border-radius: 16px; 
+            width: 100%; 
+            max-width: 900px; 
+            max-height: 85vh; 
+            overflow: hidden; 
+            box-shadow: 0 20px 60px rgba(22,119,255,0.25);
+            display: flex;
+            flex-direction: column;
+        }
+        .detail-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 20px 28px; 
+            background: linear-gradient(135deg, #1677ff, #4096ff); 
+            color: #fff;
+            border-radius: 16px 16px 0 0;
+        }
+        .detail-header h2 { font-size: 20px; font-weight: 600; }
+        .detail-close { 
+            width: 36px; 
+            height: 36px; 
+            background: rgba(255,255,255,0.2); 
+            border: none; 
+            border-radius: 50%; 
+            color: #fff; 
+            font-size: 20px; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        .detail-close:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
+        .detail-content { 
+            padding: 24px 28px; 
+            background: #fff; 
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        /* 筛选区域 */
+        .detail-filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .detail-filters select {
+            padding: 10px 14px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            min-width: 160px;
+            cursor: pointer;
+        }
+        .detail-filters select:hover { border-color: #1677ff; }
+        
+        /* 统计卡片 - PC端2行4列 */
+        .detail-stats { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 16px; 
+            margin-bottom: 20px; 
+        }
+        .detail-stat { 
+            background: linear-gradient(135deg, #f0f7ff, #e6f0ff); 
+            border: 1px solid #91d5ff;
+            border-radius: 12px; 
+            padding: 20px; 
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .detail-stat:hover { transform: translateY(-2px); }
+        .detail-stat .val { font-size: 26px; font-weight: 700; color: #1677ff; }
+        .detail-stat .label { font-size: 13px; color: #666; margin-top: 6px; }
+        
+        .detail-stats-row2 { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 16px; 
+            margin-bottom: 24px; 
+        }
+        
+        /* 表格样式 */
+        .detail-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1677ff;
+            margin: 24px 0 14px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #91d5ff;
+        }
+        .detail-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 14px;
+            margin-bottom: 16px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .detail-table th, .detail-table td { 
+            padding: 14px 16px; 
+            text-align: left; 
+            border-bottom: 1px solid #f0f0f0; 
+        }
+        .detail-table th { 
+            background: #1677ff; 
+            color: #fff; 
+            font-weight: 600; 
+            font-size: 13px;
+        }
+        .detail-table tr:hover { background: #f0f7ff; }
+        .detail-table tr:last-child td { border-bottom: none; }
 
         /* 后台 */
         .admin-section { display: none; }
@@ -444,6 +551,7 @@
                 <div class="stat-card"><div class="num" id="statProducts">0</div><div class="label">商品种类</div></div>
                 <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">总库存(吨)</div></div>
                 <div class="stat-card"><div class="num" id="statWarehouses">0</div><div class="label">仓库数</div></div>
+                <div class="stat-card"><div class="num" id="statLastUpdate">--</div><div class="label">最后更新</div></div>
             </div>
 
             <!-- 快捷操作 -->
@@ -468,7 +576,7 @@
                 <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importData(event)">
             </div>
             <table class="admin-table">
-                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>操作</th></tr></thead>
+                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>更新时间</th><th>操作</th></tr></thead>
                 <tbody id="adminTable"></tbody>
             </table>
         </div>
@@ -738,6 +846,28 @@
             document.getElementById('statProducts').textContent = productSet.size;
             document.getElementById('statTotal').textContent = Math.round(totalQty * 100) / 100;
             document.getElementById('statWarehouses').textContent = whSet.size;
+            
+            // 显示最后更新时间
+            const lastUpdate = localStorage.getItem('hoshine_lastUpdate');
+            if (lastUpdate) {
+                const date = new Date(lastUpdate);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMins / 60);
+                const diffDays = Math.floor(diffHours / 24);
+                
+                let displayTime = '';
+                if (diffMins < 1) displayTime = '刚刚';
+                else if (diffMins < 60) displayTime = diffMins + '分钟前';
+                else if (diffHours < 24) displayTime = diffHours + '小时前';
+                else if (diffDays < 7) displayTime = diffDays + '天前';
+                else displayTime = date.toLocaleDateString('zh-CN');
+                
+                document.getElementById('statLastUpdate').textContent = displayTime;
+            } else {
+                document.getElementById('statLastUpdate').textContent = '--';
+            }
         }
 
         function showDetail(name, whFilter) {
@@ -1048,7 +1178,27 @@
         function renderAdminTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const filtered = products.filter(p => p.name.toLowerCase().includes(search) || (p.model&&p.model.toLowerCase().includes(search)) || (p.warehouse&&p.warehouse.toLowerCase().includes(search)));
-            document.getElementById('adminTable').innerHTML = filtered.map(p => `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${(p.signed||0).toFixed(2)}</td><td>${(p.within3Months||0).toFixed(2)}</td><td>${(p.month3to9||0).toFixed(2)}</td><td>${(p.over9Months||0).toFixed(2)}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`).join('');
+            
+            document.getElementById('adminTable').innerHTML = filtered.map(p => {
+                // 格式化更新时间
+                let updateText = '-';
+                if (p.lastUpdate) {
+                    const date = new Date(p.lastUpdate);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMins / 60);
+                    const diffDays = Math.floor(diffHours / 24);
+                    
+                    if (diffMins < 1) updateText = '刚刚';
+                    else if (diffMins < 60) updateText = diffMins + '分钟前';
+                    else if (diffHours < 24) updateText = diffHours + '小时前';
+                    else if (diffDays < 7) updateText = diffDays + '天前';
+                    else updateText = date.toLocaleDateString('zh-CN');
+                }
+                
+                return `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${(p.signed||0).toFixed(2)}</td><td>${(p.within3Months||0).toFixed(2)}</td><td>${(p.month3to9||0).toFixed(2)}</td><td>${(p.over9Months||0).toFixed(2)}</td><td>${updateText}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`;
+            }).join('');
         }
 
         function showAddModal() { 
@@ -1083,6 +1233,7 @@
             }
             
             const totalSigned = signedCustomers.reduce((s, c) => s + c.quantity, 0);
+            const now = new Date().toISOString();
             
             const product = { 
                 id: editingId||Date.now(), 
@@ -1094,9 +1245,12 @@
                 month3to9: parseFloat(document.getElementById('formMonth3to9').value)||0, 
                 over9Months: parseFloat(document.getElementById('formOver9').value)||0,
                 signed: totalSigned,
-                signedCustomers: signedCustomers
+                signedCustomers: signedCustomers,
+                lastUpdate: now
             }; 
-            if(editingId){const idx=products.findIndex(p=>p.id===editingId); if(idx>-1)products[idx]=product;} else{products.push(product);} saveData(); closeForm(); renderAdminTable(); initFilters(); renderProducts(); 
+            if(editingId){const idx=products.findIndex(p=>p.id===editingId); if(idx>-1)products[idx]=product;} else{products.push(product);} 
+            localStorage.setItem('hoshine_lastUpdate', now);
+            saveData(); closeForm(); renderAdminTable(); initFilters(); renderProducts(); 
         }
         function deleteProduct(id) { if(confirm('确定删除？')){products=products.filter(p=>p.id!==id);saveData();renderAdminTable();initFilters();renderProducts();}}
         function closeForm() { document.getElementById('formModal').classList.remove('active'); }
@@ -1210,6 +1364,7 @@
                                 }
                             }
                             // KG转吨
+                            const now = new Date().toISOString();
                             products.push({
                                 id: Date.now() + i,
                                 name: simpleName,
@@ -1218,12 +1373,14 @@
                                 quantity: Math.round(qty / 1000 * 100) / 100,
                                 within3Months: Math.round(within3 / 1000 * 100) / 100,
                                 month3to9: Math.round(month39 / 1000 * 100) / 100,
-                                over9Months: Math.round(over9 / 1000 * 100) / 100
+                                over9Months: Math.round(over9 / 1000 * 100) / 100,
+                                lastUpdate: now
                             });
                             importedCount++;
                         }
                     }
                     console.log('Imported:', importedCount, 'products');
+                    localStorage.setItem('hoshine_lastUpdate', now);
                     saveData();
                     alert(`导入成功，共${importedCount}条`);
                     initFilters(); renderProducts(); renderAdminTable();
