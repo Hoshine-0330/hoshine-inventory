@@ -1188,6 +1188,10 @@
         }
 
         function initTransitForm() {
+            if (!products || products.length === 0) {
+                document.getElementById("transitList").innerHTML = "<div style='color:#999;padding:20px;'>请先登录并等待数据加载</div>";
+                return;
+            }
             const prodSelect = document.getElementById("transitProduct");
             const prods = [...new Set(products.map(p => p.name).filter(n => n && products.some(x => x.warehouse && x.warehouse.includes("在途") && x.name === n)))].sort();
             prodSelect.innerHTML = "<option value="">选择产品</option>" + prods.map(p => `<option value="${p}">${p}</option>`).join("");
