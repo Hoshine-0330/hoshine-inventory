@@ -542,8 +542,9 @@
             <div class="header">
                 <h1>📦 库存管理</h1>
                 <div class="header-right">
-                    <button class="nav-btn" id="btnDashboard" onclick="showPage('dashboard')">首页</button>
-                    <button class="nav-btn" id="btnAdmin" onclick="showPage('admin')">后台管理</button>
+                    <button class="nav-btn" id="btnDashboard" onclick="alert('点击首页')">首页</button>
+                    <button class="nav-btn" id="btnAdmin" onclick="alert('点击后台管理')">后台管理</button>
+                    <button class="nav-btn" onclick="alert('点击船期录入')" style="background:#52c41a;color:#fff;">🚢 船期录入</button>
                     <button class="nav-btn" onclick="logout()">退出</button>
                 </div>
             </div>
@@ -571,6 +572,7 @@
             <div class="quick-actions">
                 <button class="quick-btn primary" onclick="showPage('admin'); showAddModal();"><span class="quick-icon">📥</span><span>入库</span></button>
                 <button class="quick-btn" onclick="alert('出库功能开发中')"><span class="quick-icon">📤</span><span>出库</span></button>
+                <button class="quick-btn" onclick="showTransitModal()"><span class="quick-icon">🚢</span><span>船期录入</span></button>
                 <button class="quick-btn" onclick="showPage('admin')"><span class="quick-icon">📋</span><span>库存</span></button>
                 <button class="quick-btn" onclick="showSignedCustomerImportModal()"><span class="quick-icon">📑</span><span>导入已签单客户</span></button>
             </div>
@@ -590,7 +592,7 @@
                 <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importData(event)">
             </div>
             <table class="admin-table">
-                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>更新时间</th><th>操作</th></tr></thead>
+                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>ETD</th><th>ETA</th><th>合同编号</th><th>更新时间</th><th>操作</th></tr></thead>
                 <tbody id="adminTable"></tbody>
             </table>
         </div>
@@ -626,10 +628,32 @@
                     <div class="detail-stat"><div class="val" id="detail9plus">0</div><div class="label">9月+</div></div>
                 </div>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">📋 库存明细</h4>
-                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
+                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>ETD</th><th>ETA</th><th>合同编号</th><th>待售</th><th>操作</th></tr></thead><tbody id="detailTable"></tbody></table>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
                 <table class="detail-table"><thead><tr><th>型号</th><th>客户名称</th><th>数量(吨)</th><th>操作</th></tr></thead><tbody id="customerTable"></tbody></table>
                 <button class="btn-add" style="margin-top:10px;padding:8px 16px;" onclick="showSignedCustomerModal()">+ 录入已签单客户</button>
+                
+                <h4 style="margin:20px 0 10px;color:#1677ff;">🚢 在途货物船期录入</h4>
+                <div id="transitForm" style="background:#f5f5f5;padding:15px;border-radius:8px;">
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+                        <select id="transitProduct" onchange="updateTransitForm()" style="padding:8px;border-radius:6px;flex:1;">
+                            <option value="">选择产品</option>
+                        </select>
+                        <select id="transitWarehouse" onchange="updateTransitForm()" style="padding:8px;border-radius:6px;flex:1;">
+                            <option value="">选择仓库</option>
+                        </select>
+                        <select id="transitModel" style="padding:8px;border-radius:6px;flex:1;">
+                            <option value="">选择型号</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <input type="text" id="transitETD" placeholder="ETD(开船日)" style="padding:8px;border-radius:6px;flex:1;">
+                        <input type="text" id="transitETA" placeholder="ETA(到港日)" style="padding:8px;border-radius:6px;flex:1;">
+                        <input type="text" id="transitContract" placeholder="合同编号" style="padding:8px;border-radius:6px;flex:1;">
+                        <button onclick="saveTransitInfo()" style="padding:8px 16px;background:#1677ff;color:#fff;border:none;border-radius:6px;cursor:pointer;">保存</button>
+                    </div>
+                </div>
+                <div id="transitList" style="margin-top:15px;"></div>
             </div>
         </div>
     </div>
@@ -673,12 +697,44 @@
         <div class="form-box">
             <h3 id="formTitle">添加产品</h3>
             <div class="form-group"><label>产品名称 *</label><input type="text" id="formName"></div>
+
+    <!-- 船期录入弹窗 -->
+    <div class="form-modal" id="transitModal">
+        <div class="form-box large">
+            <h3>🚢 在途货物船期录入</h3>
+            <div style="display:flex;gap:10px;margin-bottom:15px;">
+                <select id="transitProduct" onchange="updateTransitForm()" style="flex:1;padding:10px;border-radius:8px;">
+                    <option value="">选择产品</option>
+                </select>
+                <select id="transitWarehouse" onchange="updateTransitForm()" style="flex:1;padding:10px;border-radius:8px;">
+                    <option value="">选择仓库</option>
+                </select>
+                <select id="transitModel" style="flex:1;padding:10px;border-radius:8px;">
+                    <option value="">选择型号</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:10px;margin-bottom:15px;">
+                <input type="text" id="transitETD" placeholder="ETD(开船日)如2026-04-15" style="flex:1;padding:10px;border-radius:8px;">
+                <input type="text" id="transitETA" placeholder="ETA(到港日)如2026-05-10" style="flex:1;padding:10px;border-radius:8px;">
+                <input type="text" id="transitContract" placeholder="合同编号" style="flex:1;padding:10px;border-radius:8px;">
+            </div>
+            <button onclick="saveTransitInfo()" style="width:100%;padding:12px;background:#1677ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:16px;margin-bottom:15px;">保存</button>
+            <h4 style="color:#1677ff;margin-bottom:10px;">在途货物列表</h4>
+            <div id="transitList" style="max-height:300px;overflow-y:auto;"></div>
+            <div style="margin-top:15px;text-align:right;">
+                <button class="btn-cancel" onclick="document.getElementById('transitModal').classList.remove('active')">关闭</button>
+            </div>
+        </div>
+    </div>
             <div class="form-group"><label>型号</label><input type="text" id="formModel"></div>
             <div class="form-group"><label>仓库</label><input type="text" id="formWarehouse"></div>
             <div class="form-group"><label>库存数量(吨)</label><input type="number" id="formQuantity"></div>
             <div class="form-group"><label>3月内</label><input type="number" id="formWithin3"></div>
             <div class="form-group"><label>3-9月</label><input type="number" id="formMonth3to9"></div>
             <div class="form-group"><label>9月+</label><input type="number" id="formOver9"></div>
+            <div class="form-group"><label>ETD (预计开船日)</label><input type="text" id="formETD" placeholder="例如: 2026-04-15"></div>
+            <div class="form-group"><label>ETA (预计到港日)</label><input type="text" id="formETA" placeholder="例如: 2026-05-10"></div>
+            <div class="form-group"><label>合同编号</label><input type="text" id="formContractNo" placeholder="例如: HS-2026-001"></div>
             <div class="form-group"><label>已签单客户 (格式: 客户名,吨数)</label><input type="text" id="formSignedCustomers" placeholder="例如: 客户A,10; 客户B,20"></div>
             <div class="form-actions">
                 <button class="btn-save" onclick="saveProduct()">保存</button>
@@ -692,14 +748,19 @@
         let editingId = null;
 
         function login() {
-            if (document.getElementById('username').value) {
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('mainPage').style.display = 'block';
-                loadData();
-                showPage('dashboard');
-            }
+            alert('点击了登录按钮!');
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainPage').style.display = 'block';
+            loadData();
+            showPage('dashboard');
         }
         function logout() { document.getElementById('loginPage').style.display = 'flex'; document.getElementById('mainPage').style.display = 'none'; }
+
+
+        function showTransitModal() {
+            initTransitForm();
+            document.getElementById("transitModal").classList.add("active");
+        }
 
         function showPage(page) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -719,16 +780,14 @@
             }
         }
 
+        // 硬编码数据
+        let products = [{"id": 1, "name": "十甲基环五硅氧烷(D5)", "model": "D5≥98.5%", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 1.9, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.9, "within3Months": 0.0, "month3to9": 1.9, "over9Months": 0.0, "signedCustomers": []}, {"id": 2, "name": "室温硫化甲基硅橡胶(107胶)", "model": "107-2", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 57.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 57.0, "within3Months": 57.0, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 3, "name": "室温硫化甲基硅橡胶(107胶)", "model": "107-8", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 494.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 494.0, "within3Months": 494.0, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 4, "name": "室温硫化甲基硅橡胶(107胶)", "model": "107-8", "warehouse": "印度蒙德拉一号在途仓", "category": "其他", "quantity": 209.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 209.0, "within3Months": 209.0, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 5, "name": "室温硫化甲基硅橡胶(107胶)", "model": "107-8", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 95.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 95.0, "within3Months": 95.0, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 6, "name": "混炼硅橡胶", "model": "HS-114110", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 9.6, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 9.6, "within3Months": 0.0, "month3to9": 9.6, "over9Months": 0.0, "signedCustomers": []}, {"id": 7, "name": "混炼硅橡胶", "model": "HS-3441", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 133.44, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 133.44, "within3Months": 22.08, "month3to9": 111.36, "over9Months": 0.0, "signedCustomers": []}, {"id": 8, "name": "混炼硅橡胶", "model": "HS-3431", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 1.92, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.92, "within3Months": 1.92, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": []}, {"id": 9, "name": "混炼硅橡胶", "model": "HS-3431", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 52.8, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 52.8, "within3Months": 36.48, "month3to9": 16.32, "over9Months": 0.0, "signedCustomers": []}, {"id": 10, "name": "混炼硅橡胶", "model": "HS-3461", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 19.2, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 19.2, "within3Months": 0.0, "month3to9": 14.4, "over9Months": 4.8, "signedCustomers": []}, {"id": 11, "name": "混炼硅橡胶", "model": "HS-3471", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 1.92, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.92, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 1.92, "signedCustomers": []}, {"id": 12, "name": "混炼硅橡胶", "model": "HS-3471", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 11.52, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 11.52, "within3Months": 7.68, "month3to9": 3.84, "over9Months": 0.0, "signedCustomers": []}, {"id": 13, "name": "甲基乙烯基硅橡胶", "model": "110-0", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 71.75, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 71.75, "within3Months": 54.25, "month3to9": 17.5, "over9Months": 0.0, "signedCustomers": []}, {"id": 14, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "350cs", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 57.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 57.0, "within3Months": 0.0, "month3to9": 57.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 15, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "350cs", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 57.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 57.0, "within3Months": 0.0, "month3to9": 57.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 16, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "350cs", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 15.2, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 15.2, "within3Months": 0.0, "month3to9": 15.2, "over9Months": 0.0, "signedCustomers": []}, {"id": 17, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "100cs", "warehouse": "德国汉堡仓库", "category": "其他", "quantity": 5.7, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 5.7, "within3Months": 0.0, "month3to9": 5.7, "over9Months": 0.0, "signedCustomers": []}, {"id": 18, "name": "乙烯基封端的二甲基硅油", "model": "HS-500", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 2.85, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 2.85, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 2.85, "signedCustomers": []}, {"id": 19, "name": "混炼硅橡胶", "model": "HS-5262G", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 20, "name": "混炼硅橡胶", "model": "HS-5272G", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 21, "name": "混炼硅橡胶", "model": "HS-1560PT", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 32.4, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 32.4, "within3Months": 32.4, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 22, "name": "混炼硅橡胶", "model": "HS-1562PT", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 4.8, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 4.8, "within3Months": 0.0, "month3to9": 4.8, "over9Months": 0.0, "signedCustomers": []}, {"id": 23, "name": "混炼硅橡胶", "model": "HS-1572PT", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 1.92, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.92, "within3Months": 0.0, "month3to9": 1.92, "over9Months": 0.0, "signedCustomers": []}, {"id": 24, "name": "混炼硅橡胶", "model": "HS-5360", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 64.8, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 64.8, "within3Months": 56.16, "month3to9": 8.64, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 25, "name": "混炼硅橡胶", "model": "HS-5360", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 13.5, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 13.5, "within3Months": 0.0, "month3to9": 13.5, "over9Months": 0.0, "signedCustomers": []}, {"id": 26, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "100cs", "warehouse": "德国汉堡仓库", "category": "其他", "quantity": 6.65, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 6.65, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 6.65, "signedCustomers": []}, {"id": 27, "name": "混炼硅橡胶", "model": "HS-5370", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 12.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 12.96, "within3Months": 12.96, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 28, "name": "混炼硅橡胶", "model": "HS-533010", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 3.84, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 3.84, "within3Months": 3.84, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 29, "name": "混炼硅橡胶", "model": "HS-535010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 30, "name": "混炼硅橡胶", "model": "HS-534010", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 7.68, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 7.68, "within3Months": 7.68, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 31, "name": "混炼硅橡胶", "model": "HS-534010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 9.6, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 9.6, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 9.6, "signedCustomers": []}, {"id": 32, "name": "混炼硅橡胶", "model": "HS-537010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 33, "name": "混炼硅橡胶", "model": "HS-537010", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 7.68, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 7.68, "within3Months": 6.72, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 34, "name": "混炼硅橡胶", "model": "HS-536010", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 35, "name": "混炼硅橡胶", "model": "HS-536010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 36, "name": "混炼硅橡胶", "model": "HS-538010", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 8.64, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 8.64, "within3Months": 8.64, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 37, "name": "混炼硅橡胶", "model": "HS-538010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 3.84, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 3.84, "within3Months": 0.0, "month3to9": 3.84, "over9Months": 0.0, "signedCustomers": []}, {"id": 38, "name": "混炼硅橡胶", "model": "HS-538010", "warehouse": "德国汉堡仓库", "category": "其他", "quantity": 1.92, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.92, "within3Months": 0.0, "month3to9": 1.92, "over9Months": 0.0, "signedCustomers": []}, {"id": 39, "name": "混炼硅橡胶", "model": "HS-5340", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 236.16, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 236.16, "within3Months": 199.68, "month3to9": 36.48, "over9Months": 0.0, "signedCustomers": []}, {"id": 40, "name": "混炼硅橡胶", "model": "HS-5380", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 2.7, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 2.7, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 2.7, "signedCustomers": []}, {"id": 41, "name": "甲基高含氢硅油", "model": "20粘度", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 22.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 22.0, "within3Months": 18.0, "month3to9": 4.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 42, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "350cs", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 1.52, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.52, "within3Months": 0.0, "month3to9": 1.52, "over9Months": 0.0, "signedCustomers": []}, {"id": 43, "name": "混炼硅橡胶", "model": "HS-1540PT", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 2.7, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 2.7, "within3Months": 0.0, "month3to9": 2.7, "over9Months": 0.0, "signedCustomers": []}, {"id": 44, "name": "二甲基硅氧烷线性体", "model": "密度0.97", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 3.8, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 3.8, "within3Months": 0.0, "month3to9": 3.8, "over9Months": 0.0, "signedCustomers": []}, {"id": 45, "name": "", "model": "", "warehouse": "", "category": "其他", "quantity": 0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0, "within3Months": 1323.49, "month3to9": 0, "over9Months": 0, "signedCustomers": []}];
+        
         function loadData() {
-            const stored = localStorage.getItem('hoshine_products');
-            if (stored) { products = JSON.parse(stored); }
-            else {
-                products = [
-                    {id:1,name:'混炼硅橡胶',model:'HS-5340',warehouse:'蒙德拉一号仓库',quantity:236.16,within3Months:199.68,month3to9:36.48,over9Months:0},
-                    {id:2,name:'混炼硅橡胶',model:'HS-3441',warehouse:'蒙德拉一号仓库',quantity:133.44,within3Months:22.08,month3to9:111.36,over9Months:0},
-                ];
-                saveData();
-            }
+            console.log('加载硬编码数据:', products.length, '条');
+            alert('加载了 ' + products.length + ' 条数据');
+            localStorage.setItem('hoshine_products', JSON.stringify(products));
+            localStorage.setItem('hoshine_lastUpdate', new Date().toISOString());
             initFilters();
             renderProducts();
         }
@@ -841,6 +900,9 @@
                                 <div class="product-info">
                                     <div class="product-name">${p.name}</div>
                                     ${p.isInTransit && p.inTransit > 0 ? `<span class="transit-badge">🚚 在途: ${p.inTransit.toFixed(2)}吨</span>` : ''}
+                                    ${p.etd ? `<span style="color:#1890ff;font-size:12px;margin-left:8px;">ETD:${p.etd}</span>` : ''}
+                                    ${p.eta ? `<span style="color:#1890ff;font-size:12px;margin-left:8px;">ETA:${p.eta}</span>` : ''}
+                                    ${p.contractNo ? `<span style="color:#722ed1;font-size:12px;margin-left:8px;">📝${p.contractNo}</span>` : ''}
                                 </div>
                                 <div class="product-stock"><span class="stock-num">${(p.total + p.inTransit).toFixed(2)}</span><span class="stock-unit">吨</span></div>
                                 <div class="stock-date">
@@ -885,6 +947,7 @@
         }
 
         function showDetail(name, whFilter) {
+            alert('点击了产品: ' + name);
             currentDetailProduct = name;
             currentDetailWhFilter = whFilter || '';
             const currentWhFilter = currentDetailWhFilter;
@@ -909,6 +972,7 @@
             document.getElementById('detailTitle').textContent = name;
             renderDetailTable();
             document.getElementById('detailModal').classList.add('active');
+            initTransitForm();
         }
 
         let currentDetailProduct = '';
@@ -948,11 +1012,22 @@
                         stock: 0,  // 库存
                         inTransit: 0,  // 在途
                         signed: 0,
-                        forSale: 0
+                        forSale: 0,
+                        etd: p.etd || '',
+                        eta: p.eta || '',
+                        contractNo: p.contractNo || ''
                     };
                 }
+                // 如果还没有值，从当前记录取
+                if (!mergedMap[key].etd && p.etd) mergedMap[key].etd = p.etd;
+                if (!mergedMap[key].eta && p.eta) mergedMap[key].eta = p.eta;
+                if (!mergedMap[key].contractNo && p.contractNo) mergedMap[key].contractNo = p.contractNo;
                 if (isInTransit) {
                     mergedMap[key].inTransit += p.quantity || 0;
+                    // 在途货物记录ETD/ETA/合同编号
+                    if (p.etd) mergedMap[key].etd = p.etd;
+                    if (p.eta) mergedMap[key].eta = p.eta;
+                    if (p.contractNo) mergedMap[key].contractNo = p.contractNo;
                 } else {
                     mergedMap[key].stock += p.quantity || 0;
                 }
@@ -987,13 +1062,16 @@
             document.getElementById('detailForSale').textContent = forSale.toFixed(2);
             
             // 合并后的明细表 - 按型号+仓库显示
-            function getRowHtml(model, baseWh, stock, inTransit, signed) {
+            function getRowHtml(model, baseWh, stock, inTransit, signed, etd, eta, contractNo, warehouse, origModel) {
                 let html = '';
                 if (stock > 0) {
-                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>-</td><td>${(stock - (signed || 0)).toFixed(2)}</td></tr>`;
+                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>${(stock - (signed || 0)).toFixed(2)}</td><td>-</td></tr>`;
                 }
                 if (inTransit > 0) {
-                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td>-</td></tr>`;
+                    const etdVal = etd || '';
+                    const etaVal = eta || '';
+                    const cnVal = contractNo || '';
+                    html += `<tr data-wh="${warehouse}" data-model="${origModel}"><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td style="color:#1890ff">${etdVal}</td><td style="color:#1890ff">${etaVal}</td><td style="color:#722ed1">${cnVal}</td><td>-</td><td><input type="text" placeholder="ETD" value="${etdVal}" style="width:90px;padding:4px;margin-right:4px;" onchange="updateTransitInfo('${warehouse}', '${origModel}', 'etd', this.value)"><input type="text" placeholder="ETA" value="${etaVal}" style="width:90px;padding:4px;margin-right:4px;" onchange="updateTransitInfo('${warehouse}', '${origModel}', 'eta', this.value)"><input type="text" placeholder="合同号" value="${cnVal}" style="width:80px;padding:4px;" onchange="updateTransitInfo('${warehouse}', '${origModel}', 'contractNo', this.value)"></td><td>${(stock - (signed || 0)).toFixed(2)}</td></tr>`;
                 }
                 return html;
             }
@@ -1003,17 +1081,17 @@
             mergedList.forEach(item => {
                 const exists = rows.find(r => r.warehouse === item.warehouse && r.model === item.model);
                 if (!exists) {
-                    rows.push({ model: item.model, warehouse: item.warehouse, stock: item.stock, inTransit: item.inTransit, signed: item.signed });
+                    rows.push({ model: item.model, warehouse: item.warehouse, stock: item.stock, inTransit: item.inTransit, signed: item.signed, etd: item.etd, eta: item.eta, contractNo: item.contractNo, origModel: item.model, origWh: item.warehouse });
                 }
             });
             
             let detailHtml = '';
             rows.forEach(r => {
                 console.log('Rendering row:', r);
-                detailHtml += getRowHtml(r.model, r.warehouse, r.stock, r.inTransit, r.signed);
+                detailHtml += getRowHtml(r.model, r.warehouse, r.stock, r.inTransit, r.signed, r.etd, r.eta, r.contractNo, r.origWh, r.origModel);
             });
             
-            document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="7">暂无数据</td></tr>';
+            document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="12">暂无数据</td></tr>';
             
             // 渲染已签单客户明细 - 从所有该产品的记录中获取（包括筛选后的）
             const customerMap = {};
@@ -1060,6 +1138,79 @@
         }
         
         function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
+
+
+        // 在途货物船期录入表单
+        function updateTransitForm() {
+            const prod = document.getElementById("transitProduct").value;
+            const wh = document.getElementById("transitWarehouse").value;
+            const modelSelect = document.getElementById("transitModel");
+            modelSelect.innerHTML = "<option value="">选择型号</option>";
+            if (prod && wh) {
+                const items = products.filter(p => p.name === prod && p.warehouse.includes(wh));
+                const models = [...new Set(items.map(p => p.model).filter(Boolean))];
+                models.forEach(m => {
+                    modelSelect.innerHTML += `<option value="${m}">${m}</option>`;
+                });
+            }
+            renderTransitList();
+        }
+
+        function saveTransitInfo() {
+            const prod = document.getElementById("transitProduct").value;
+            const wh = document.getElementById("transitWarehouse").value;
+            const model = document.getElementById("transitModel").value;
+            const etd = document.getElementById("transitETD").value;
+            const eta = document.getElementById("transitETA").value;
+            const contract = document.getElementById("transitContract").value;
+            if (!prod || !wh || !model) { alert("请选择产品、仓库和型号"); return; }
+            const items = products.filter(p => p.name === prod && p.warehouse.includes(wh) && p.model === model);
+            if (items.length > 0) {
+                items.forEach(p => { p.etd = etd; p.eta = eta; p.contractNo = contract; p.lastUpdate = new Date().toISOString(); });
+                localStorage.setItem("hoshine_products", JSON.stringify(products));
+                localStorage.setItem("hoshine_lastUpdate", new Date().toISOString());
+                alert("保存成功！");
+                renderTransitList();
+                renderDetailTable();
+            } else { alert("未找到匹配的库存记录"); }
+        }
+
+        function renderTransitList() {
+            let items = products.filter(p => p.warehouse && p.warehouse.includes("在途"));
+            const prod = document.getElementById("transitProduct").value;
+            const wh = document.getElementById("transitWarehouse").value;
+            const model = document.getElementById("transitModel").value;
+            if (prod) items = items.filter(p => p.name === prod);
+            if (wh) items = items.filter(p => p.warehouse.includes(wh));
+            if (model) items = items.filter(p => p.model === model);
+            const html = items.map(p => `<div style="background:#fff;padding:10px;margin-bottom:8px;border-radius:6px;border:1px solid #e8e8e8;"><div style="font-weight:bold;color:#333;">${p.name} (${p.model})</div><div style="color:#666;font-size:12px;margin-top:4px;">仓库: ${p.warehouse} | 数量: ${p.quantity}吨</div><div style="color:#1890ff;font-size:12px;margin-top:4px;">ETD: ${p.etd || "-"} | ETA: ${p.eta || "-"} | 合同: ${p.contractNo || "-"}</div></div>`).join("") || "<div style="color:#999;">暂无在途货物</div>";
+            document.getElementById("transitList").innerHTML = html;
+        }
+
+        function initTransitForm() {
+            const prodSelect = document.getElementById("transitProduct");
+            const prods = [...new Set(products.map(p => p.name).filter(n => n && products.some(x => x.warehouse && x.warehouse.includes("在途") && x.name === n)))].sort();
+            prodSelect.innerHTML = "<option value="">选择产品</option>" + prods.map(p => `<option value="${p}">${p}</option>`).join("");
+            const whSelect = document.getElementById("transitWarehouse");
+            const warehouses = [...new Set(products.map(p => p.warehouse).filter(w => w && w.includes("在途")).map(w => w.replace("在途仓", "").replace("在途", "").replace("仓库", "").trim()))].sort();
+            whSelect.innerHTML = "<option value="">选择仓库</option>" + warehouses.map(w => `<option value="${w}">${w}</option>`).join("");
+            renderTransitList();
+        }
+
+        // 更新在途货物的ETD/ETA/合同编号
+        function updateTransitInfo(warehouse, model, field, value) {
+            // 找到匹配的记录并更新
+            const items = products.filter(p => p.warehouse === warehouse && p.model === model);
+            if (items.length > 0) {
+                items.forEach(p => {
+                    p[field] = value;
+                    p.lastUpdate = new Date().toISOString();
+                });
+                saveData();
+                localStorage.setItem('hoshine_lastUpdate', new Date().toISOString());
+                console.log(`Updated ${field} to ${value} for ${model} at ${warehouse}`);
+            }
+        }
 
         // 已签单客户录入
         let currentSignedCustomerFilter = { name: '', model: '', warehouse: '' };
@@ -1325,17 +1476,17 @@
                     else updateText = date.toLocaleDateString('zh-CN');
                 }
                 
-                return `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${(p.signed||0).toFixed(2)}</td><td>${(p.within3Months||0).toFixed(2)}</td><td>${(p.month3to9||0).toFixed(2)}</td><td>${(p.over9Months||0).toFixed(2)}</td><td>${updateText}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`;
+                return `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${(p.signed||0).toFixed(2)}</td><td>${p.etd||'-'}</td><td>${p.eta||'-'}</td><td>${p.contractNo||'-'}</td><td>${updateText}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`;
             }).join('');
         }
 
         function showAddModal() { 
             editingId = null; 
             document.getElementById('formTitle').textContent = '添加产品'; 
-            ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9','formSignedCustomers'].forEach(id => document.getElementById(id).value = ''); 
+            ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9','formETD','formETA','formContractNo','formSignedCustomers'].forEach(id => document.getElementById(id).value = ''); 
             document.getElementById('formModal').classList.add('active'); 
         }
-        function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; 
+        function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; document.getElementById('formETD').value = p.etd||''; document.getElementById('formETA').value = p.eta||''; document.getElementById('formContractNo').value = p.contractNo||''; 
             // 将已签单客户转回字符串格式显示
             let signedStr = '';
             if (p.signedCustomers && p.signedCustomers.length > 0) {
@@ -1372,6 +1523,9 @@
                 within3Months: parseFloat(document.getElementById('formWithin3').value)||0, 
                 month3to9: parseFloat(document.getElementById('formMonth3to9').value)||0, 
                 over9Months: parseFloat(document.getElementById('formOver9').value)||0,
+                etd: document.getElementById('formETD').value,
+                eta: document.getElementById('formETA').value,
+                contractNo: document.getElementById('formContractNo').value,
                 signed: totalSigned,
                 signedCustomers: signedCustomers,
                 lastUpdate: now
