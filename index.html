@@ -745,6 +745,14 @@
 
     <script>
         let editingId = null;
+
+        function login() {
+            document.getElementById("loginPage").style.display = "none";
+            document.getElementById("mainPage").style.display = "block";
+            loadData();
+            showPage("dashboard");
+        }
+
         
         // 绑定登录按钮事件
         document.getElementById("loginBtn").addEventListener("click", function() {
@@ -754,14 +762,6 @@
             showPage("dashboard");
         });
 
-        function login() {
-            console.log('login function called');
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainPage').style.display = 'block';
-            loadData();
-            showPage('dashboard');
-        }
-        function logout() { document.getElementById('loginPage').style.display = 'flex'; document.getElementById('mainPage').style.display = 'none'; }
 
 
         function showTransitModal() {
