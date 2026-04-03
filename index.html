@@ -920,7 +920,6 @@
             const totalQty = filtered.reduce((s,p)=>s+(p.quantity||0),0);
             document.getElementById('statProducts').textContent = productSet.size;
             document.getElementById('statTotal').textContent = Math.round(totalQty * 100) / 100;
-            document.getElementById('statWarehouses').textContent = whSet.size;
             
             // 显示最后更新时间
             const lastUpdate = localStorage.getItem('hoshine_lastUpdate');
@@ -1070,7 +1069,7 @@
                     const etdVal = etd || '';
                     const etaVal = eta || '';
                     const cnVal = contractNo || '';
-                    html += `<tr data-wh="${baseWh}" data-model="${origModel}"><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td><input type="text" value="${etdVal}" style="width:85px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'etd', this.value)"></td><td><input type="text" value="${etaVal}" style="width:85px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'eta', this.value)"></td><td><input type="text" value="${cnVal}" style="width:100px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'contractNo', this.value)"></td><td>${(stock - (signed || 0)).toFixed(2)}</td><td style="padding:4px;"><button onclick="deleteProduct(${item.id || 0})" style="padding:3px 8px;background:#ff4d4f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;">删除</button></td></tr>`;
+                    html += `<tr data-wh="${baseWh}" data-model="${origModel}"><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td><input type="text" value="${etdVal}" style="width:85px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'etd', this.value)"></td><td><input type="text" value="${etaVal}" style="width:85px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'eta', this.value)"></td><td><input type="text" value="${cnVal}" style="width:100px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'contractNo', this.value)"></td><td>${(stock - (signed || 0)).toFixed(2)}</td><td style="padding:4px;"><button onclick="deleteProductByWhModel('${baseWh}', '${origModel}')" style="padding:3px 8px;background:#ff4d4f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;">删除</button></td></tr>`;
                 }
                 return html;
             }
@@ -1538,6 +1537,16 @@
             saveData(); closeForm(); renderAdminTable(); initFilters(); renderProducts(); 
         }
         function deleteProduct(id) { if(confirm('确定删除？')){products=products.filter(p=>p.id!==id);saveData();renderAdminTable();initFilters();renderProducts();}}
+        
+        function deleteProductByWhModel(warehouse, model) {
+            if (!confirm('确定删除 ' + model + ' @ ' + warehouse + '？')) return;
+            products = products.filter(p => p.warehouse === warehouse && p.model === model);
+            saveData();
+            renderAdminTable();
+            initFilters();
+            renderProducts();
+            closeDetail();
+        }
         function closeForm() { document.getElementById('formModal').classList.remove('active'); }
         function clearAllData() { if(confirm('确定清空所有数据？')){products=[];saveData();renderAdminTable();initFilters();renderProducts();}}
 
