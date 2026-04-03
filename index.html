@@ -442,26 +442,35 @@
         .detail-table { 
             width: 100%; 
             border-collapse: collapse; 
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 16px;
             background: white;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
         }
         .detail-table th, .detail-table td { 
-            padding: 14px 16px; 
+            padding: 12px 10px; 
             text-align: left; 
             border-bottom: 1px solid #f0f0f0; 
+            white-space: nowrap;
         }
         .detail-table th { 
-            background: #1677ff; 
-            color: #fff; 
+            background: #f0f5ff; 
+            color: #1677ff; 
             font-weight: 600; 
-            font-size: 13px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .detail-table tr:hover { background: #f0f7ff; }
+        .detail-table tr:hover { background: #fafcff; }
         .detail-table tr:last-child td { border-bottom: none; }
+        .detail-table td input { 
+            padding: 4px 6px; 
+            border: 1px solid #d9d9d9; 
+            border-radius: 4px; 
+            font-size: 12px; 
+        }
 
         /* 后台 */
         .admin-section { display: none; }
@@ -542,9 +551,8 @@
             <div class="header">
                 <h1>📦 库存管理</h1>
                 <div class="header-right">
-                    <button class="nav-btn" id="btnDashboard" onclick="alert('点击首页')">首页</button>
-                    <button class="nav-btn" id="btnAdmin" onclick="alert('点击后台管理')">后台管理</button>
-                    <button class="nav-btn" onclick="alert('点击船期录入')" style="background:#52c41a;color:#fff;">🚢 船期录入</button>
+                    <button class="nav-btn" id="btnDashboard" onclick="showPage('dashboard')">首页</button>
+                    <button class="nav-btn" id="btnAdmin" onclick="showPage('admin')">后台管理</button>
                     <button class="nav-btn" onclick="logout()">退出</button>
                 </div>
             </div>
@@ -571,8 +579,7 @@
             <!-- 快捷操作 -->
             <div class="quick-actions">
                 <button class="quick-btn primary" onclick="showPage('admin'); showAddModal();"><span class="quick-icon">📥</span><span>入库</span></button>
-                <button class="quick-btn" onclick="alert('出库功能开发中')"><span class="quick-icon">📤</span><span>出库</span></button>
-                <button class="quick-btn" onclick="showTransitModal()"><span class="quick-icon">🚢</span><span>船期录入</span></button>
+                <button class="quick-btn" onclick="showPage('admin')"><span class="quick-icon">📤</span><span>出库</span></button>
                 <button class="quick-btn" onclick="showPage('admin')"><span class="quick-icon">📋</span><span>库存</span></button>
                 <button class="quick-btn" onclick="showSignedCustomerImportModal()"><span class="quick-icon">📑</span><span>导入已签单客户</span></button>
             </div>
@@ -1085,7 +1092,7 @@
                     const etdVal = etd || '';
                     const etaVal = eta || '';
                     const cnVal = contractNo || '';
-                    html += `<tr data-wh="${warehouse}" data-model="${origModel}"><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td style="color:#1890ff">${etdVal}</td><td style="color:#1890ff">${etaVal}</td><td style="color:#722ed1">${cnVal}</td><td>-</td><td><input type="text" placeholder="ETD" value="${etdVal}" style="width:90px;padding:4px;margin-right:4px;" onchange="updateTransitInfo('${warehouse}', '${origModel}', 'etd', this.value)"><input type="text" placeholder="ETA" value="${etaVal}" style="width:90px;padding:4px;margin-right:4px;" onchange="updateTransitInfo('${warehouse}', '${origModel}', 'eta', this.value)"><input type="text" placeholder="合同号" value="${cnVal}" style="width:80px;padding:4px;" onchange="updateTransitInfo('${warehouse}', '${origModel}', 'contractNo', this.value)"></td><td>${(stock - (signed || 0)).toFixed(2)}</td></tr>`;
+                    html += `<tr data-wh="${baseWh}" data-model="${origModel}"><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td style="color:#1890ff">${etdVal}</td><td style="color:#1890ff">${etaVal}</td><td style="color:#722ed1">${cnVal}</td><td>-</td><td><input type="text" placeholder="ETD" value="${etdVal}" style="width:90px;padding:4px;margin-right:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'etd', this.value)"><input type="text" placeholder="ETA" value="${etaVal}" style="width:90px;padding:4px;margin-right:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'eta', this.value)"><input type="text" placeholder="合同号" value="${cnVal}" style="width:80px;padding:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'contractNo', this.value)"></td><td>${(stock - (signed || 0)).toFixed(2)}</td></tr>`;
                 }
                 return html;
             }
