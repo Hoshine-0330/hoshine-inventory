@@ -697,6 +697,8 @@
         <div class="form-box">
             <h3 id="formTitle">添加产品</h3>
             <div class="form-group"><label>产品名称 *</label><input type="text" id="formName"></div>
+        </div>
+    </div>
 
     <!-- 船期录入弹窗 -->
     <div class="form-modal" id="transitModal">
@@ -726,6 +728,11 @@
             </div>
         </div>
     </div>
+
+    <!-- 产品编辑弹窗 -->
+    <div class="form-modal" id="editProductModal">
+        <div class="form-box">
+            <h3 id="editFormTitle">添加产品</h3>
             <div class="form-group"><label>型号</label><input type="text" id="formModel"></div>
             <div class="form-group"><label>仓库</label><input type="text" id="formWarehouse"></div>
             <div class="form-group"><label>库存数量(吨)</label><input type="number" id="formQuantity"></div>
@@ -1152,7 +1159,7 @@
             const prod = document.getElementById("transitProduct").value;
             const wh = document.getElementById("transitWarehouse").value;
             const modelSelect = document.getElementById("transitModel");
-            modelSelect.innerHTML = "<option value="">选择型号</option>";
+            modelSelect.innerHTML = '<option value="">选择型号</option>';
             if (prod && wh) {
                 const items = products.filter(p => p.name === prod && p.warehouse.includes(wh));
                 const models = [...new Set(items.map(p => p.model).filter(Boolean))];
@@ -1190,7 +1197,7 @@
             if (prod) items = items.filter(p => p.name === prod);
             if (wh) items = items.filter(p => p.warehouse.includes(wh));
             if (model) items = items.filter(p => p.model === model);
-            const html = items.map(p => `<div style="background:#fff;padding:10px;margin-bottom:8px;border-radius:6px;border:1px solid #e8e8e8;"><div style="font-weight:bold;color:#333;">${p.name} (${p.model})</div><div style="color:#666;font-size:12px;margin-top:4px;">仓库: ${p.warehouse} | 数量: ${p.quantity}吨</div><div style="color:#1890ff;font-size:12px;margin-top:4px;">ETD: ${p.etd || "-"} | ETA: ${p.eta || "-"} | 合同: ${p.contractNo || "-"}</div></div>`).join("") || "<div style="color:#999;">暂无在途货物</div>";
+            const html = items.map(p => `<div style="background:#fff;padding:10px;margin-bottom:8px;border-radius:6px;border:1px solid #e8e8e8;"><div style="font-weight:bold;color:#333;">${p.name} (${p.model})</div><div style="color:#666;font-size:12px;margin-top:4px;">仓库: ${p.warehouse} | 数量: ${p.quantity}吨</div><div style="color:#1890ff;font-size:12px;margin-top:4px;">ETD: ${p.etd || "-"} | ETA: ${p.eta || "-"} | 合同: ${p.contractNo || "-"}</div></div>`).join("") || '<div style="color:#999;">暂无在途货物</div>';
             document.getElementById("transitList").innerHTML = html;
         }
 
@@ -1201,10 +1208,10 @@
             }
             const prodSelect = document.getElementById("transitProduct");
             const prods = [...new Set(products.map(p => p.name).filter(n => n && products.some(x => x.warehouse && x.warehouse.includes("在途") && x.name === n)))].sort();
-            prodSelect.innerHTML = "<option value="">选择产品</option>" + prods.map(p => `<option value="${p}">${p}</option>`).join("");
+            prodSelect.innerHTML = '<option value="">选择产品</option>' + prods.map(p => `<option value="${p}">${p}</option>`).join("");
             const whSelect = document.getElementById("transitWarehouse");
             const warehouses = [...new Set(products.map(p => p.warehouse).filter(w => w && w.includes("在途")).map(w => w.replace("在途仓", "").replace("在途", "").replace("仓库", "").trim()))].sort();
-            whSelect.innerHTML = "<option value="">选择仓库</option>" + warehouses.map(w => `<option value="${w}">${w}</option>`).join("");
+            whSelect.innerHTML = '<option value="">选择仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join("");
             renderTransitList();
         }
 
