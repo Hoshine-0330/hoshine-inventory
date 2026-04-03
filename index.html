@@ -639,28 +639,6 @@
                 <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
                 <table class="detail-table"><thead><tr><th>型号</th><th>客户名称</th><th>数量(吨)</th><th>操作</th></tr></thead><tbody id="customerTable"></tbody></table>
                 <button class="btn-add" style="margin-top:10px;padding:8px 16px;" onclick="showSignedCustomerModal()">+ 录入已签单客户</button>
-                
-                <h4 style="margin:20px 0 10px;color:#1677ff;">🚢 在途货物船期录入</h4>
-                <div id="transitForm" style="background:#f5f5f5;padding:15px;border-radius:8px;">
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-                        <select id="transitProduct" onchange="updateTransitForm()" style="padding:8px;border-radius:6px;flex:1;">
-                            <option value="">选择产品</option>
-                        </select>
-                        <select id="transitWarehouse" onchange="updateTransitForm()" style="padding:8px;border-radius:6px;flex:1;">
-                            <option value="">选择仓库</option>
-                        </select>
-                        <select id="transitModel" style="padding:8px;border-radius:6px;flex:1;">
-                            <option value="">选择型号</option>
-                        </select>
-                    </div>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                        <input type="text" id="transitETD" placeholder="ETD(开船日)" style="padding:8px;border-radius:6px;flex:1;">
-                        <input type="text" id="transitETA" placeholder="ETA(到港日)" style="padding:8px;border-radius:6px;flex:1;">
-                        <input type="text" id="transitContract" placeholder="合同编号" style="padding:8px;border-radius:6px;flex:1;">
-                        <button onclick="saveTransitInfo()" style="padding:8px 16px;background:#1677ff;color:#fff;border:none;border-radius:6px;cursor:pointer;">保存</button>
-                    </div>
-                </div>
-                <div id="transitList" style="margin-top:15px;"></div>
             </div>
         </div>
     </div>
@@ -1092,7 +1070,7 @@
                     const etdVal = etd || '';
                     const etaVal = eta || '';
                     const cnVal = contractNo || '';
-                    html += `<tr data-wh="${baseWh}" data-model="${origModel}"><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td style="color:#1890ff">${etdVal}</td><td style="color:#1890ff">${etaVal}</td><td style="color:#722ed1">${cnVal}</td><td>-</td><td><input type="text" placeholder="ETD" value="${etdVal}" style="width:90px;padding:4px;margin-right:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'etd', this.value)"><input type="text" placeholder="ETA" value="${etaVal}" style="width:90px;padding:4px;margin-right:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'eta', this.value)"><input type="text" placeholder="合同号" value="${cnVal}" style="width:80px;padding:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'contractNo', this.value)"></td><td>${(stock - (signed || 0)).toFixed(2)}</td></tr>`;
+                    html += `<tr data-wh="${baseWh}" data-model="${origModel}"><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td><input type="text" value="${etdVal}" style="width:85px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'etd', this.value)"></td><td><input type="text" value="${etaVal}" style="width:85px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'eta', this.value)"></td><td><input type="text" value="${cnVal}" style="width:100px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'contractNo', this.value)"></td><td>${(stock - (signed || 0)).toFixed(2)}</td><td style="padding:4px;"><button onclick="deleteProduct(${item.id || 0})" style="padding:3px 8px;background:#ff4d4f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;">删除</button></td></tr>`;
                 }
                 return html;
             }
