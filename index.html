@@ -789,10 +789,13 @@
                     products = JSON.parse(stored);
                     console.log('从localStorage加载:', products.length, '条');
                 } catch(e) {
-                    console.error('解析失败，使用默认数据');
+                    console.error('解析失败，保留内存中的数据');
+                    // 不再使用默认数据覆盖！
+                    console.log('当前内存中数据:', products.length, '条');
                 }
             } else {
                 console.log('无缓存，使用硬编码数据:', products.length, '条');
+                // 只有在没有存储时才用默认数据初始化
                 localStorage.setItem('hoshine_products', JSON.stringify(products));
             }
             localStorage.setItem('hoshine_lastUpdate', new Date().toISOString());
