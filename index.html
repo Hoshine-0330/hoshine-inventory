@@ -779,40 +779,29 @@
             }
         }
 
-        // 飞书多维表格配置
-        const FEISHU_APP_ID = 'cli_a92079cda4f85cd1';
-        const FEISHU_APP_SECRET = 'zbTVNkfxnhVZIk9Wt6yzeeTcAQsBtst4';
-        const FEISHU_TABLE_TOKEN = 'KpIabEvJOaeDFUsQcWTcTY5NnPn';
-        const FEISHU_TABLE_ID = 'tblOv7aaRlZPBWgF';
+        // 飞书多维表格配置（通过后端代理）
+        const API_BASE = 'http://47.96.67.37:3001';
         
         let feishuToken = '';
         
-        // 获取飞书token
+        // 获取飞书token（通过后端）
         async function getFeishuToken() {
             if(feishuToken) return feishuToken;
             try {
-                const resp = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({app_id: FEISHU_APP_ID, app_secret: FEISHU_APP_SECRET})
-                });
+                const resp = await fetch(API_BASE + '/token');
                 const data = await resp.json();
-                if(data.code === 0) {
-                    feishuToken = data.tenant_access_token;
+                if(data.success) {
+                    feishuToken = data.token;
                     return feishuToken;
                 }
             } catch(e) { console.error('获取token失败', e); }
             return null;
         }
         
-        // 从飞书读取数据
+        // 从飞书读取数据（通过后端）
         async function loadFromFeishu() {
-            const token = await getFeishuToken();
-            if(!token) return null;
             try {
-                const resp = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_TABLE_TOKEN}/tables/${FEISHU_TABLE_ID}/records`, {
-                    headers: {'Authorization': 'Bearer ' + token}
-                });
+                const resp = await fetch(API_BASE + '/read');
                 const data = await resp.json();
                 if(data.code === 0 && data.data && data.data.items) {
                     return data.data.items.map((item, idx) => ({
@@ -830,50 +819,18 @@
             return null;
         }
         
-        // 保存到飞书（清空后重新写入）
+        // 保存到飞书（通过后端）
         async function saveToFeishu(products) {
-            const token = await getFeishuToken();
-            if(!token) {
-                console.error('无法获取飞书token');
-                return false;
-            }
-            console.log('开始同步到飞书，产品数:', products.length);
             try {
-                // 先删除所有记录
-                const listResp = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_TABLE_TOKEN}/tables/${FEISHU_TABLE_ID}/records`, {
-                    headers: {'Authorization': 'Bearer ' + token}
+                const resp = await fetch(API_BASE + '/write', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(products)
                 });
-                const listData = await listResp.json();
-                if(listData.code === 0 && listData.data && listData.data.items) {
-                    for(const item of listData.data.items) {
-                        await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_TABLE_TOKEN}/tables/${FEISHU_TABLE_ID}/records/${item.record_id}`, {
-                            method: 'DELETE',
-                            headers: {'Authorization': 'Bearer ' + token}
-                        });
-                    }
-                }
-                // 写入新数据
-                for(const p of products) {
-                    if(!p.name) continue;
-                    await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_TABLE_TOKEN}/tables/${FEISHU_TABLE_ID}/records`, {
-                        method: 'POST',
-                        headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            fields: {
-                                '产品名称': p.name,
-                                '型号': p.model || '',
-                                '仓库': p.warehouse || '',
-                                '库存': p.quantity || 0,
-                                '3月内': p.within3Months || 0,
-                                '3-9月': p.month3to9 || 0,
-                                '9月+': p.over9Months || 0
-                            }
-                        })
-                    });
-                }
-                console.log('同步飞书成功');
-                return true;
-            } catch(e) { console.error('同步飞书失败', e); return false; }
+                const data = await resp.json();
+                console.log('同步飞书成功，写入', data.count, '条');
+                return data.success;
+            } catch(e) { console.error('飞书同步异常:', e); return false; }
         }
         
         // 硬编码数据
