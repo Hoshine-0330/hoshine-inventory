@@ -1458,7 +1458,20 @@
 
         function renderAdminTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(search) || (p.model&&p.model.toLowerCase().includes(search)) || (p.warehouse&&p.warehouse.toLowerCase().includes(search)));
+            let filtered = products.filter(p => p.name.toLowerCase().includes(search) || (p.model&&p.model.toLowerCase().includes(search)) || (p.warehouse&&p.warehouse.toLowerCase().includes(search)));
+            
+            // 按 仓库+型号 合并
+            const merged = {};
+            filtered.forEach(p => {
+                const key = (p.warehouse||'') + '|' + (p.model||'');
+                if (!merged[key]) {
+                    merged[key] = { ...p };
+                } else {
+                    merged[key].quantity += p.quantity || 0;
+                    merged[key].signed += p.signed || 0;
+                }
+            });
+            filtered = Object.values(merged);
             
             document.getElementById('adminTable').innerHTML = filtered.map(p => {
                 // 格式化更新时间
