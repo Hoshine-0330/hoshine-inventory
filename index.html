@@ -911,11 +911,14 @@
             // 同时同步到飞书
             saveToFeishu(products).then(success => {
                 if(success) {
-                    console.log('✅ 飞书同步成功');
+                    alert('✅ 数据已同步到飞书表格！');
                 } else {
-                    console.error('❌ 飞书同步失败');
+                    alert('❌ 飞书同步失败，请查看浏览器控制台');
                 }
-            }).catch(err => console.error('飞书同步异常:', err));
+            }).catch(err => {
+                console.error('飞书同步异常:', err);
+                alert('❌ 飞书同步异常: ' + err.message);
+            });
         }
 
         function initFilters() {
