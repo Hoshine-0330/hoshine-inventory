@@ -1639,6 +1639,8 @@
                     }
                     
                     let importedCount = 0;
+                    // 在循环外部定义now变量
+                    let timestamp = new Date().toISOString();
                     for(let i=1; i<jsonData.length; i++) {
                         const row = jsonData[i];
                         const name = row[nameIdx];
@@ -1686,7 +1688,6 @@
                                 }
                             }
                             // KG转吨
-                            const now = new Date().toISOString();
                             products.push({
                                 id: Date.now() + i,
                                 name: simpleName,
@@ -1696,13 +1697,13 @@
                                 within3Months: Math.round(within3 / 1000 * 100) / 100,
                                 month3to9: Math.round(month39 / 1000 * 100) / 100,
                                 over9Months: Math.round(over9 / 1000 * 100) / 100,
-                                lastUpdate: now
+                                lastUpdate: timestamp
                             });
                             importedCount++;
                         }
                     }
                     console.log('Imported:', importedCount, 'products');
-                    localStorage.setItem('hoshine_lastUpdate', now);
+                    localStorage.setItem('hoshine_lastUpdate', timestamp);
                     saveData();
                     alert(`导入成功，共${importedCount}条`);
                     initFilters(); renderProducts(); renderAdminTable();
