@@ -833,7 +833,11 @@
         // 保存到飞书（清空后重新写入）
         async function saveToFeishu(products) {
             const token = await getFeishuToken();
-            if(!token) return false;
+            if(!token) {
+                console.error('无法获取飞书token');
+                return false;
+            }
+            console.log('开始同步到飞书，产品数:', products.length);
             try {
                 // 先删除所有记录
                 const listResp = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_TABLE_TOKEN}/tables/${FEISHU_TABLE_ID}/records`, {
@@ -905,7 +909,13 @@
         function saveData() { 
             localStorage.setItem('hoshine_products', JSON.stringify(products));
             // 同时同步到飞书
-            saveToFeishu(products);
+            saveToFeishu(products).then(success => {
+                if(success) {
+                    console.log('✅ 飞书同步成功');
+                } else {
+                    console.error('❌ 飞书同步失败');
+                }
+            }).catch(err => console.error('飞书同步异常:', err));
         }
 
         function initFilters() {
