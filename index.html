@@ -599,7 +599,7 @@
                 <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importData(event)">
             </div>
             <table class="admin-table">
-                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>ETD</th><th>ETA</th><th>合同编号</th><th>更新时间</th><th>操作</th></tr></thead>
+                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>ETD</th><th>ETA</th><th>合同编号</th><th>已签单</th><th>操作</th></tr></thead>
                 <tbody id="adminTable"></tbody>
             </table>
         </div>
@@ -1559,24 +1559,10 @@
             filtered = Object.values(merged);
             
             document.getElementById('adminTable').innerHTML = filtered.map(p => {
-                // 格式化更新时间
-                let updateText = '-';
-                if (p.lastUpdate) {
-                    const date = new Date(p.lastUpdate);
-                    const now = new Date();
-                    const diffMs = now - date;
-                    const diffMins = Math.floor(diffMs / 60000);
-                    const diffHours = Math.floor(diffMins / 60);
-                    const diffDays = Math.floor(diffHours / 24);
-                    
-                    if (diffMins < 1) updateText = '刚刚';
-                    else if (diffMins < 60) updateText = diffMins + '分钟前';
-                    else if (diffHours < 24) updateText = diffHours + '小时前';
-                    else if (diffDays < 7) updateText = diffDays + '天前';
-                    else updateText = date.toLocaleDateString('zh-CN');
-                }
+                // 显示已签单数量
+                const signedText = (p.signed || 0).toFixed(2);
                 
-                return `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${(p.signed||0).toFixed(2)}</td><td>${p.etd||'-'}</td><td>${p.eta||'-'}</td><td>${p.contractNo||'-'}</td><td>${updateText}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`;
+                return `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${signedText}</td><td>${p.etd||'-'}</td><td>${p.eta||'-'}</td><td>${p.contractNo||'-'}</td><td>${signedText}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`;
             }).join('');
         }
 
