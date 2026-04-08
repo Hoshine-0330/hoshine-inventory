@@ -596,6 +596,7 @@
                 <button class="btn-import" onclick="document.getElementById('csvInput').click()">📥 导入</button>
                 <button class="btn-import" onclick="exportData()">📤 导出</button>
                 <button class="btn-clear" onclick="clearAllData()">🗑️ 清空</button>
+                <button class="btn-feishu" onclick="saveToFeishuHandler()" style="background:#00b891;color:white;">☁️ 同步飞书</button>
                 <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importData(event)">
             </div>
             <table class="admin-table">
@@ -620,6 +621,17 @@
                     </select>
                     <select id="detailModelFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
                         <option value="">全部型号</option>
+                    </select>
+                    <select id="detailStatusFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
+                        <option value="">全部状态</option>
+                        <option value="在库">在库</option>
+                        <option value="在途">在途</option>
+                    </select>
+                    <select id="detailAgeFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
+                        <option value="">全部库龄</option>
+                        <option value="3月内">3月内</option>
+                        <option value="3-9月">3-9月</option>
+                        <option value="9月+">9月+</option>
                     </select>
                 </div>
                 
@@ -865,17 +877,8 @@
 
         function saveData() { 
             localStorage.setItem('hoshine_products', JSON.stringify(products));
-            // 同时同步到飞书
-            saveToFeishu(products).then(success => {
-                if(success) {
-                    alert('✅ 数据已同步到飞书表格！');
-                } else {
-                    alert('❌ 飞书同步失败，请查看浏览器控制台');
-                }
-            }).catch(err => {
-                console.error('飞书同步异常:', err);
-                alert('❌ 飞书同步异常: ' + err.message);
-            });
+            // 手动同步到飞书，请点击 ☁️ 同步飞书 按钮
+            // saveToFeishu(products); // 已禁用自动同步
         }
 
         function initFilters() {
@@ -1064,6 +1067,7 @@
         function renderDetailTable() {
             const modelFilter = document.getElementById('detailModelFilter').value;
             const whFilter = document.getElementById('detailWhFilter').value;
+            const statusFilter = document.getElementById('detailStatusFilter').value;
             const currentWhFilter = currentDetailWhFilter;
             
             // Apply the initial warehouse filter from main page - use merged base name
@@ -1076,6 +1080,28 @@
                 const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
                 return baseWh === whFilter;
             });
+            // 在途/在库筛选
+            if (statusFilter) {
+                items = items.filter(p => {
+                    const isInTransit = (p.warehouse || '').includes('在途仓');
+                    if (statusFilter === '在途') return isInTransit;
+                    if (statusFilter === '在库') return !isInTransit;
+                    return true;
+                });
+            }
+            // 库龄筛选
+            const ageFilter = document.getElementById('detailAgeFilter').value;
+            if (ageFilter) {
+                items = items.filter(p => {
+                    const q3m = p.within3Months || 0;
+                    const q3to9 = p.month3to9 || 0;
+                    const q9plus = p.over9Months || 0;
+                    if (ageFilter === '3月内') return q3m > 0;
+                    if (ageFilter === '3-9月') return q3to9 > 0;
+                    if (ageFilter === '9月+') return q9plus > 0;
+                    return true;
+                });
+            }
             
             console.log('items:', items.map(p => ({name: p.name, model: p.model, warehouse: p.warehouse, signedCustomers: p.signedCustomers})));
             
@@ -1633,6 +1659,12 @@
         }
         function closeForm() { document.getElementById('formModal').classList.remove('active'); }
         function clearAllData() { if(confirm('确定清空所有数据？')){products=[];saveData();renderAdminTable();initFilters();renderProducts();}}
+
+        async function saveToFeishuHandler() {
+            if(!confirm('确定同步到飞书？')) return;
+            await saveToFeishu(products);
+            alert('同步完成');
+        }
 
         function importData(event) {
             const file = event.target.files[0];
