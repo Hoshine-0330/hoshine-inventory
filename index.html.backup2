@@ -792,11 +792,7 @@
         }
 
         // 飞书多维表格配置（通过后端代理）
-        // 飞书配置 - 直接API
-        const FEISHU_APP_ID = 'cli_a92079cda4f85cd1';
-        const FEISHU_APP_SECRET = 'zbTVNkfxnhVZIk9Wt6yzeeTcAQsBtst4';
-        const FEISHU_APP_TOKEN = 'Vi5RbCMHGaKIYZs8vYUcoxm4nlp';
-        const FEISHU_TABLE_ID = 'tblSDKjebZkRxqW0';
+        const API_BASE = 'http://47.96.67.37:3001';
         
         let feishuToken = '';
         
@@ -816,17 +812,13 @@
         
         // 从飞书读取数据（通过后端）
         async function loadFromFeishu() {
-            const token = await getFeishuToken();
-            if(!token) return null;
             try {
-                const resp = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_APP_TOKEN}/tables/${FEISHU_TABLE_ID}/records`, {
-                    headers: {'Authorization': 'Bearer ' + token}
-                });
+                const resp = await fetch(API_BASE + '/read');
                 const data = await resp.json();
                 if(data.code === 0 && data.data && data.data.items) {
                     return data.data.items.map((item, idx) => ({
                         id: idx + 1,
-                        name: item.fields['产品名称'] || item.fields['文本'] || '',
+                        name: item.fields['产品名称'] || '',
                         model: item.fields['型号'] || '',
                         warehouse: item.fields['仓库'] || '',
                         quantity: parseFloat(item.fields['库存']) || 0,
@@ -841,47 +833,16 @@
         
         // 保存到飞书（通过后端）
         async function saveToFeishu(products) {
-            const token = await getFeishuToken();
-            if(!token) return false;
             try {
-                // 先清空旧数据
-                const listResp = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_APP_TOKEN}/tables/${FEISHU_TABLE_ID}/records`, {
-                    headers: {'Authorization': 'Bearer ' + token}
+                const resp = await fetch(API_BASE + '/write', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(products)
                 });
-                const listData = await listResp.json();
-                if(listData.data && listData.data.items) {
-                    for(const item of listData.data.items) {
-                        await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_APP_TOKEN}/tables/${FEISHU_TABLE_ID}/records/${item.record_id}`, {
-                            method: 'DELETE',
-                            headers: {'Authorization': 'Bearer ' + token}
-                        });
-                    }
-                }
-                // 写入新数据
-                for(const p of products) {
-                    await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_APP_TOKEN}/tables/${FEISHU_TABLE_ID}/records`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'Bearer ' + token,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            fields: {
-                                '产品名称': p.name,
-                                '型号': p.model,
-                                '仓库': p.warehouse,
-                                '库存': p.quantity,
-                                '3月内': p.within3Months,
-                                '3-9月': p.month3to9,
-                                '9月+': p.over9Months
-                            }
-                        })
-                    });
-                }
-                console.log('同步飞书成功，写入', products.length, '条');
-                return true;
+                const data = await resp.json();
+                console.log('同步飞书成功，写入', data.count, '条');
+                return data.success;
             } catch(e) { console.error('飞书同步异常:', e); return false; }
-        }
         }
         
         // 硬编码数据
