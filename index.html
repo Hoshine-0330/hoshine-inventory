@@ -350,7 +350,7 @@
         // ==================== Gist 数据同步 ====================
         async function fetchFromGist() {
             try {
-                const response = await fetch(`${API_BASE}/read`);
+                const response = await fetchWithRetry(`${API_BASE}/read`, {}, 3, 1500);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 if (Array.isArray(data)) return data;
@@ -362,17 +362,36 @@
             }
         }
 
+        // 重试fetch的辅助函数
+        async function fetchWithRetry(url, options, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return response;
+                } catch (err) {
+                    console.log(`尝试 ${i+1}/${retries} 失败: ${err.message}`);
+                    if (i < retries - 1) await new Promise(r => setTimeout(r, delay));
+                }
+            }
+            throw new Error('网络请求失败');
+        }
+
         async function syncToGist(data) {
             try {
-                const response = await fetch(`${API_BASE}/write`, {
+                const response = await fetchWithRetry(`${API_BASE}/write`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
-                });
+                }, 3, 1500);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const result = await response.json();
                 return result.success === true;
             } catch (err) {
                 console.error('syncToGist error:', err);
+                // 备用方案：保存到本地存储
+                localStorage.setItem('hoshine_products_pending', JSON.stringify(data));
+                localStorage.setItem('hoshine_pending_time', new Date().toISOString());
+                alert('⚠️ 云端同步失败，数据已临时保存在本地。网络恢复后请重试同步。');
                 return false;
             }
         }
@@ -384,7 +403,7 @@
             if (success) {
                 alert('✅ 同步成功！数据已保存到云端');
             } else {
-                alert('❌ 同步失败，请检查网络后重试');
+                alert('❌ 同步失败，请检查网络后重试。\n\n如持续失败，请尝试：\n1. 更换网络（关闭VPN）\n2. 清除浏览器缓存\n3. 换个浏览器');
             }
         }
 
