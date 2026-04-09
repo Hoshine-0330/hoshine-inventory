@@ -877,8 +877,12 @@
 
         function saveData() { 
             localStorage.setItem('hoshine_products', JSON.stringify(products));
-            // 手动同步到飞书，请点击 ☁️ 同步飞书 按钮
-            // saveToFeishu(products); // 已禁用自动同步
+            // 自动同步到飞书并推送
+            saveToFeishu(products).then(success => {
+                if(success) {
+                    console.log('已自动同步到飞书');
+                }
+            }).catch(err => console.error('飞书同步异常:', err));
         }
 
         function initFilters() {
