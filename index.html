@@ -748,6 +748,11 @@
     </div>
 
     <script>
+        // 页面加载自动初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+        
         let editingId = null;
 
         function login() {
