@@ -519,7 +519,7 @@
 </head>
 <body>
     <!-- 登录 -->
-    <div class="login-page" id="loginPage">
+    <div class="login-page" id="loginPage" style="display:none;">
         <div class="login-box">
             <h2>🏭 合盛硅业库存管理</h2>
             <input type="text" id="username" placeholder="请输入用户名">
@@ -529,7 +529,7 @@
     </div>
 
     <!-- 主页面 - PC端侧边栏布局 -->
-    <div class="main-page" id="mainPage" style="display:none;">
+    <div class="main-page" id="mainPage">
         <!-- 侧边栏 -->
         <div class="sidebar">
             <div class="sidebar-logo">
@@ -751,7 +751,8 @@
         let editingId = null;
 
         function login() {
-            document.getElementById("loginPage").style.display = "none";
+            document.getElementById("mainPage").style.display = "block";
+            document.getElementById("loginPage" style="display:none;").style.display = "none";
             document.getElementById("mainPage").style.display = "block";
             loadData();
             showPage("dashboard");
@@ -760,7 +761,7 @@
         
         // 绑定登录按钮事件
         document.getElementById("loginBtn").addEventListener("click", function() {
-            document.getElementById("loginPage").style.display = "none";
+            document.getElementById("loginPage" style="display:none;").style.display = "none";
             document.getElementById("mainPage").style.display = "block";
             loadData();
             showPage("dashboard");
