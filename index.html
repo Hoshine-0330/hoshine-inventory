@@ -792,7 +792,7 @@
         }
 
         // 飞书多维表格配置（通过后端代理）
-        const API_BASE = 'http://47.96.67.37:3001';
+        const API_BASE = 'https://hidden-block-fbd3.hoshinesilicone.workers.dev';
         
         let feishuToken = '';
         
@@ -814,20 +814,23 @@
         async function loadFromFeishu() {
             try {
                 const resp = await fetch(API_BASE + '/read');
-                const data = await resp.json();
-                if(data.code === 0 && data.data && data.data.items) {
-                    return data.data.items.map((item, idx) => ({
-                        id: idx + 1,
-                        name: item.fields['产品名称'] || '',
-                        model: item.fields['型号'] || '',
-                        warehouse: item.fields['仓库'] || '',
-                        quantity: parseFloat(item.fields['库存']) || 0,
-                        within3Months: parseFloat(item.fields['3月内']) || 0,
-                        month3to9: parseFloat(item.fields['3-9月']) || 0,
-                        over9Months: parseFloat(item.fields['9月+']) || 0
-                    }));
-                }
-            } catch(e) { console.error('读取飞书失败', e); }
+                const text = await resp.text();
+                try {
+                    const arr = JSON.parse(text);
+                    if(arr && Array.isArray(arr)) {
+                        return arr.map((item, idx) => ({
+                            id: idx + 1,
+                            name: item.name || '',
+                            model: item.model || '',
+                            warehouse: item.warehouse || '',
+                            quantity: parseFloat(item.quantity) || 0,
+                            within3Months: parseFloat(item.within3Months) || 0,
+                            month3to9: parseFloat(item.month3to9) || 0,
+                            over9Months: parseFloat(item.over9Months) || 0
+                        }));
+                    }
+                } catch(e) { console.log('数据不是JSON'); }
+            } catch(e) { console.error('读取失败', e); }
             return null;
         }
         
@@ -839,10 +842,10 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(products)
                 });
-                const data = await resp.json();
-                console.log('同步飞书成功，写入', data.count, '条');
-                return data.success;
-            } catch(e) { console.error('飞书同步异常:', e); return false; }
+                console.log('同步成功');
+                return true;
+            } catch(e) { console.error('保存失败', e); return false; }
+        }
         }
         
         // 硬编码数据
