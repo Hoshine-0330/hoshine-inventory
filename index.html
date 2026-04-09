@@ -748,13 +748,9 @@
     </div>
 
     <script>
-        // 页面加载自动初始化
-        
-        
         let editingId = null;
 
         function login() {
-            document.getElementById("mainPage").style.display = "block";
             document.getElementById("loginPage").style.display = "none";
             document.getElementById("mainPage").style.display = "block";
             loadData();
@@ -796,7 +792,7 @@
         }
 
         // 飞书多维表格配置（通过后端代理）
-        const API_BASE = 'https://hidden-block-fbd3.hoshinesilicone.workers.dev';
+        const API_BASE = 'http://47.96.67.37:3001';
         
         let feishuToken = '';
         
@@ -818,23 +814,20 @@
         async function loadFromFeishu() {
             try {
                 const resp = await fetch(API_BASE + '/read');
-                const data = await resp.text();
-                try {
-                    const arr = JSON.parse(data);
-                    if(arr && Array.isArray(arr)) {
-                        return arr.map((item, idx) => ({
-                            id: idx + 1,
-                            name: item.name || '',
-                            model: item.model || '',
-                            warehouse: item.warehouse || '',
-                            quantity: parseFloat(item.quantity) || 0,
-                            within3Months: parseFloat(item.within3Months) || 0,
-                            month3to9: parseFloat(item.month3to9) || 0,
-                            over9Months: parseFloat(item.over9Months) || 0
-                        }));
-                    }
-                } catch(e) { console.log('数据不是JSON格式:', data.substring(0,100)); }
-            } catch(e) { console.error('读取失败', e); }
+                const data = await resp.json();
+                if(data.code === 0 && data.data && data.data.items) {
+                    return data.data.items.map((item, idx) => ({
+                        id: idx + 1,
+                        name: item.fields['产品名称'] || '',
+                        model: item.fields['型号'] || '',
+                        warehouse: item.fields['仓库'] || '',
+                        quantity: parseFloat(item.fields['库存']) || 0,
+                        within3Months: parseFloat(item.fields['3月内']) || 0,
+                        month3to9: parseFloat(item.fields['3-9月']) || 0,
+                        over9Months: parseFloat(item.fields['9月+']) || 0
+                    }));
+                }
+            } catch(e) { console.error('读取飞书失败', e); }
             return null;
         }
         
@@ -846,11 +839,10 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(products)
                 });
-                const text = await resp.text();
-                console.log('同步成功:', text);
-                return true;
-            } catch(e) { console.error('保存失败', e); return false; }
-        }
+                const data = await resp.json();
+                console.log('同步飞书成功，写入', data.count, '条');
+                return data.success;
+            } catch(e) { console.error('飞书同步异常:', e); return false; }
         }
         
         // 硬编码数据
@@ -885,12 +877,8 @@
 
         function saveData() { 
             localStorage.setItem('hoshine_products', JSON.stringify(products));
-            // 自动同步到飞书并推送
-            saveToFeishu(products).then(success => {
-                if(success) {
-                    console.log('已自动同步到飞书');
-                }
-            }).catch(err => console.error('飞书同步异常:', err));
+            // 手动同步到飞书，请点击 ☁️ 同步飞书 按钮
+            // saveToFeishu(products); // 已禁用自动同步
         }
 
         function initFilters() {
