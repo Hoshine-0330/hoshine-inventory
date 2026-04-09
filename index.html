@@ -12,327 +12,66 @@
             background: linear-gradient(135deg, #e6f7ff 0%, #f0f5ff 100%);
             min-height: 100vh;
             color: #333;
-            font-size: 14px;
-            line-height: 1.6;
         }
-        
-        /* PC端布局 - 侧边栏 */
-        .main-page { display: flex; min-height: 100vh; }
-        .sidebar {
-            width: 220px;
-            background: linear-gradient(180deg, #1677ff 0%, #0958d9 100%);
-            padding: 20px 0;
-            position: fixed;
-            height: 100vh;
-            left: 0;
-            top: 0;
-            box-shadow: 2px 0 12px rgba(22,119,255,0.2);
-        }
-        .sidebar-logo {
-            text-align: center;
-            padding: 20px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            margin-bottom: 20px;
-        }
-        .sidebar-logo h2 {
-            color: #fff;
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .sidebar-logo p {
-            color: rgba(255,255,255,0.7);
-            font-size: 12px;
-            margin-top: 4px;
-        }
-        .sidebar-menu { list-style: none; }
-        .sidebar-menu li {
-            padding: 14px 24px;
-            color: rgba(255,255,255,0.8);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .sidebar-menu li:hover, .sidebar-menu li.active {
-            background: rgba(255,255,255,0.15);
-            color: #fff;
-        }
-        .sidebar-menu li.active {
-            background: rgba(255,255,255,0.2);
-            border-left: 3px solid #fff;
-        }
-        .sidebar-user {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            right: 0;
-            padding: 16px;
-            border-top: 1px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.8);
-            font-size: 13px;
-            text-align: center;
-        }
-        
-        .main-content {
-            flex: 1;
-            margin-left: 220px;
-            padding: 0;
-        }
-        
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 16px 32px; 
-            background: white; 
-            box-shadow: 0 2px 12px rgba(22,119,255,0.1); 
-        }
-        .header h1 { font-size: 20px; color: #1677ff; font-weight: 600; }
-        .header-right { display: flex; gap: 12px; }
-        .nav-btn { padding: 10px 20px; background: #f5f5f5; border: none; border-radius: 8px; color: #666; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-        .nav-btn:hover, .nav-btn.active { background: #1677ff; color: #fff; }
-
-        .main-container { padding: 24px 32px; }
-
-        /* PC端统计卡片 - 横向大卡片 */
-        .stats-row { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 20px; 
-            margin-bottom: 25px; 
-        }
-        .stat-card { 
-            background: white; 
-            box-shadow: 0 4px 16px rgba(22,119,255,0.1); 
-            border: 1px solid #91d5ff; 
-            border-left: 5px solid #1677ff;
-            padding: 24px 20px; 
-            border-radius: 12px; 
-            text-align: left;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(22,119,255,0.15);
-        }
-        .stat-card .num { 
-            font-size: 32px; 
-            font-weight: 700; 
-            color: #1677ff; 
-            margin-bottom: 8px; 
-        }
-        .stat-card .label { font-size: 14px; color: #666; }
-        .stat-card .trend { 
-            font-size: 12px; 
-            color: #52c41a; 
-            margin-top: 8px; 
-        }
-
-        /* 仓库分组 - 表格形式PC端 */
-        .warehouse-section { 
-            background: white; 
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05); 
-            border-radius: 12px; 
-            margin-bottom: 20px; 
-            overflow: hidden; 
-        }
-        .warehouse-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 16px 24px; 
-            background: linear-gradient(135deg, #1677ff, #4096ff);
-            color: #fff;
-        }
-        .warehouse-header h3 { font-size: 16px; font-weight: 600; }
-        .warehouse-header .total { font-size: 14px; opacity: 0.9; }
-        
-        /* PC端产品表格 */
-        .product-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 14px;
-        }
-        .product-table th { 
-            background: #f5f7fa; 
-            padding: 14px 16px; 
-            text-align: left; 
-            font-weight: 600; 
-            color: #333;
-            border-bottom: 2px solid #e8e8e8;
-        }
-        .product-table td { 
-            padding: 14px 16px; 
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .product-table tr:hover { 
-            background: #f0f7ff; 
-        }
-        
-        .product-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 14px; 
-            background: #fafafa; 
-            border-radius: 10px; 
-            margin-bottom: 8px; 
-            cursor: pointer; 
-            transition: all 0.2s; 
-        }
-        .product-item:hover { background: #e6f7ff; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(22,119,255,0.1); }
-        
-        /* 后台管理表格 - 全宽PC风格 */
-        .admin-section { display: none; }
-        .admin-section.active { display: block; }
-        .dashboard-section { display: none; }
-        .dashboard-section.active { display: block; }
-        
-        .toolbar { 
-            display: flex; 
-            gap: 12px; 
-            margin-bottom: 20px; 
-            background: white;
-            padding: 16px 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .toolbar input[type="text"] { 
-            flex: 1; 
-            min-width: 200px; 
-            padding: 12px 16px; 
-            border: 1px solid #e8e8e8; 
-            border-radius: 8px; 
-            background: #fff; 
-            color: #333; 
-            font-size: 14px; 
-        }
-        .toolbar button { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
-        .btn-add { background: #52c41a; color: #fff; }
-        .btn-import { background: #1677ff; color: #fff; }
-        .btn-clear { background: #ff4d4f; color: #fff; }
-        
-        .admin-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            background: white; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .admin-table th, .admin-table td { 
-            padding: 14px 16px; 
-            text-align: left; 
-            border-bottom: 1px solid #f5f5f5; 
-        }
-        .admin-table th { 
-            background: #1677ff; 
-            color: #fff; 
-            font-weight: 600; 
-            font-size: 13px;
-        }
-        .admin-table tr:hover { background: #f0f7ff; }
-        .action-btns button { 
-            padding: 6px 12px; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 12px; 
-            margin-right: 4px; 
-        }
-        .btn-edit { background: #1677ff; color: #fff; }
-        .btn-delete { background: #ff4d4f; color: #fff; }
         
         /* 登录页 */
         .login-page { display: flex; justify-content: center; align-items: center; height: 100vh; }
         .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        .login-box h2 { margin-bottom: 30px; color: #1677ff; font-size: 22px; font-weight: 600; }
+        .login-box h2 { margin-bottom: 30px; color: #1677ff; }
         .login-box input { width: 100%; padding: 15px; margin-bottom: 20px; border: none; border-radius: 10px; background: white; color: #333; border: 1px solid #d9d9d9; font-size: 14px; }
-        .login-btn { width: 100%; padding: 15px; border: none; border-radius: 10px; background: linear-gradient(135deg, #1677ff, #4096ff); color: #fff; font-size: 16px; font-weight: 500; cursor: pointer; }
+        .login-btn { width: 100%; padding: 15px; border: none; border-radius: 10px; background: linear-gradient(135deg, #1677ff, #4096ff); color: #fff; font-size: 18px; cursor: pointer; }
 
         /* 顶部 */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 16px 40px; background: white; box-shadow: 0 2px 12px rgba(22,119,255,0.1); }
-        .header h1 { font-size: 22px; color: #1677ff; font-weight: 600; }
-        .header-right { display: flex; gap: 12px; }
-        .nav-btn { padding: 10px 20px; background: #f5f5f5; border: none; border-radius: 8px; color: #666; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-        .nav-btn:hover, .nav-btn.active { background: #1677ff; color: #fff; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 12px rgba(22,119,255,0.1); }
+        .header h1 { font-size: 28px; color: #1677ff; }
+        .header-right { display: flex; gap: 15px; }
+        .nav-btn { padding: 10px 20px; background: #f0f0f0; border: none; border-radius: 8px; color: #333; cursor: pointer; }
+        .nav-btn:hover, .nav-btn.active { background: #1677ff; }
+
+        .main-container { padding: 20px 40px; }
 
         /* 筛选栏 */
-        .filter-bar { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
+        .filter-bar { display: flex; gap: 15px; margin-bottom: 20px; }
         .filter-bar select {
-            padding: 10px 16px;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
+            padding: 12px 20px;
+            border: 1px solid #d9d9d9;
+            border-radius: 10px;
             background: white;
             color: #333;
             font-size: 14px;
-            min-width: 150px;
-            cursor: pointer;
-            transition: all 0.2s;
+            min-width: 180px;
         }
-        .filter-bar select:hover { border-color: #1677ff; }
-        .filter-bar select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
 
         /* 统计 */
-        .stats-row { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 20px; 
-            margin-bottom: 25px; 
-        }
-        .stat-card { 
-            background: white; 
-            box-shadow: 0 4px 16px rgba(22,119,255,0.1); 
-            border: 1px solid #91d5ff; 
-            border-left: 4px solid #1677ff;
-            padding: 20px; 
-            border-radius: 12px; 
-            text-align: center;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(22,119,255,0.15);
-        }
-        .stat-card .num { font-size: 28px; font-weight: 600; color: #1677ff; margin-bottom: 4px; }
-        .stat-card .label { font-size: 13px; color: #888; }
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: white; box-shadow: 0 4px 16px rgba(22,119,255,0.1); border: 1px solid #91d5ff; padding: 25px; border-radius: 16px; text-align: center; }
+        .stat-card .num { font-size: 36px; font-weight: bold; color: #1677ff; margin-bottom: 8px; }
+        .stat-card .label { font-size: 14px; color: #999; }
 
         /* 快捷操作 */
-        .quick-actions { display: flex; gap: 12px; margin-bottom: 20px; }
-        .quick-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 16px; background: rgba(255,255,255,0.15); border: none; border-radius: 12px; color: #fff; cursor: pointer; font-size: 14px; }
+        .quick-actions { display: flex; gap: 15px; margin-bottom: 25px; }
+        .quick-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 18px; background: rgba(255,255,255,0.1); border: none; border-radius: 12px; color: #fff; cursor: pointer; }
         .quick-btn:hover { background: rgba(22,119,255,0.3); }
         .quick-btn.primary { background: linear-gradient(135deg, #1677ff, #4096ff); }
-        .quick-icon { font-size: 24px; margin-bottom: 4px; }
+        .quick-icon { font-size: 28px; margin-bottom: 5px; }
 
         /* 仓库分组 */
-        .warehouse-section { background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.05); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
-        .warehouse-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: linear-gradient(135deg, #1677ff, #4096ff); }
-        .warehouse-header h3 { font-size: 16px; font-weight: 500; }
-        .warehouse-header .total { font-size: 14px; color: rgba(255,255,255,0.85); }
-        .product-list { padding: 12px; }
-        .product-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: #fafafa; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
-        .product-item:hover { background: #e6f7ff; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(22,119,255,0.1); }
+        .warehouse-section { background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 16px; border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
+        .warehouse-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: linear-gradient(135deg, #1677ff, #4096ff); }
+        .warehouse-header h3 { font-size: 18px; }
+        .warehouse-header .total { font-size: 16px; color: rgba(255,255,255,0.9); }
+        .product-list { padding: 15px; }
+        .product-item { display: flex; justify-content: space-between; align-items: center; padding: 18px; background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 16px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; }
+        .product-item:hover { background: #e6f7ff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(22,119,255,0.15); }
         .product-info { flex: 1; }
-        .product-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+        .product-name { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
         .product-stock { text-align: right; }
-        .stock-num { font-size: 20px; font-weight: 600; color: #1677ff; }
-        .transit-badge { 
-            display: inline-block; 
-            font-size: 11px; 
-            background: #fff7e6; 
-            color: #fa8c16; 
-            padding: 2px 6px; 
-            border-radius: 6px; 
-            margin-left: 6px;
-            font-weight: normal;
-        }
-        .stock-unit { font-size: 12px; color: #999; margin-left: 3px; }
-        .stock-date { display: flex; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); }
-        .date-item { flex: 1; text-align: center; padding: 6px; border-radius: 6px; font-size: 12px; }
+        .stock-num { font-size: 24px; font-weight: bold; color: #1677ff; }
+        .stock-unit { font-size: 12px; color: #999; margin-left: 4px; }
+        .stock-date { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .date-item { flex: 1; text-align: center; padding: 8px; border-radius: 8px; font-size: 13px; }
         .date-item .label { font-size: 11px; color: #999; }
-        .date-item .val { font-weight: 600; margin-top: 2px; }
+        .date-item .val { font-weight: bold; margin-top: 4px; }
         .date-3m { background: #e6f7ff; }
         .date-3m .val { color: #096dd9; }
         .date-3to9 { background: #fff7e6; }
@@ -340,177 +79,50 @@
         .date-9plus { background: #fff1f0; }
         .date-9plus .val { color: #ff4d4f; }
 
-        /* 详情弹窗 - PC端宽屏样式 */
-        .detail-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; padding: 40px; }
+        /* 详情弹窗 */
+        .detail-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
         .detail-modal.active { display: flex; }
-        .detail-box { 
-            background: white; 
-            border-radius: 16px; 
-            width: 100%; 
-            max-width: 900px; 
-            max-height: 85vh; 
-            overflow: hidden; 
-            box-shadow: 0 20px 60px rgba(22,119,255,0.25);
-            display: flex;
-            flex-direction: column;
-        }
-        .detail-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 20px 28px; 
-            background: linear-gradient(135deg, #1677ff, #4096ff); 
-            color: #fff;
-            border-radius: 16px 16px 0 0;
-        }
-        .detail-header h2 { font-size: 20px; font-weight: 600; }
-        .detail-close { 
-            width: 36px; 
-            height: 36px; 
-            background: rgba(255,255,255,0.2); 
-            border: none; 
-            border-radius: 50%; 
-            color: #fff; 
-            font-size: 20px; 
-            cursor: pointer; 
-            transition: all 0.2s;
-        }
-        .detail-close:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
-        .detail-content { 
-            padding: 24px 28px; 
-            background: #fff; 
-            overflow-y: auto;
-            flex: 1;
-        }
-        
-        /* 筛选区域 */
-        .detail-filters {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 20px;
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-        .detail-filters select {
-            padding: 10px 14px;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
-            background: white;
-            color: #333;
-            font-size: 14px;
-            min-width: 160px;
-            cursor: pointer;
-        }
-        .detail-filters select:hover { border-color: #1677ff; }
-        
-        /* 统计卡片 - PC端2行4列 */
-        .detail-stats { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 16px; 
-            margin-bottom: 20px; 
-        }
-        .detail-stat { 
-            background: linear-gradient(135deg, #f0f7ff, #e6f0ff); 
-            border: 1px solid #91d5ff;
-            border-radius: 12px; 
-            padding: 20px; 
-            text-align: center;
-            transition: transform 0.2s;
-        }
-        .detail-stat:hover { transform: translateY(-2px); }
-        .detail-stat .val { font-size: 26px; font-weight: 700; color: #1677ff; }
-        .detail-stat .label { font-size: 13px; color: #666; margin-top: 6px; }
-        
-        .detail-stats-row2 { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 16px; 
-            margin-bottom: 24px; 
-        }
-        
-        /* 表格样式 */
-        .detail-section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1677ff;
-            margin: 24px 0 14px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #91d5ff;
-        }
-        .detail-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 13px;
-            margin-bottom: 16px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-        }
-        .detail-table th, .detail-table td { 
-            padding: 12px 10px; 
-            text-align: left; 
-            border-bottom: 1px solid #f0f0f0; 
-            white-space: nowrap;
-        }
-        .detail-table th { 
-            background: #f0f5ff; 
-            color: #1677ff; 
-            font-weight: 600; 
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .detail-table tr:hover { background: #fafcff; }
-        .detail-table tr:last-child td { border-bottom: none; }
-        .detail-table td input { 
-            padding: 4px 6px; 
-            border: 1px solid #d9d9d9; 
-            border-radius: 4px; 
-            font-size: 12px; 
-        }
+        .detail-box { background: white; border-radius: 20px; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(22,119,255,0.2); }
+        .detail-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: linear-gradient(135deg, #1677ff, #4096ff); border-radius: 20px 20px 0 0; }
+        .detail-header h2 { font-size: 20px; }
+        .detail-close { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; color: #fff; font-size: 20px; cursor: pointer; }
+        .detail-content { padding: 20px; background: #fff; }
+        .detail-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .detail-stat { background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 16px; padding: 12px; border-radius: 10px; text-align: center; }
+        .detail-stat .val { font-size: 20px; font-weight: bold; color: #1677ff; }
+        .detail-stat .label { font-size: 11px; color: #999; margin-top: 4px; }
+        .detail-table { width: 100%; border-collapse: collapse; }
+        .detail-table th, .detail-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
+        .detail-table th { color: #1677ff; }
 
         /* 后台 */
         .admin-section { display: none; }
         .admin-section.active { display: block; }
-        .dashboard-section { display: none; }
-        .dashboard-section.active { display: block; }
-        .toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-        .toolbar input[type="text"] { flex: 1; min-width: 180px; padding: 10px 16px; border: 1px solid #e8e8e8; border-radius: 8px; background: white; color: #333; font-size: 14px; }
-        .toolbar button { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .toolbar input[type="text"] { flex: 1; min-width: 200px; padding: 12px 20px; border: none; border-radius: 10px; background: white; color: #333; border: 1px solid #d9d9d9; font-size: 14px; }
+        .toolbar button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; }
         .btn-add { background: #52c41a; color: #fff; }
         .btn-import { background: #1677ff; color: #fff; }
         .btn-clear { background: #ff4d4f; color: #fff; }
-        .admin-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 10px; }
-        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid #f5f5f5; }
-        .admin-table th { background: #f5f5f5; color: #1677ff; font-weight: 500; }
-        .action-btns button { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; margin-right: 4px; }
+        .admin-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 16px; border-radius: 12px; }
+        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .admin-table th { background: rgba(22,119,255,0.2); color: #1677ff; }
+        .action-btns button { padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-right: 5px; }
         .btn-edit { background: #1677ff; color: #fff; }
         .btn-delete { background: #ff4d4f; color: #fff; }
 
         /* 表单弹窗 */
-        .form-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; }
+        .form-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
         .form-modal.active { display: flex; }
-        .form-box { background: white; padding: 24px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 8px 32px rgba(22,119,255,0.15); }
-        .form-box.large { max-width: 800px; }
-        .form-box h3 { margin-bottom: 16px; color: #1677ff; font-size: 18px; font-weight: 500; }
-        .form-group { margin-bottom: 14px; }
+        .form-box { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 450px; box-shadow: 0 8px 32px rgba(22,119,255,0.15); }
+        .form-box h3 { margin-bottom: 15px; color: #1677ff; }
+        .form-group { margin-bottom: 12px; }
         .form-group label { display: block; margin-bottom: 6px; color: #666; font-size: 13px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #e8e8e8; border-radius: 8px; background: #fff; color: #333; font-size: 14px; }
-        .form-actions { display: flex; gap: 10px; margin-top: 16px; }
-        .form-actions button { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 8px; background: #fff; color: #333; }
+        .form-actions { display: flex; gap: 12px; margin-top: 15px; }
+        .form-actions button { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; }
         .btn-save { background: #1677ff; color: #fff; }
         .btn-cancel { background: #666; color: #fff; }
-        
-        /* 已签单客户导入表格 */
-        .import-customer-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
-        .import-customer-table th, .import-customer-table td { padding: 12px; border: 1px solid #e8e8e8; text-align: left; font-size: 13px; }
-        .import-customer-table th { background: #f5f7fa; color: #1677ff; font-weight: 600; }
-        .import-customer-table td input { padding: 8px; border: 1px solid #e8e8e8; border-radius: 6px; width: 100%; }
-        .import-hint { color: #888; font-size: 12px; margin-top: 8px; }
-        .import-actions { display: flex; gap: 12px; margin-top: 16px; }
 
         .empty { text-align: center; padding: 40px; color: #999; background: white; border-radius: 12px; }
 
@@ -524,41 +136,23 @@
             <h2>🏭 合盛硅业库存管理</h2>
             <input type="text" id="username" placeholder="请输入用户名">
             <input type="password" id="password" placeholder="请输入密码">
-            <button class="login-btn" id="loginBtn">登录</button>
+            <button class="login-btn" onclick="login()">登录</button>
         </div>
     </div>
 
-    <!-- 主页面 - PC端侧边栏布局 -->
+    <!-- 主页面 -->
     <div class="main-page" id="mainPage" style="display:none;">
-        <!-- 侧边栏 -->
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <h2>🏭 合盛硅业</h2>
-                <p>库存管理系统</p>
-            </div>
-            <ul class="sidebar-menu">
-                <li class="active" onclick="showPage('dashboard')"><span>📊</span> 首页</li>
-                <li onclick="showPage('admin')"><span>⚙️</span> 后台管理</li>
-                <li onclick="logout()"><span>🚪</span> 退出登录</li>
-            </ul>
-            <div class="sidebar-user">
-                当前用户：admin
+        <div class="header">
+            <h1>📦 库存管理</h1>
+            <div class="header-right">
+                <button class="nav-btn active" onclick="showPage('dashboard')">首页</button>
+                <button class="nav-btn" onclick="showPage('admin')">后台管理</button>
+                <button class="nav-btn" onclick="logout()">退出</button>
             </div>
         </div>
-        
-        <!-- 主内容区 -->
-        <div class="main-content">
-            <div class="header">
-                <h1>📦 库存管理</h1>
-                <div class="header-right">
-                    <button class="nav-btn" id="btnDashboard" onclick="showPage('dashboard')">首页</button>
-                    <button class="nav-btn" id="btnAdmin" onclick="showPage('admin')">后台管理</button>
-                    <button class="nav-btn" onclick="logout()">退出</button>
-                </div>
-            </div>
 
-            <!-- 首页 -->
-            <div class="main-container dashboard-section" id="dashboardSection">
+        <!-- 首页 -->
+        <div class="main-container dashboard-section active" id="dashboardSection">
             <!-- 筛选 -->
             <div class="filter-bar">
                 <select id="warehouseFilter" onchange="renderProducts()">
@@ -573,15 +167,14 @@
             <div class="stats-row">
                 <div class="stat-card"><div class="num" id="statProducts">0</div><div class="label">商品种类</div></div>
                 <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">总库存(吨)</div></div>
-                <div class="stat-card"><div class="num" id="statLastUpdate">--</div><div class="label">最后更新</div></div>
+                <div class="stat-card"><div class="num" id="statWarehouses">0</div><div class="label">仓库数</div></div>
             </div>
 
             <!-- 快捷操作 -->
             <div class="quick-actions">
                 <button class="quick-btn primary" onclick="showPage('admin'); showAddModal();"><span class="quick-icon">📥</span><span>入库</span></button>
-                <button class="quick-btn" onclick="showPage('admin')"><span class="quick-icon">📤</span><span>出库</span></button>
+                <button class="quick-btn" onclick="alert('出库功能开发中')"><span class="quick-icon">📤</span><span>出库</span></button>
                 <button class="quick-btn" onclick="showPage('admin')"><span class="quick-icon">📋</span><span>库存</span></button>
-                <button class="quick-btn" onclick="showSignedCustomerImportModal()"><span class="quick-icon">📑</span><span>导入已签单客户</span></button>
             </div>
 
             <!-- 产品列表 -->
@@ -596,11 +189,10 @@
                 <button class="btn-import" onclick="document.getElementById('csvInput').click()">📥 导入</button>
                 <button class="btn-import" onclick="exportData()">📤 导出</button>
                 <button class="btn-clear" onclick="clearAllData()">🗑️ 清空</button>
-                <button class="btn-feishu" onclick="saveToFeishuHandler()" style="background:#00b891;color:white;">☁️ 同步飞书</button>
                 <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importData(event)">
             </div>
             <table class="admin-table">
-                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>ETD</th><th>ETA</th><th>合同编号</th><th>已签单</th><th>操作</th></tr></thead>
+                <thead><tr><th>ID</th><th>产品名称</th><th>型号</th><th>仓库</th><th>库存</th><th>3月内</th><th>3-9月</th><th>9月+</th><th>操作</th></tr></thead>
                 <tbody id="adminTable"></tbody>
             </table>
         </div>
@@ -616,22 +208,11 @@
             <div class="detail-content">
                 <!-- 详情页筛选 -->
                 <div class="filter-bar" style="margin-bottom:15px;">
-                    <select id="detailWhFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
-                        <option value="">全部仓库</option>
-                    </select>
                     <select id="detailModelFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
                         <option value="">全部型号</option>
                     </select>
-                    <select id="detailStatusFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
-                        <option value="">全部状态</option>
-                        <option value="在库">在库</option>
-                        <option value="在途">在途</option>
-                    </select>
-                    <select id="detailAgeFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
-                        <option value="">全部库龄</option>
-                        <option value="3月内">3月内</option>
-                        <option value="3-9月">3-9月</option>
-                        <option value="9月+">9月+</option>
+                    <select id="detailWhFilter" onchange="renderDetailTable()" style="padding:8px 12px;border-radius:8px;background:white;color:#333;border:1px solid #d9d9d9;">
+                        <option value="">全部仓库</option>
                     </select>
                 </div>
                 
@@ -647,44 +228,9 @@
                     <div class="detail-stat"><div class="val" id="detail9plus">0</div><div class="label">9月+</div></div>
                 </div>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">📋 库存明细</h4>
-                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>状态</th><th>库存</th><th>已签单</th><th>在途</th><th>ETD</th><th>ETA</th><th>合同编号</th><th>待售</th><th>操作</th></tr></thead><tbody id="detailTable"></tbody></table>
+                <table class="detail-table"><thead><tr><th>型号</th><th>仓库</th><th>库存</th><th>已签单</th><th>在途</th><th>待售</th></tr></thead><tbody id="detailTable"></tbody></table>
                 <h4 style="margin:15px 0 10px;color:#1677ff;">✓ 已签单客户明细</h4>
-                <table class="detail-table"><thead><tr><th>型号</th><th>客户名称</th><th>数量(吨)</th><th>操作</th></tr></thead><tbody id="customerTable"></tbody></table>
-                <button class="btn-add" style="margin-top:10px;padding:8px 16px;" onclick="showSignedCustomerModal()">+ 录入已签单客户</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 已签单客户录入弹窗 -->
-    <div class="form-modal" id="signedCustomerModal">
-        <div class="form-box">
-            <h3>录入已签单客户</h3>
-            <div class="form-group">
-                <label>产品名称 *</label>
-                <select id="signedProductFilter" onchange="updateSignedCustomerFilters()" style="width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:8px;">
-                    <option value="">请选择产品</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>仓库</label>
-                <select id="signedWarehouseFilter" onchange="updateSignedCustomerFilters()" style="width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:8px;">
-                    <option value="">请选择仓库</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>型号</label>
-                <select id="signedModelFilter" onchange="updateSignedCustomerFilters()" style="width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:8px;">
-                    <option value="">请选择型号</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>客户名称 *</label>
-                <input type="text" id="signedCustomerName" placeholder="请输入客户名称" style="width:100%;padding:10px;border:1px solid #d9d9d9;border-radius:8px;">
-            </div>
-            <div class="form-group"><label>数量(吨) *</label><input type="number" id="signedCustomerQty" placeholder="请输入吨数"></div>
-            <div class="form-actions">
-                <button class="btn-save" onclick="saveSignedCustomer()">保存</button>
-                <button class="btn-cancel" onclick="closeSignedCustomerModal()">取消</button>
+                <table class="detail-table"><thead><tr><th>客户名称</th><th>数量(吨)</th></tr></thead><tbody id="customerTable"></tbody></table>
             </div>
         </div>
     </div>
@@ -694,52 +240,12 @@
         <div class="form-box">
             <h3 id="formTitle">添加产品</h3>
             <div class="form-group"><label>产品名称 *</label><input type="text" id="formName"></div>
-        </div>
-    </div>
-
-    <!-- 船期录入弹窗 -->
-    <div class="form-modal" id="transitModal">
-        <div class="form-box large">
-            <h3>🚢 在途货物船期录入</h3>
-            <div style="display:flex;gap:10px;margin-bottom:15px;">
-                <select id="transitProduct" onchange="updateTransitForm()" style="flex:1;padding:10px;border-radius:8px;">
-                    <option value="">选择产品</option>
-                </select>
-                <select id="transitWarehouse" onchange="updateTransitForm()" style="flex:1;padding:10px;border-radius:8px;">
-                    <option value="">选择仓库</option>
-                </select>
-                <select id="transitModel" style="flex:1;padding:10px;border-radius:8px;">
-                    <option value="">选择型号</option>
-                </select>
-            </div>
-            <div style="display:flex;gap:10px;margin-bottom:15px;">
-                <input type="text" id="transitETD" placeholder="ETD(开船日)如2026-04-15" style="flex:1;padding:10px;border-radius:8px;">
-                <input type="text" id="transitETA" placeholder="ETA(到港日)如2026-05-10" style="flex:1;padding:10px;border-radius:8px;">
-                <input type="text" id="transitContract" placeholder="合同编号" style="flex:1;padding:10px;border-radius:8px;">
-            </div>
-            <button onclick="saveTransitInfo()" style="width:100%;padding:12px;background:#1677ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:16px;margin-bottom:15px;">保存</button>
-            <h4 style="color:#1677ff;margin-bottom:10px;">在途货物列表</h4>
-            <div id="transitList" style="max-height:300px;overflow-y:auto;"></div>
-            <div style="margin-top:15px;text-align:right;">
-                <button class="btn-cancel" onclick="document.getElementById('transitModal').classList.remove('active')">关闭</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 产品编辑弹窗 -->
-    <div class="form-modal" id="editProductModal">
-        <div class="form-box">
-            <h3 id="editFormTitle">添加产品</h3>
             <div class="form-group"><label>型号</label><input type="text" id="formModel"></div>
             <div class="form-group"><label>仓库</label><input type="text" id="formWarehouse"></div>
             <div class="form-group"><label>库存数量(吨)</label><input type="number" id="formQuantity"></div>
             <div class="form-group"><label>3月内</label><input type="number" id="formWithin3"></div>
             <div class="form-group"><label>3-9月</label><input type="number" id="formMonth3to9"></div>
             <div class="form-group"><label>9月+</label><input type="number" id="formOver9"></div>
-            <div class="form-group"><label>ETD (预计开船日)</label><input type="text" id="formETD" placeholder="例如: 2026-04-15"></div>
-            <div class="form-group"><label>ETA (预计到港日)</label><input type="text" id="formETA" placeholder="例如: 2026-05-10"></div>
-            <div class="form-group"><label>合同编号</label><input type="text" id="formContractNo" placeholder="例如: HS-2026-001"></div>
-            <div class="form-group"><label>已签单客户 (格式: 客户名,吨数)</label><input type="text" id="formSignedCustomers" placeholder="例如: 客户A,10; 客户B,20"></div>
             <div class="form-actions">
                 <button class="btn-save" onclick="saveProduct()">保存</button>
                 <button class="btn-cancel" onclick="closeForm()">取消</button>
@@ -748,30 +254,17 @@
     </div>
 
     <script>
+        let products = [];
         let editingId = null;
 
         function login() {
-            document.getElementById("loginPage").style.display = "none";
-            document.getElementById("mainPage").style.display = "block";
-            loadData();
-            showPage("dashboard");
+            if (document.getElementById('username').value) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainPage').style.display = 'block';
+                loadData();
+            }
         }
-
-        
-        // 绑定登录按钮事件
-        document.getElementById("loginBtn").addEventListener("click", function() {
-            document.getElementById("loginPage").style.display = "none";
-            document.getElementById("mainPage").style.display = "block";
-            loadData();
-            showPage("dashboard");
-        });
-
-
-
-        function showTransitModal() {
-            initTransitForm();
-            document.getElementById("transitModal").classList.add("active");
-        }
+        function logout() { document.getElementById('loginPage').style.display = 'flex'; document.getElementById('mainPage').style.display = 'none'; }
 
         function showPage(page) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -791,175 +284,53 @@
             }
         }
 
-        // 飞书多维表格配置（通过后端代理）
-        const API_BASE = 'https://hidden-block-fbd3.hoshinesilicone.workers.dev';
-        
-        let feishuToken = '';
-        
-        // 获取飞书token（通过后端）
-        async function getFeishuToken() {
-            if(feishuToken) return feishuToken;
-            try {
-                const resp = await fetch(API_BASE + '/token');
-                const data = await resp.json();
-                if(data.success) {
-                    feishuToken = data.token;
-                    return feishuToken;
-                }
-            } catch(e) { console.error('获取token失败', e); }
-            return null;
-        }
-        
-        // 从飞书读取数据（通过后端）
-        async function loadFromFeishu() {
-            try {
-                const resp = await fetch(API_BASE + '/read');
-                const data = await resp.json();
-                if(data && Array.isArray(data)) {
-                    return data.map((item, idx) => ({
-                        id: idx + 1,
-                        name: item.name || '',
-                        model: item.model || '',
-                        warehouse: item.warehouse || '',
-                        quantity: parseFloat(item.quantity) || 0,
-                        within3Months: parseFloat(item.within3Months) || 0,
-                        month3to9: parseFloat(item.month3to9) || 0,
-                        over9Months: parseFloat(item.over9Months) || 0
-                    }));
-                }
-            } catch(e) { console.error('读取失败', e); }
-            return null;
-        }
-        
-        // 保存到飞书（通过后端）
-        async function saveToFeishu(products) {
-            try {
-                const resp = await fetch(API_BASE + '/write', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(products)
-                });
-                const data = await resp.json();
-                console.log('同步成功:', data);
-                return data.success !== false;
-            } catch(e) { console.error('保存失败', e); return false; }
-        }
-        }
-        
-        // 硬编码数据
-        let products = [{"id": 1, "name": "十甲基环五硅氧烷(D5)", "model": "D5≥98.5%", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 1.9, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.9, "within3Months": 0.0, "month3to9": 1.9, "over9Months": 0.0, "signedCustomers": []}, {"id": 2, "name": "室温硫化甲基硅橡胶(107胶)", "model": "107-2", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 57.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 57.0, "within3Months": 57.0, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 3, "name": "室温硫化甲基硅橡胶(107胶)", "model": "107-8", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 494.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 494.0, "within3Months": 494.0, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 4, "name": "室温硫化甲基硅橡胶(107胶)", "model": "107-8", "warehouse": "印度蒙德拉一号在途仓", "category": "其他", "quantity": 209.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 209.0, "within3Months": 209.0, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 5, "name": "室温硫化甲基硅橡胶(107胶)", "model": "107-8", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 95.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 95.0, "within3Months": 95.0, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 6, "name": "混炼硅橡胶", "model": "HS-114110", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 9.6, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 9.6, "within3Months": 0.0, "month3to9": 9.6, "over9Months": 0.0, "signedCustomers": []}, {"id": 7, "name": "混炼硅橡胶", "model": "HS-3441", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 133.44, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 133.44, "within3Months": 22.08, "month3to9": 111.36, "over9Months": 0.0, "signedCustomers": []}, {"id": 8, "name": "混炼硅橡胶", "model": "HS-3431", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 1.92, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.92, "within3Months": 1.92, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": []}, {"id": 9, "name": "混炼硅橡胶", "model": "HS-3431", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 52.8, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 52.8, "within3Months": 36.48, "month3to9": 16.32, "over9Months": 0.0, "signedCustomers": []}, {"id": 10, "name": "混炼硅橡胶", "model": "HS-3461", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 19.2, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 19.2, "within3Months": 0.0, "month3to9": 14.4, "over9Months": 4.8, "signedCustomers": []}, {"id": 11, "name": "混炼硅橡胶", "model": "HS-3471", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 1.92, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.92, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 1.92, "signedCustomers": []}, {"id": 12, "name": "混炼硅橡胶", "model": "HS-3471", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 11.52, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 11.52, "within3Months": 7.68, "month3to9": 3.84, "over9Months": 0.0, "signedCustomers": []}, {"id": 13, "name": "甲基乙烯基硅橡胶", "model": "110-0", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 71.75, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 71.75, "within3Months": 54.25, "month3to9": 17.5, "over9Months": 0.0, "signedCustomers": []}, {"id": 14, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "350cs", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 57.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 57.0, "within3Months": 0.0, "month3to9": 57.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 15, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "350cs", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 57.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 57.0, "within3Months": 0.0, "month3to9": 57.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 16, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "350cs", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 15.2, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 15.2, "within3Months": 0.0, "month3to9": 15.2, "over9Months": 0.0, "signedCustomers": []}, {"id": 17, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "100cs", "warehouse": "德国汉堡仓库", "category": "其他", "quantity": 5.7, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 5.7, "within3Months": 0.0, "month3to9": 5.7, "over9Months": 0.0, "signedCustomers": []}, {"id": 18, "name": "乙烯基封端的二甲基硅油", "model": "HS-500", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 2.85, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 2.85, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 2.85, "signedCustomers": []}, {"id": 19, "name": "混炼硅橡胶", "model": "HS-5262G", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 20, "name": "混炼硅橡胶", "model": "HS-5272G", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 21, "name": "混炼硅橡胶", "model": "HS-1560PT", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 32.4, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 32.4, "within3Months": 32.4, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 22, "name": "混炼硅橡胶", "model": "HS-1562PT", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 4.8, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 4.8, "within3Months": 0.0, "month3to9": 4.8, "over9Months": 0.0, "signedCustomers": []}, {"id": 23, "name": "混炼硅橡胶", "model": "HS-1572PT", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 1.92, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.92, "within3Months": 0.0, "month3to9": 1.92, "over9Months": 0.0, "signedCustomers": []}, {"id": 24, "name": "混炼硅橡胶", "model": "HS-5360", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 64.8, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 64.8, "within3Months": 56.16, "month3to9": 8.64, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 25, "name": "混炼硅橡胶", "model": "HS-5360", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 13.5, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 13.5, "within3Months": 0.0, "month3to9": 13.5, "over9Months": 0.0, "signedCustomers": []}, {"id": 26, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "100cs", "warehouse": "德国汉堡仓库", "category": "其他", "quantity": 6.65, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 6.65, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 6.65, "signedCustomers": []}, {"id": 27, "name": "混炼硅橡胶", "model": "HS-5370", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 12.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 12.96, "within3Months": 12.96, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 28, "name": "混炼硅橡胶", "model": "HS-533010", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 3.84, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 3.84, "within3Months": 3.84, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 29, "name": "混炼硅橡胶", "model": "HS-535010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 30, "name": "混炼硅橡胶", "model": "HS-534010", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 7.68, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 7.68, "within3Months": 7.68, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 31, "name": "混炼硅橡胶", "model": "HS-534010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 9.6, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 9.6, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 9.6, "signedCustomers": []}, {"id": 32, "name": "混炼硅橡胶", "model": "HS-537010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 33, "name": "混炼硅橡胶", "model": "HS-537010", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 7.68, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 7.68, "within3Months": 6.72, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 34, "name": "混炼硅橡胶", "model": "HS-536010", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 35, "name": "混炼硅橡胶", "model": "HS-536010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 0.96, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0.96, "within3Months": 0.0, "month3to9": 0.96, "over9Months": 0.0, "signedCustomers": []}, {"id": 36, "name": "混炼硅橡胶", "model": "HS-538010", "warehouse": "意大利热那亚在途仓", "category": "其他", "quantity": 8.64, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 8.64, "within3Months": 8.64, "month3to9": 0.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 37, "name": "混炼硅橡胶", "model": "HS-538010", "warehouse": "环世-鹿特丹仓", "category": "其他", "quantity": 3.84, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 3.84, "within3Months": 0.0, "month3to9": 3.84, "over9Months": 0.0, "signedCustomers": []}, {"id": 38, "name": "混炼硅橡胶", "model": "HS-538010", "warehouse": "德国汉堡仓库", "category": "其他", "quantity": 1.92, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.92, "within3Months": 0.0, "month3to9": 1.92, "over9Months": 0.0, "signedCustomers": []}, {"id": 39, "name": "混炼硅橡胶", "model": "HS-5340", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 236.16, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 236.16, "within3Months": 199.68, "month3to9": 36.48, "over9Months": 0.0, "signedCustomers": []}, {"id": 40, "name": "混炼硅橡胶", "model": "HS-5380", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 2.7, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 2.7, "within3Months": 0.0, "month3to9": 0.0, "over9Months": 2.7, "signedCustomers": []}, {"id": 41, "name": "甲基高含氢硅油", "model": "20粘度", "warehouse": "环世-鹿特丹在途仓", "category": "其他", "quantity": 22.0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 22.0, "within3Months": 18.0, "month3to9": 4.0, "over9Months": 0.0, "signedCustomers": [], "etd": "2026-04-15", "eta": "2026-05-10", "contractNo": "HS-2026-001"}, {"id": 42, "name": "聚二甲基硅氧烷(201甲基硅油)", "model": "350cs", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 1.52, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 1.52, "within3Months": 0.0, "month3to9": 1.52, "over9Months": 0.0, "signedCustomers": []}, {"id": 43, "name": "混炼硅橡胶", "model": "HS-1540PT", "warehouse": "意大利热那亚仓库", "category": "其他", "quantity": 2.7, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 2.7, "within3Months": 0.0, "month3to9": 2.7, "over9Months": 0.0, "signedCustomers": []}, {"id": 44, "name": "二甲基硅氧烷线性体", "model": "密度0.97", "warehouse": "蒙德拉一号仓库", "category": "其他", "quantity": 3.8, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 3.8, "within3Months": 0.0, "month3to9": 3.8, "over9Months": 0.0, "signedCustomers": []}, {"id": 45, "name": "", "model": "", "warehouse": "", "category": "其他", "quantity": 0, "unit": "吨", "signed": 0, "inTransit": 0, "forSale": 0, "within3Months": 1323.49, "month3to9": 0, "over9Months": 0, "signedCustomers": []}];
-        
         function loadData() {
-            // 优先从飞书加载数据
-            loadFromFeishu().then(feishuData => {
-                if(feishuData && feishuData.length > 0) {
-                    products = feishuData;
-                    console.log('从飞书加载:', products.length, '条');
-                    localStorage.setItem('hoshine_products', JSON.stringify(products));
-                } else {
-                    // 飞书无数据则从localStorage
-                    const stored = localStorage.getItem('hoshine_products');
-                    if(stored) {
-                        try {
-                            products = JSON.parse(stored);
-                            console.log('从localStorage加载:', products.length, '条');
-                        } catch(e) {
-                            console.error('解析失败，保留内存数据');
-                        }
-                    } else {
-                        console.log('无缓存，使用硬编码数据');
-                        localStorage.setItem('hoshine_products', JSON.stringify(products));
-                    }
-                }
-                initFilters();
-                renderProducts();
-            });
-        }
-
-        function saveData() { 
-            localStorage.setItem('hoshine_products', JSON.stringify(products));
-            // 自动同步到飞书并推送
-            saveToFeishu(products).then(success => {
-                if(success) {
-                    console.log('已自动同步到飞书');
-                }
-            }).catch(err => console.error('飞书同步异常:', err));
-        }
-
-        function initFilters() {
-            // 不传参数时初始化所有选项
-            updateFilterOptions('', '');
-        }
-
-        function onFilterChange() {
-            const whFilter = document.getElementById('warehouseFilter').value;
-            const prodFilter = document.getElementById('productFilter').value;
-            updateFilterOptions(whFilter, prodFilter);
+            const stored = localStorage.getItem('hoshine_products');
+            if (stored) { products = JSON.parse(stored); }
+            else {
+                products = [
+                    {id:1,name:'混炼硅橡胶',model:'HS-5340',warehouse:'蒙德拉一号仓库',quantity:236.16,within3Months:199.68,month3to9:36.48,over9Months:0},
+                    {id:2,name:'混炼硅橡胶',model:'HS-3441',warehouse:'蒙德拉一号仓库',quantity:133.44,within3Months:22.08,month3to9:111.36,over9Months:0},
+                ];
+                saveData();
+            }
+            initFilters();
             renderProducts();
         }
 
-        function updateFilterOptions(whFilter, prodFilter) {
-            // 根据产品筛选仓库 - 使用合并后的基础仓库名
-            let filtered = [...products];
-            if (prodFilter) filtered = filtered.filter(p => p.name === prodFilter);
-            // 合并仓库名
-            const rawWarehouses = filtered.map(p => p.warehouse || '未知仓库');
-            const baseWarehouses = rawWarehouses.map(wh => {
-                const isInTransit = wh.includes('在途仓');
-                return wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-            });
-            const warehouses = [...new Set(baseWarehouses)].sort();
-            
-            // 根据仓库筛选产品
-            filtered = [...products];
-            if (whFilter) filtered = filtered.filter(p => {
-                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                return baseWh === whFilter;
-            });
-            const productNames = [...new Set(filtered.map(p => p.name).filter(Boolean))].sort();
-            
-            // 保存当前选中的值
-            const currentWh = document.getElementById('warehouseFilter').value;
-            const currentProd = document.getElementById('productFilter').value;
-            
-            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}" ${w === currentWh ? 'selected' : ''}>${w}</option>`).join('');
-            document.getElementById('productFilter').innerHTML = '<option value="">全部产品</option>' + productNames.map(p => `<option value="${p}" ${p === currentProd ? 'selected' : ''}>${p}</option>`).join('');
+        function saveData() { localStorage.setItem('hoshine_products', JSON.stringify(products)); }
+
+        function initFilters() {
+            const warehouses = [...new Set(products.map(p => p.warehouse).filter(Boolean))];
+            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))];
+            document.getElementById('warehouseFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
+            document.getElementById('productFilter').innerHTML = '<option value="">全部产品</option>' + productNames.map(p => `<option value="${p}">${p}</option>`).join('');
         }
 
         function renderProducts() {
             const whFilter = document.getElementById('warehouseFilter').value;
             const prodFilter = document.getElementById('productFilter').value;
             let filtered = [...products];
-            if (whFilter) filtered = filtered.filter(p => {
-                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                return baseWh === whFilter;
-            });
+            if (whFilter) filtered = filtered.filter(p => p.warehouse === whFilter);
             if (prodFilter) filtered = filtered.filter(p => p.name === prodFilter);
 
-            // 按仓库+产品分组
+            // 按仓库+产品分组（合并型号）
             const groupMap = {};
             filtered.forEach(p => {
-                // 统一仓库名：去掉"在途仓"、"仓"后缀
-                let wh = p.warehouse || '未知仓库';
-                const isInTransit = wh.includes('在途仓');
-                // 基础名用于分组：去掉在途仓和尾部仓
-                let baseKey = wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
+                const wh = p.warehouse || '未知仓库';
                 const name = p.name || '未知产品';
-                const key = baseKey + '||' + name;
+                const key = wh + '||' + name;
                 
                 if (!groupMap[key]) {
-                    groupMap[key] = { warehouse: baseKey, name: name, models: new Set(), total: 0, within3: 0, month3to9: 0, over9: 0, signed: 0, inTransit: 0, forSale: 0 };
+                    groupMap[key] = { warehouse: wh, name: name, models: new Set(), total: 0, within3: 0, month3to9: 0, over9: 0, signed: 0, inTransit: 0, forSale: 0 };
                 }
                 if (p.model) groupMap[key].models.add(p.model);
-                if (isInTransit) {
-                    groupMap[key].inTransit += p.quantity || 0;
-                } else {
-                    groupMap[key].total += p.quantity || 0;
-                }
+                groupMap[key].total += p.quantity || 0;
                 groupMap[key].within3 += p.within3Months || 0;
                 groupMap[key].month3to9 += p.month3to9 || 0;
                 groupMap[key].over9 += p.over9Months || 0;
                 groupMap[key].signed += p.signed || 0;
+                groupMap[key].inTransit += p.inTransit || 0;
                 groupMap[key].forSale += p.forSale || 0;
             });
             
@@ -967,7 +338,7 @@
             const whGroupMap = {};
             Object.values(groupMap).forEach(g => {
                 const wh = g.warehouse;
-                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: wh, products: [], total: 0, inTransit: 0 };
+                if (!whGroupMap[wh]) whGroupMap[wh] = { warehouse: wh, products: [], total: 0 };
                 whGroupMap[wh].products.push({
                     name: g.name,
                     models: Array.from(g.models).join(', '),
@@ -980,23 +351,16 @@
                     forSale: Math.round(g.forSale * 100) / 100
                 });
                 whGroupMap[wh].total += g.total;
-                whGroupMap[wh].inTransit += g.inTransit;
             });
 
             document.getElementById('productContainer').innerHTML = Object.values(whGroupMap).map(g => `
                 <div class="warehouse-section">
-                    <div class="warehouse-header"><h3>📍 ${g.warehouse}仓${g.inTransit > 0 ? ' (在途' + g.inTransit.toFixed(0) + '吨)' : ''}</h3><span class="total">合计: ${Math.round((g.total + g.inTransit) * 100) / 100}吨</span></div>
+                    <div class="warehouse-header"><h3>📍 ${g.warehouse}</h3><span class="total">合计: ${Math.round(g.total * 100) / 100}吨</span></div>
                     <div class="product-list">
                         ${g.products.map(p => `
-                            <div class="product-item" onclick="showDetail('${p.name}', '${whFilter}')">
-                                <div class="product-info">
-                                    <div class="product-name">${p.name}</div>
-                                    ${p.isInTransit && p.inTransit > 0 ? `<span class="transit-badge">🚚 在途: ${p.inTransit.toFixed(2)}吨</span>` : ''}
-                                    ${p.etd ? `<span style="color:#1890ff;font-size:12px;margin-left:8px;">ETD:${p.etd}</span>` : ''}
-                                    ${p.eta ? `<span style="color:#1890ff;font-size:12px;margin-left:8px;">ETA:${p.eta}</span>` : ''}
-                                    ${p.contractNo ? `<span style="color:#722ed1;font-size:12px;margin-left:8px;">📝${p.contractNo}</span>` : ''}
-                                </div>
-                                <div class="product-stock"><span class="stock-num">${(p.total + p.inTransit).toFixed(2)}</span><span class="stock-unit">吨</span></div>
+                            <div class="product-item" onclick="showDetail('${p.name}')">
+                                <div class="product-info"><div class="product-name">${p.name}</div></div>
+                                <div class="product-stock"><span class="stock-num">${p.total.toFixed(2)}</span><span class="stock-unit">吨</span></div>
                                 <div class="stock-date">
                                     <div class="date-item date-3m"><div class="label">3月内</div><div class="val">${p.within3.toFixed(2)}</div></div>
                                     <div class="date-item date-3to9"><div class="label">3-9月</div><div class="val">${p.month3to9.toFixed(2)}</div></div>
@@ -1013,49 +377,15 @@
             const totalQty = filtered.reduce((s,p)=>s+(p.quantity||0),0);
             document.getElementById('statProducts').textContent = productSet.size;
             document.getElementById('statTotal').textContent = Math.round(totalQty * 100) / 100;
-            
-            // 显示最后更新时间
-            const lastUpdate = localStorage.getItem('hoshine_lastUpdate');
-            if (lastUpdate) {
-                const date = new Date(lastUpdate);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffMins = Math.floor(diffMs / 60000);
-                const diffHours = Math.floor(diffMins / 60);
-                const diffDays = Math.floor(diffHours / 24);
-                
-                let displayTime = '';
-                if (diffMins < 1) displayTime = '刚刚';
-                else if (diffMins < 60) displayTime = diffMins + '分钟前';
-                else if (diffHours < 24) displayTime = diffHours + '小时前';
-                else if (diffDays < 7) displayTime = diffDays + '天前';
-                else displayTime = date.toLocaleDateString('zh-CN');
-                
-                document.getElementById('statLastUpdate').textContent = displayTime;
-            } else {
-                document.getElementById('statLastUpdate').textContent = '--';
-            }
+            document.getElementById('statWarehouses').textContent = whSet.size;
         }
 
-        function showDetail(name, whFilter) {
-            alert('点击了产品: ' + name);
+        function showDetail(name) {
             currentDetailProduct = name;
-            currentDetailWhFilter = whFilter || '';
-            const currentWhFilter = currentDetailWhFilter;
-            const items = products.filter(p => p.name === name && (!currentWhFilter || (function(){
-                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                return baseWh === currentWhFilter;
-            })()));
+            const items = products.filter(p => p.name === name);
             
-            const models = [...new Set(items.map(p => p.model).filter(Boolean))].sort();
-            
-            // Get all original warehouses and merge for filter
-            const allItems = products.filter(p => p.name === name);
-            const baseWarehouses = allItems.map(p => {
-                const wh = p.warehouse || '未知仓库';
-                return wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-            });
-            const warehouses = [...new Set(baseWarehouses)].sort();
+            const models = [...new Set(items.map(p => p.model).filter(Boolean))];
+            const warehouses = [...new Set(items.map(p => p.warehouse).filter(Boolean))];
             
             document.getElementById('detailModelFilter').innerHTML = '<option value="">全部型号</option>' + models.map(m => `<option value="${m}">${m}</option>`).join('');
             document.getElementById('detailWhFilter').innerHTML = '<option value="">全部仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join('');
@@ -1063,628 +393,78 @@
             document.getElementById('detailTitle').textContent = name;
             renderDetailTable();
             document.getElementById('detailModal').classList.add('active');
-            initTransitForm();
         }
 
         let currentDetailProduct = '';
-        let currentDetailWhFilter = '';
 
         function renderDetailTable() {
             const modelFilter = document.getElementById('detailModelFilter').value;
             const whFilter = document.getElementById('detailWhFilter').value;
-            const statusFilter = document.getElementById('detailStatusFilter').value;
-            const currentWhFilter = currentDetailWhFilter;
             
-            // Apply the initial warehouse filter from main page - use merged base name
-            let items = products.filter(p => p.name === currentDetailProduct && (!currentWhFilter || (function(){
-                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                return baseWh === currentWhFilter;
-            })()));
+            let items = products.filter(p => p.name === currentDetailProduct);
             if (modelFilter) items = items.filter(p => p.model === modelFilter);
-            if (whFilter) items = items.filter(p => {
-                const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                return baseWh === whFilter;
-            });
-            // 在途/在库筛选
-            if (statusFilter) {
-                items = items.filter(p => {
-                    const isInTransit = (p.warehouse || '').includes('在途仓');
-                    if (statusFilter === '在途') return isInTransit;
-                    if (statusFilter === '在库') return !isInTransit;
-                    return true;
-                });
-            }
-            // 库龄筛选
-            const ageFilter = document.getElementById('detailAgeFilter').value;
-            if (ageFilter) {
-                items = items.filter(p => {
-                    const q3m = p.within3Months || 0;
-                    const q3to9 = p.month3to9 || 0;
-                    const q9plus = p.over9Months || 0;
-                    if (ageFilter === '3月内') return q3m > 0;
-                    if (ageFilter === '3-9月') return q3to9 > 0;
-                    if (ageFilter === '9月+') return q9plus > 0;
-                    return true;
-                });
-            }
+            if (whFilter) items = items.filter(p => p.warehouse === whFilter);
             
-            console.log('items:', items.map(p => ({name: p.name, model: p.model, warehouse: p.warehouse, signedCustomers: p.signedCustomers})));
-            
-            // 合并同仓库库存，区分在途和库存
-            const mergedMap = {};
-            items.forEach(p => {
-                let wh = p.warehouse || '未知仓库';
-                const isInTransit = wh.includes('在途仓');
-                // 基础名用于合并：去掉在途仓和尾部仓
-                let baseKey = wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').trim();
-                const key = baseKey + '||' + (p.model || '无型号');
-                
-                if (!mergedMap[key]) {
-                    mergedMap[key] = { 
-                        warehouse: baseKey, 
-                        model: p.model || '无型号',
-                        stock: 0,  // 库存
-                        inTransit: 0,  // 在途
-                        signed: 0,
-                        forSale: 0,
-                        etd: p.etd || '',
-                        eta: p.eta || '',
-                        contractNo: p.contractNo || ''
-                    };
-                }
-                // 如果还没有值，从当前记录取
-                if (!mergedMap[key].etd && p.etd) mergedMap[key].etd = p.etd;
-                if (!mergedMap[key].eta && p.eta) mergedMap[key].eta = p.eta;
-                if (!mergedMap[key].contractNo && p.contractNo) mergedMap[key].contractNo = p.contractNo;
-                if (isInTransit) {
-                    mergedMap[key].inTransit += p.quantity || 0;
-                    // 在途货物记录ETD/ETA/合同编号
-                    if (p.etd) mergedMap[key].etd = p.etd;
-                    if (p.eta) mergedMap[key].eta = p.eta;
-                    if (p.contractNo) mergedMap[key].contractNo = p.contractNo;
-                } else {
-                    mergedMap[key].stock += p.quantity || 0;
-                }
-                mergedMap[key].forSale += p.forSale || 0;
-                
-                // 只从signedCustomers数组计算已签单数量
-                if (p.signedCustomers && p.signedCustomers.length > 0) {
-                    mergedMap[key].signed += p.signedCustomers.reduce((s, c) => s + c.quantity, 0);
-                }
-            });
-            
-            const mergedList = Object.values(mergedMap);
-            console.log('mergedList:', mergedList);
-            
-            const total = mergedList.reduce((s, p) => s + p.stock + p.inTransit, 0);
-            const totalStock = mergedList.reduce((s, p) => s + p.stock, 0);
-            const totalInTransit = mergedList.reduce((s, p) => s + p.inTransit, 0);
-            const signed = mergedList.reduce((s, p) => s + p.signed, 0);
-            const forSale = mergedList.reduce((s, p) => s + p.forSale, 0);
-            
-            // 时间分布按合并后的库存计算
+            const total = items.reduce((s,p)=>s+(p.quantity||0),0);
             const within3 = items.reduce((s,p)=>s+(p.within3Months||0),0);
             const month3to9 = items.reduce((s,p)=>s+(p.month3to9||0),0);
             const over9 = items.reduce((s,p)=>s+(p.over9Months||0),0);
+            const signed = items.reduce((s,p)=>s+(p.signed||0),0);
+            const inTransit = items.reduce((s,p)=>s+(p.inTransit||0),0);
+            const forSale = items.reduce((s,p)=>s+(p.forSale||0),0);
+            
+            // 合并客户数据
+            const customerMap = {};
+            items.forEach(p => {
+                if (p.signedCustomers && p.signedCustomers.length > 0) {
+                    p.signedCustomers.forEach(c => {
+                        if (customerMap[c.customer]) {
+                            customerMap[c.customer] += c.quantity;
+                        } else {
+                            customerMap[c.customer] = c.quantity;
+                        }
+                    });
+                }
+            });
+            const customers = Object.entries(customerMap).map(([name, qty]) => ({name, qty})).sort((a,b) => b.qty - a.qty);
             
             document.getElementById('detailTotal').textContent = total.toFixed(2);
             document.getElementById('detail3m').textContent = within3.toFixed(2);
             document.getElementById('detail3to9').textContent = month3to9.toFixed(2);
             document.getElementById('detail9plus').textContent = over9.toFixed(2);
             document.getElementById('detailSigned').textContent = signed.toFixed(2);
-            document.getElementById('detailInTransit').textContent = totalInTransit.toFixed(2);
+            document.getElementById('detailInTransit').textContent = inTransit.toFixed(2);
             document.getElementById('detailForSale').textContent = forSale.toFixed(2);
             
-            // 合并后的明细表 - 按型号+仓库显示
-            function getRowHtml(model, baseWh, stock, inTransit, signed, etd, eta, contractNo, warehouse, origModel) {
-                let html = '';
-                if (stock > 0) {
-                    html += `<tr><td>${model}</td><td>${baseWh}</td><td style="color:#52c41a">库存</td><td style="color:#1677ff;font-weight:bold">${stock.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>${(stock - (signed || 0)).toFixed(2)}</td><td>-</td></tr>`;
-                }
-                if (inTransit > 0) {
-                    const etdVal = etd || '';
-                    const etaVal = eta || '';
-                    const cnVal = contractNo || '';
-                    html += `<tr data-wh="${baseWh}" data-model="${origModel}"><td>${model}</td><td>${baseWh}</td><td style="color:#fa8c16">在途</td><td style="color:#1677ff;font-weight:bold">${inTransit.toFixed(2)}</td><td>${(signed || 0).toFixed(2)}</td><td>${inTransit.toFixed(2)}</td><td><input type="text" value="${etdVal}" style="width:85px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'etd', this.value)"></td><td><input type="text" value="${etaVal}" style="width:85px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'eta', this.value)"></td><td><input type="text" value="${cnVal}" style="width:100px;padding:3px;border:1px solid #d9d9d9;border-radius:4px;" onchange="updateTransitInfo('${baseWh}', '${origModel}', 'contractNo', this.value)"></td><td>${(stock - (signed || 0)).toFixed(2)}</td><td style="padding:4px;"><button onclick="deleteProductByWhModel('${baseWh}', '${origModel}')" style="padding:3px 8px;background:#ff4d4f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;">删除</button></td></tr>`;
-                }
-                return html;
-            }
+            // 明细表
+            document.getElementById('detailTable').innerHTML = items.map(p => `<tr><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td>${(p.signed||0).toFixed(2)}</td><td>${(p.inTransit||0).toFixed(2)}</td><td>${(p.forSale||0).toFixed(2)}</td></tr>`).join('');
             
-            // 按型号+仓库去重显示
-            const rows = [];
-            mergedList.forEach(item => {
-                const exists = rows.find(r => r.warehouse === item.warehouse && r.model === item.model);
-                if (!exists) {
-                    rows.push({ model: item.model, warehouse: item.warehouse, stock: item.stock, inTransit: item.inTransit, signed: item.signed, etd: item.etd, eta: item.eta, contractNo: item.contractNo, origModel: item.model, origWh: item.warehouse });
-                }
-            });
-            
-            let detailHtml = '';
-            rows.forEach(r => {
-                console.log('Rendering row:', r);
-                detailHtml += getRowHtml(r.model, r.warehouse, r.stock, r.inTransit, r.signed, r.etd, r.eta, r.contractNo, r.origWh, r.origModel);
-            });
-            
-            document.getElementById('detailTable').innerHTML = detailHtml || '<tr><td colspan="12">暂无数据</td></tr>';
-            
-            // 渲染已签单客户明细 - 从所有该产品的记录中获取（包括筛选后的）
-            const customerMap = {};
-            // 使用所有符合产品名称的记录，而不仅仅是筛选后的items
-            const allProductItems = products.filter(p => p.name === currentDetailProduct);
-            allProductItems.forEach(p => {
-                if (p.signedCustomers && p.signedCustomers.length > 0) {
-                    p.signedCustomers.forEach(c => {
-                        // 按产品+型号+客户合并
-                        const key = (p.model || '无型号') + '||' + c.customer;
-                        if (customerMap[key]) {
-                            customerMap[key].quantity += c.quantity;
-                        } else {
-                            customerMap[key] = { customer: c.customer, model: p.model || '无型号', quantity: c.quantity };
-                        }
-                    });
-                }
-            });
-            const customers = Object.values(customerMap).sort((a,b) => b.quantity - a.quantity);
-            
-            console.log('Rendering customer table, customers:', customers);
-            document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map((c, idx) => `<tr><td>${c.model}</td><td>${c.customer}</td><td style="color:#1677ff;font-weight:bold">${c.quantity.toFixed(2)}吨</td><td><button onclick="deleteSignedRecord('${c.model}', '${c.customer}', ${c.quantity})" style="background:#ff4d4f;color:#fff;padding:4px 8px;border:none;border-radius:4px;cursor:pointer;">删除</button></td></tr>`).join('') : '<tr><td colspan="4">暂无已签单客户</td></tr>';
+            // 客户明细
+            document.getElementById('customerTable').innerHTML = customers.length > 0 ? customers.map(c => `<tr><td>${c.name}</td><td style="color:#1677ff;font-weight:bold">${c.qty.toFixed(2)}吨</td></tr>`).join('') : '<tr><td colspan="2">暂无已签单客户</td></tr>';
         }
-        
-        function deleteSignedRecord(model, customer, qty) {
-            if (!confirm('确定删除已签单记录？\n型号：' + model + '\n客户：' + customer + '\n数量：' + qty + '吨')) return;
-            
-            // 找到所有匹配的产品记录，删除对应的客户
-            products.forEach(p => {
-                if (p.name === currentDetailProduct && p.model === model) {
-                    if (p.signedCustomers) {
-                        const idx = p.signedCustomers.findIndex(c => c.customer === customer);
-                        if (idx >= 0) {
-                            p.signedCustomers.splice(idx, 1);
-                            // 更新已签单总量
-                            p.signed = p.signedCustomers.reduce((s, c) => s + c.quantity, 0);
-                        }
-                    }
-                }
-            });
-            
-            saveData();
-            renderDetailTable();
-        }
-        
         function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
-
-
-        // 在途货物船期录入表单
-        function updateTransitForm() {
-            const prod = document.getElementById("transitProduct").value;
-            const wh = document.getElementById("transitWarehouse").value;
-            const modelSelect = document.getElementById("transitModel");
-            modelSelect.innerHTML = '<option value="">选择型号</option>';
-            if (prod && wh) {
-                const items = products.filter(p => p.name === prod && p.warehouse.includes(wh));
-                const models = [...new Set(items.map(p => p.model).filter(Boolean))];
-                models.forEach(m => {
-                    modelSelect.innerHTML += `<option value="${m}">${m}</option>`;
-                });
-            }
-            renderTransitList();
-        }
-
-        function saveTransitInfo() {
-            const prod = document.getElementById("transitProduct").value;
-            const wh = document.getElementById("transitWarehouse").value;
-            const model = document.getElementById("transitModel").value;
-            const etd = document.getElementById("transitETD").value;
-            const eta = document.getElementById("transitETA").value;
-            const contract = document.getElementById("transitContract").value;
-            if (!prod || !wh || !model) { alert("请选择产品、仓库和型号"); return; }
-            const items = products.filter(p => p.name === prod && p.warehouse.includes(wh) && p.model === model);
-            if (items.length > 0) {
-                items.forEach(p => { p.etd = etd; p.eta = eta; p.contractNo = contract; p.lastUpdate = new Date().toISOString(); });
-                localStorage.setItem("hoshine_products", JSON.stringify(products));
-                localStorage.setItem("hoshine_lastUpdate", new Date().toISOString());
-                alert("保存成功！");
-                renderTransitList();
-                renderDetailTable();
-            } else { alert("未找到匹配的库存记录"); }
-        }
-
-        function renderTransitList() {
-            let items = products.filter(p => p.warehouse && p.warehouse.includes("在途"));
-            const prod = document.getElementById("transitProduct").value;
-            const wh = document.getElementById("transitWarehouse").value;
-            const model = document.getElementById("transitModel").value;
-            if (prod) items = items.filter(p => p.name === prod);
-            if (wh) items = items.filter(p => p.warehouse.includes(wh));
-            if (model) items = items.filter(p => p.model === model);
-            const html = items.map(p => `<div style="background:#fff;padding:10px;margin-bottom:8px;border-radius:6px;border:1px solid #e8e8e8;"><div style="font-weight:bold;color:#333;">${p.name} (${p.model})</div><div style="color:#666;font-size:12px;margin-top:4px;">仓库: ${p.warehouse} | 数量: ${p.quantity}吨</div><div style="color:#1890ff;font-size:12px;margin-top:4px;">ETD: ${p.etd || "-"} | ETA: ${p.eta || "-"} | 合同: ${p.contractNo || "-"}</div></div>`).join("") || '<div style="color:#999;">暂无在途货物</div>';
-            document.getElementById("transitList").innerHTML = html;
-        }
-
-        function initTransitForm() {
-            if (!products || products.length === 0) {
-                document.getElementById("transitList").innerHTML = "<div style='color:#999;padding:20px;'>请先登录并等待数据加载</div>";
-                return;
-            }
-            const prodSelect = document.getElementById("transitProduct");
-            const prods = [...new Set(products.map(p => p.name).filter(n => n && products.some(x => x.warehouse && x.warehouse.includes("在途") && x.name === n)))].sort();
-            prodSelect.innerHTML = '<option value="">选择产品</option>' + prods.map(p => `<option value="${p}">${p}</option>`).join("");
-            const whSelect = document.getElementById("transitWarehouse");
-            const warehouses = [...new Set(products.map(p => p.warehouse).filter(w => w && w.includes("在途")).map(w => w.replace("在途仓", "").replace("在途", "").replace("仓库", "").trim()))].sort();
-            whSelect.innerHTML = '<option value="">选择仓库</option>' + warehouses.map(w => `<option value="${w}">${w}</option>`).join("");
-            renderTransitList();
-        }
-
-        // 更新在途货物的ETD/ETA/合同编号
-        function updateTransitInfo(warehouse, model, field, value) {
-            // 找到匹配的记录并更新
-            const items = products.filter(p => p.warehouse === warehouse && p.model === model);
-            if (items.length > 0) {
-                items.forEach(p => {
-                    p[field] = value;
-                    p.lastUpdate = new Date().toISOString();
-                });
-                saveData();
-                localStorage.setItem('hoshine_lastUpdate', new Date().toISOString());
-                console.log(`Updated ${field} to ${value} for ${model} at ${warehouse}`);
-            }
-        }
-
-        // 已签单客户录入
-        let currentSignedCustomerFilter = { name: '', model: '', warehouse: '' };
-        
-        function showSignedCustomerModal() {
-            document.getElementById('signedCustomerQty').value = '';
-            currentSignedCustomerFilter = { name: '', model: '', warehouse: '' };
-            
-            // 填充产品名称下拉框 - 从库存中已有的产品
-            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
-            const nameSelect = document.getElementById('signedProductFilter');
-            nameSelect.innerHTML = '<option value="">请选择产品</option>';
-            productNames.forEach(name => {
-                nameSelect.innerHTML += `<option value="${name}">${name}</option>`;
-            });
-            
-            // 填充合并后的仓库下拉框
-            const rawWarehouses = products.map(p => p.warehouse || '未知仓库');
-            const baseWarehouses = rawWarehouses.map(wh => {
-                return wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-            });
-            const warehouses = [...new Set(baseWarehouses)].sort();
-            
-            const whSelect = document.getElementById('signedWarehouseFilter');
-            whSelect.innerHTML = '<option value="">请选择仓库</option>';
-            warehouses.forEach(wh => {
-                whSelect.innerHTML += `<option value="${wh}">${wh}</option>`;
-            });
-            
-            // 填充型号下拉框
-            document.getElementById('signedModelFilter').innerHTML = '<option value="">请选择型号</option>';
-            
-            document.getElementById('signedCustomerModal').classList.add('active');
-        }
-        
-        function updateSignedCustomerFilters() {
-            const name = document.getElementById('signedProductFilter').value;
-            const warehouse = document.getElementById('signedWarehouseFilter').value;
-            const model = document.getElementById('signedModelFilter').value;
-            currentSignedCustomerFilter.name = name;
-            currentSignedCustomerFilter.model = model;
-            
-            // 仓库合并：去掉在途仓和尾部仓，跟首页一样
-            let filteredProducts = products;
-            if (name) filteredProducts = filteredProducts.filter(p => p.name === name);
-            
-            // 获取合并后的仓库列表
-            const rawWarehouses = filteredProducts.map(p => p.warehouse || '未知仓库');
-            const baseWarehouses = rawWarehouses.map(wh => {
-                return wh.replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-            });
-            const warehouses = [...new Set(baseWarehouses)].sort();
-            
-            const whSelect = document.getElementById('signedWarehouseFilter');
-            const currentWh = whSelect.value;
-            whSelect.innerHTML = '<option value="">请选择仓库</option>';
-            warehouses.forEach(wh => {
-                whSelect.innerHTML += `<option value="${wh}" ${wh === currentWh ? 'selected' : ''}>${wh}</option>`;
-            });
-            
-            // 根据选择的产品+仓库更新型号
-            let modelFilteredProducts = products;
-            if (name) modelFilteredProducts = modelFilteredProducts.filter(p => p.name === name);
-            if (warehouse) {
-                modelFilteredProducts = modelFilteredProducts.filter(p => {
-                    const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                    return baseWh === warehouse;
-                });
-            }
-            
-            const models = [...new Set(modelFilteredProducts.map(p => p.model).filter(Boolean))].sort();
-            const modelSelect = document.getElementById('signedModelFilter');
-            const currentModel = modelSelect.value;
-            modelSelect.innerHTML = '<option value="">请选择型号</option>';
-            models.forEach(m => {
-                modelSelect.innerHTML += `<option value="${m}" ${m === currentModel ? 'selected' : ''}>${m}</option>`;
-            });
-        }
-        
-        function closeSignedCustomerModal() {
-            document.getElementById('signedCustomerModal').classList.remove('active');
-        }
-        
-        function saveSignedCustomer() {
-            const name = document.getElementById('signedProductFilter').value;
-            const model = document.getElementById('signedModelFilter').value;
-            const warehouse = document.getElementById('signedWarehouseFilter').value;
-            const customer = document.getElementById('signedCustomerName').value.trim();
-            const qty = parseFloat(document.getElementById('signedCustomerQty').value);
-            
-            if (!name) { alert('请选择产品'); return; }
-            if (!customer) { alert('请输入客户名称'); return; }
-            if (!qty || qty <= 0) { alert('请输入有效的吨数'); return; }
-            
-            // 找到匹配的产品（根据名称+型号+仓库，仓库需要使用合并后的名称匹配）
-            let product = products.find(p => {
-                if (p.name !== name) return false;
-                if (model && p.model !== model) return false;
-                if (warehouse) {
-                    const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                    if (baseWh !== warehouse) return false;
-                }
-                return true;
-            });
-            if (!product) {
-                alert('未找到匹配的产品'); return; 
-            }
-            
-            if (!product.signedCustomers) product.signedCustomers = [];
-            
-            // 检查客户是否已存在
-            const existingIdx = product.signedCustomers.findIndex(c => c.customer === customer);
-            if (existingIdx >= 0) {
-                product.signedCustomers[existingIdx].quantity += qty;
-            } else {
-                product.signedCustomers.push({ customer, quantity: qty });
-            }
-            
-            // 更新已签单总量
-            product.signed = product.signedCustomers.reduce((s, c) => s + c.quantity, 0);
-            
-            console.log('Saved signed customer, product:', product);
-            saveData();
-            closeSignedCustomerModal();
-            
-            // 显示成功提示
-            alert('✅ 已签单客户录入成功！\n客户：' + customer + '\n数量：' + qty + '吨');
-        }
-
-        // 导入已签单客户弹窗相关函数
-        function showSignedCustomerImportModal() {
-            // 初始化产品下拉框
-            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
-            document.getElementById('importCustomerProduct').innerHTML = '<option value="">请选择产品</option>' + 
-                productNames.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('importCustomerWarehouse').innerHTML = '<option value="">全部仓库</option>';
-            document.getElementById('importCustomerModal').classList.add('active');
-            // 默认添加3个空行
-            renderImportCustomerTable();
-        }
-
-        function renderImportCustomerTable() {
-            const product = document.getElementById('importCustomerProduct').value;
-            const warehouse = document.getElementById('importCustomerWarehouse').value;
-            
-            // 更新仓库下拉框
-            if (product) {
-                let filtered = products.filter(p => p.name === product);
-                if (warehouse) {
-                    filtered = filtered.filter(p => {
-                        const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                        return baseWh === warehouse;
-                    });
-                }
-                const warehouses = [...new Set(filtered.map(p => {
-                    const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                    return baseWh;
-                }))].sort();
-                document.getElementById('importCustomerWarehouse').innerHTML = '<option value="">全部仓库</option>' + 
-                    warehouses.map(w => `<option value="${w}" ${w === warehouse ? 'selected' : ''}>${w}</option>`).join('');
-            }
-            
-            const tbody = document.getElementById('importCustomerTableBody');
-            // 获取当前已有的行数
-            const rowCount = tbody.querySelectorAll('tr').length || 3;
-            let html = '';
-            for (let i = 0; i < Math.max(rowCount, 3); i++) {
-                html += `<tr>
-                    <td><input type="text" class="customer-name" placeholder="请输入客户名称"></td>
-                    <td><input type="number" class="customer-qty" placeholder="请输入吨数" min="0" step="0.01"></td>
-                    <td><input type="text" class="customer-note" placeholder="备注(可选)"></td>
-                    <td><button class="btn-delete" style="padding:6px 12px;" onclick="this.closest('tr').remove()">删除</button></td>
-                </tr>`;
-            }
-            tbody.innerHTML = html;
-        }
-
-        function addImportCustomerRow() {
-            const tbody = document.getElementById('importCustomerTableBody');
-            const html = `<tr>
-                <td><input type="text" class="customer-name" placeholder="请输入客户名称"></td>
-                <td><input type="number" class="customer-qty" placeholder="请输入吨数" min="0" step="0.01"></td>
-                <td><input type="text" class="customer-note" placeholder="备注(可选)"></td>
-                <td><button class="btn-delete" style="padding:6px 12px;" onclick="this.closest('tr').remove()">删除</button></td>
-            </tr>`;
-            tbody.insertAdjacentHTML('beforeend', html);
-        }
-
-        function saveImportCustomers() {
-            const productName = document.getElementById('importCustomerProduct').value;
-            const warehouse = document.getElementById('importCustomerWarehouse').value;
-            
-            if (!productName) { alert('请选择产品'); return; }
-            
-            // 收集所有有效数据
-            const rows = document.querySelectorAll('#importCustomerTableBody tr');
-            let savedCount = 0;
-            const now = new Date().toISOString();
-            
-            rows.forEach(row => {
-                const customer = row.querySelector('.customer-name').value.trim();
-                const qty = parseFloat(row.querySelector('.customer-qty').value);
-                
-                if (customer && qty && qty > 0) {
-                    // 查找匹配的产品
-                    let targetProducts = products.filter(p => p.name === productName);
-                    if (warehouse) {
-                        targetProducts = targetProducts.filter(p => {
-                            const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                            return baseWh === warehouse;
-                        });
-                    }
-                    
-                    if (targetProducts.length > 0) {
-                        // 找到第一个产品添加客户
-                        const product = targetProducts[0];
-                        if (!product.signedCustomers) product.signedCustomers = [];
-                        
-                        const existingIdx = product.signedCustomers.findIndex(c => c.customer === customer);
-                        if (existingIdx >= 0) {
-                            product.signedCustomers[existingIdx].quantity += qty;
-                        } else {
-                            product.signedCustomers.push({ customer, quantity: qty });
-                        }
-                        product.signed = product.signedCustomers.reduce((s, c) => s + c.quantity, 0);
-                        product.lastUpdate = now;
-                        savedCount++;
-                    }
-                }
-            });
-            
-            if (savedCount > 0) {
-                localStorage.setItem('hoshine_lastUpdate', now);
-                saveData();
-                document.getElementById('importCustomerModal').classList.remove('active');
-                alert('✅ 成功导入 ' + savedCount + ' 条已签单客户记录！');
-                renderProducts();
-                initFilters();
-            } else {
-                alert('请输入有效的客户名称和数量');
-            }
-        }
 
         function renderAdminTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = products.filter(p => p.name.toLowerCase().includes(search) || (p.model&&p.model.toLowerCase().includes(search)) || (p.warehouse&&p.warehouse.toLowerCase().includes(search)));
-            
-            // 按 仓库+型号 合并
-            const merged = {};
-            filtered.forEach(p => {
-                const key = (p.warehouse||'') + '|' + (p.model||'');
-                if (!merged[key]) {
-                    merged[key] = { ...p };
-                } else {
-                    merged[key].quantity += p.quantity || 0;
-                    merged[key].signed += p.signed || 0;
-                }
-            });
-            filtered = Object.values(merged);
-            
-            document.getElementById('adminTable').innerHTML = filtered.map(p => {
-                // 显示已签单数量
-                const signedText = (p.signed || 0).toFixed(2);
-                
-                return `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td style="color:#1677ff;font-weight:bold">${(p.quantity||0).toFixed(2)}</td><td style="color:#52c41a">${signedText}</td><td>${p.etd||'-'}</td><td>${p.eta||'-'}</td><td>${p.contractNo||'-'}</td><td>${signedText}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`;
-            }).join('');
+            const filtered = products.filter(p => p.name.toLowerCase().includes(search) || (p.model&&p.model.toLowerCase().includes(search)) || (p.warehouse&&p.warehouse.toLowerCase().includes(search)));
+            document.getElementById('adminTable').innerHTML = filtered.map(p => `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.model||'-'}</td><td>${p.warehouse||'-'}</td><td>${(p.quantity||0).toFixed(2)}</td><td>${(p.within3Months||0).toFixed(2)}</td><td>${(p.month3to9||0).toFixed(2)}</td><td>${(p.over9Months||0).toFixed(2)}</td><td class="action-btns"><button class="btn-edit" onclick="editProduct(${p.id})">编辑</button><button class="btn-delete" onclick="deleteProduct(${p.id})">删除</button></td></tr>`).join('');
         }
 
-        function showAddModal() { 
-            editingId = null; 
-            document.getElementById('formTitle').textContent = '添加产品'; 
-            ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9','formETD','formETA','formContractNo','formSignedCustomers'].forEach(id => document.getElementById(id).value = ''); 
-            document.getElementById('formModal').classList.add('active'); 
-        }
-        function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; document.getElementById('formETD').value = p.etd||''; document.getElementById('formETA').value = p.eta||''; document.getElementById('formContractNo').value = p.contractNo||''; 
-            // 将已签单客户转回字符串格式显示
-            let signedStr = '';
-            if (p.signedCustomers && p.signedCustomers.length > 0) {
-                signedStr = p.signedCustomers.map(c => c.customer + ',' + c.quantity).join('; ');
-            }
-            document.getElementById('formSignedCustomers').value = signedStr;
-            document.getElementById('formModal').classList.add('active'); }
-        function saveProduct() { 
-            const name = document.getElementById('formName').value; 
-            if(!name){alert('请输入产品名称');return;} 
-            
-            // 解析已签单客户
-            const signedInput = document.getElementById('formSignedCustomers').value;
-            const signedCustomers = [];
-            if (signedInput.trim()) {
-                const pairs = signedInput.split(';');
-                pairs.forEach(pair => {
-                    const [customer, qty] = pair.split(',');
-                    if (customer && qty) {
-                        signedCustomers.push({ customer: customer.trim(), quantity: parseFloat(qty) || 0 });
-                    }
-                });
-            }
-            
-            const totalSigned = signedCustomers.reduce((s, c) => s + c.quantity, 0);
-            const now = new Date().toISOString();
-            
-            const product = { 
-                id: editingId||Date.now(), 
-                name, 
-                model: document.getElementById('formModel').value, 
-                warehouse: document.getElementById('formWarehouse').value, 
-                quantity: parseFloat(document.getElementById('formQuantity').value)||0, 
-                within3Months: parseFloat(document.getElementById('formWithin3').value)||0, 
-                month3to9: parseFloat(document.getElementById('formMonth3to9').value)||0, 
-                over9Months: parseFloat(document.getElementById('formOver9').value)||0,
-                etd: document.getElementById('formETD').value,
-                eta: document.getElementById('formETA').value,
-                contractNo: document.getElementById('formContractNo').value,
-                signed: totalSigned,
-                signedCustomers: signedCustomers,
-                lastUpdate: now
-            }; 
-            if(editingId){const idx=products.findIndex(p=>p.id===editingId); if(idx>-1)products[idx]=product;} else{products.push(product);} 
-            localStorage.setItem('hoshine_lastUpdate', now);
-            saveData(); closeForm(); renderAdminTable(); initFilters(); renderProducts(); 
-        }
+        function showAddModal() { editingId = null; document.getElementById('formTitle').textContent = '添加产品'; ['formName','formModel','formWarehouse','formQuantity','formWithin3','formMonth3to9','formOver9'].forEach(id => document.getElementById(id).value = ''); document.getElementById('formModal').classList.add('active'); }
+        function editProduct(id) { const p = products.find(p => p.id === id); if(!p)return; editingId = id; document.getElementById('formTitle').textContent = '编辑产品'; document.getElementById('formName').value = p.name; document.getElementById('formModel').value = p.model||''; document.getElementById('formWarehouse').value = p.warehouse||''; document.getElementById('formQuantity').value = p.quantity||0; document.getElementById('formWithin3').value = p.within3Months||0; document.getElementById('formMonth3to9').value = p.month3to9||0; document.getElementById('formOver9').value = p.over9Months||0; document.getElementById('formModal').classList.add('active'); }
+        function saveProduct() { const name = document.getElementById('formName').value; if(!name){alert('请输入产品名称');return;} const product = { id: editingId||Date.now(), name, model: document.getElementById('formModel').value, warehouse: document.getElementById('formWarehouse').value, quantity: parseFloat(document.getElementById('formQuantity').value)||0, within3Months: parseFloat(document.getElementById('formWithin3').value)||0, month3to9: parseFloat(document.getElementById('formMonth3to9').value)||0, over9Months: parseFloat(document.getElementById('formOver9').value)||0 }; if(editingId){const idx=products.findIndex(p=>p.id===editingId); if(idx>-1)products[idx]=product;} else{products.push(product);} saveData(); closeForm(); renderAdminTable(); initFilters(); renderProducts(); }
         function deleteProduct(id) { if(confirm('确定删除？')){products=products.filter(p=>p.id!==id);saveData();renderAdminTable();initFilters();renderProducts();}}
-        
-        function deleteProductByWhModel(warehouse, model) {
-            if (!confirm('确定删除 ' + model + ' @ ' + warehouse + '？')) return;
-            products = products.filter(p => p.warehouse === warehouse && p.model === model);
-            saveData();
-            renderAdminTable();
-            initFilters();
-            renderProducts();
-            closeDetail();
-        }
         function closeForm() { document.getElementById('formModal').classList.remove('active'); }
         function clearAllData() { if(confirm('确定清空所有数据？')){products=[];saveData();renderAdminTable();initFilters();renderProducts();}}
-
-        async function saveToFeishuHandler() {
-            if(!confirm('确定同步到飞书？')) return;
-            await saveToFeishu(products);
-            alert('同步完成');
-        }
 
         function importData(event) {
             const file = event.target.files[0];
             if(!file)return;
             const fileName = file.name.toLowerCase();
             
-            // 检查XLSX库是否加载
-            if((fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) && typeof XLSX === 'undefined') {
-                alert('Excel库正在加载中，请稍等1秒后重试');
-                return;
-            }
-            
             if(fileName.endsWith('.csv')) {
                 importCSV(event);
-            } else if(fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.xls')) {
+            } else if(fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
                 importExcel(file);
             } else {
                 alert('请选择CSV或Excel文件');
@@ -1692,33 +472,19 @@
         }
         
         function importExcel(file) {
-            console.log('Starting Excel import, file:', file.name, 'size:', file.size);
-            if(!XLSX) {
-                alert('XLSX库未加载，请刷新页面重试');
-                return;
-            }
             const reader = new FileReader();
             reader.onload = function(e) {
-                console.log('File read complete, result length:', e.target.result.byteLength);
                 try {
                     const data = new Uint8Array(e.target.result);
-                    console.log('Parsing XLSX...');
                     const workbook = XLSX.read(data, {type: 'array'});
-                    console.log('Workbook sheets:', workbook.SheetNames);
                     const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                    console.log('Rows parsed:', jsonData.length);
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheetName, {header: 1});
                     
-                    if(jsonData.length < 2) { 
-                        alert('文件内容为空，请检查文件是否包含数据'); 
-                        console.log('JSON data:', jsonData);
-                        return; 
-                    }
+                    if(jsonData.length < 2) { alert('文件内容为空'); return; }
                     
                     const headers = jsonData[0].map(h => String(h).trim());
-                    console.log('Headers:', headers);
                     
+                    // 精确列名映射 - 你的海外汇总格式
                     const nameIdx = headers.indexOf('物料描述');
                     const modelIdx = headers.indexOf('物料号');
                     const warehouseIdx = headers.indexOf('库存地点描述');
@@ -1730,21 +496,15 @@
                     const idx360to720 = headers.indexOf('360天到720天数量');
                     const idx720plus = headers.indexOf('大于720天数量');
                     
-                    console.log('Column indexes:', {nameIdx, modelIdx, warehouseIdx, qtyIdx, idx90});
-                    
-                    if(nameIdx === -1) { 
-                        alert('未找到"物料描述"列\n实际列名: ' + headers.slice(0, 10).join(', ')); 
-                        return; 
-                    }
+                    if(nameIdx === -1) { alert('未找到"物料描述"列，请检查文件格式'); return; }
                     
                     let importedCount = 0;
-                    // 在循环外部定义now变量
-                    let timestamp = new Date().toISOString();
                     for(let i=1; i<jsonData.length; i++) {
                         const row = jsonData[i];
                         const name = row[nameIdx];
                         if(!name) continue;
                         
+                        // 计算3月内、3-9月、9月+
                         const within3 = (parseFloat(row[idx90]) || 0);
                         const month39 = (parseFloat(row[idx90to180]) || 0) + (parseFloat(row[idx180to270]) || 0);
                         const over9 = (parseFloat(row[idx270to360]) || 0) + (parseFloat(row[idx360to720]) || 0) + (parseFloat(row[idx720plus]) || 0);
@@ -1754,66 +514,25 @@
                         const model = row[modelIdx] ? String(row[modelIdx]) : '';
                         
                         if(qty > 0 || within3 > 0 || month39 > 0 || over9 > 0) {
-                            // 简化产品名称：取第一个\之前的内容
-                            let simpleName = String(name).replace(/\\n/g, ' ').replace(/\\r/g, '').trim();
-                            const firstBackslash = simpleName.indexOf('\\');
-                            if(firstBackslash > 0) {
-                                simpleName = simpleName.substring(0, firstBackslash).trim();
-                            }
-                            // 从产品名称中提取型号
-                            let simpleModel = '';
-                            const nameStr = String(name);
-                            // 107胶：匹配107-XX格式
-                            const match107 = nameStr.match(/107[-_](\d+)/i);
-                            if(match107) {
-                                simpleModel = '107-' + match107[1];
-                            }
-                            // 二甲基硅油/硅油：匹配XXXCS格式 (如500CS, 1000CS, 50CS)
-                            else {
-                                const matchCS = nameStr.match(/(\d+)\s*CS/i);
-                                if(matchCS) {
-                                    simpleModel = matchCS[1] + 'CS';
-                                }
-                                // 混炼胶：匹配HS-XXXX格式
-                                else {
-                                    const matchHS = nameStr.match(/HS[-_](\d+)/i);
-                                    if(matchHS) {
-                                        simpleModel = 'HS-' + matchHS[1];
-                                    }
-                                    // 最后用物料号
-                                    else if(model) {
-                                        simpleModel = String(model).split('.')[0];
-                                    }
-                                }
-                            }
-                            // KG转吨
                             products.push({
                                 id: Date.now() + i,
-                                name: simpleName,
-                                model: simpleModel,
+                                name: String(name).replace(/\\n/g, ' ').replace(/\\r/g, '').trim(),
+                                model: model,
                                 warehouse: String(warehouse).trim(),
-                                quantity: Math.round(qty / 1000 * 100) / 100,
-                                within3Months: Math.round(within3 / 1000 * 100) / 100,
-                                month3to9: Math.round(month39 / 1000 * 100) / 100,
-                                over9Months: Math.round(over9 / 1000 * 100) / 100,
-                                lastUpdate: timestamp
+                                quantity: Math.round(qty * 100) / 100,
+                                within3Months: Math.round(within3 * 100) / 100,
+                                month3to9: Math.round(month39 * 100) / 100,
+                                over9Months: Math.round(over9 * 100) / 100
                             });
                             importedCount++;
                         }
                     }
-                    console.log('Imported:', importedCount, 'products');
-                    localStorage.setItem('hoshine_lastUpdate', timestamp);
                     saveData();
                     alert(`导入成功，共${importedCount}条`);
                     initFilters(); renderProducts(); renderAdminTable();
                 } catch(err) {
-                    console.error('Import error:', err);
                     alert('Excel解析失败: ' + err.message);
                 }
-            };
-            reader.onerror = function(err) {
-                console.error('FileReader error:', err);
-                alert('文件读取失败');
             };
             reader.readAsArrayBuffer(file);
         }
@@ -1848,339 +567,5 @@
 
         loadData();
     </script>
-    
-    <!-- 导入已签单客户弹窗 -->
-    <div class="form-modal" id="importCustomerModal">
-        <div class="form-box large">
-            <h3>📑 导入已签单客户</h3>
-            
-            <!-- 导入方式切换 -->
-            <div class="form-group">
-                <label>导入方式</label>
-                <div style="display:flex;gap:12px;margin-top:8px;">
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                        <input type="radio" name="importMode" value="file" checked onchange="toggleImportMode()"> 📁 从文件导入
-                    </label>
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                        <input type="radio" name="importMode" value="manual" onchange="toggleImportMode()"> ✏️ 手动录入
-                    </label>
-                </div>
-            </div>
-            
-            <!-- 文件导入模式 -->
-            <div id="fileImportMode">
-                <div class="form-group">
-                    <label>选择产品 *</label>
-                    <select id="importCustomerProduct">
-                        <option value="">请选择产品</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>选择仓库</label>
-                    <select id="importCustomerWarehouse">
-                        <option value="">全部仓库</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>选择文件 (CSV/Excel)</label>
-                    <input type="file" id="customerFileInput" accept=".csv,.xlsx,.xls" style="margin-top:8px;" onchange="importCustomerFromFile(event)">
-                    <p class="import-hint">💡 文件格式：客户名称, 数量(吨) <br>📥 示例：ABC公司, 50</p>
-                </div>
-            </div>
-            
-            <!-- 手动录入模式 -->
-            <div id="manualImportMode" style="display:none;">
-                <div class="form-group">
-                    <label>选择产品 *</label>
-                    <select id="importCustomerProductManual" onchange="renderImportCustomerTable()">
-                        <option value="">请选择产品</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>选择仓库</label>
-                    <select id="importCustomerWarehouseManual" onchange="renderImportCustomerTable()">
-                        <option value="">全部仓库</option>
-                    </select>
-                </div>
-                
-                <table class="import-customer-table">
-                    <thead>
-                        <tr>
-                            <th style="width:30%">客户名称 *</th>
-                            <th style="width:25%">数量(吨) *</th>
-                            <th style="width:30%">备注</th>
-                            <th style="width:15%">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="importCustomerTableBody">
-                        <!-- 动态生成的行 -->
-                    </tbody>
-                </table>
-                
-                <button class="btn-add" style="padding:10px 16px;margin-top:8px;" onclick="addImportCustomerRow()">+ 添加一行</button>
-                <p class="import-hint">💡 提示：直接输入客户名称和数量，可添加多行</p>
-                
-                <div class="import-actions">
-                    <button class="btn-save" onclick="saveImportCustomers()">保存全部</button>
-                    <button class="btn-cancel" onclick="document.getElementById('importCustomerModal').classList.remove('active')">取消</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // 切换导入模式
-        function toggleImportMode() {
-            const mode = document.querySelector('input[name="importMode"]:checked').value;
-            document.getElementById('fileImportMode').style.display = mode === 'file' ? 'block' : 'none';
-            document.getElementById('manualImportMode').style.display = mode === 'manual' ? 'block' : 'none';
-            
-            if (mode === 'file') {
-                // 初始化产品下拉框
-                const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
-                document.getElementById('importCustomerProduct').innerHTML = '<option value="">请选择产品</option>' + 
-                    productNames.map(p => `<option value="${p}">${p}</option>`).join('');
-            }
-        }
-        
-        // 从文件导入已签单客户
-        function importCustomerFromFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            console.log('开始导入文件:', file.name, '大小:', file.size);
-            
-            const productName = document.getElementById('importCustomerProduct').value;
-            const warehouse = document.getElementById('importCustomerWarehouse').value;
-            
-            console.log('产品:', productName, '仓库:', warehouse);
-            
-            if (!productName) { alert('请先选择产品'); event.target.value = ''; return; }
-            
-            const fileName = file.name.toLowerCase();
-            const now = new Date().toISOString();
-            let importedCount = 0;
-            
-            if (fileName.endsWith('.csv')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    console.log('CSV文件读取完成');
-                    const lines = e.target.result.split('\n').filter(l => l.trim());
-                    console.log('行数:', lines.length);
-                    // 跳过表头
-                    for (let i = 1; i < lines.length; i++) {
-                        const cols = lines[i].split(',').map(c => c.trim());
-                        if (cols.length >= 2) {
-                            const customer = cols[0];
-                            const qty = parseFloat(cols[1]);
-                            
-                            console.log('解析行', i, ':', customer, qty);
-                            
-                            if (customer && qty && qty > 0) {
-                                addSignedCustomerToProduct(productName, warehouse, customer, qty, now);
-                                importedCount++;
-                            }
-                        }
-                    }
-                    console.log('导入完成，数量:', importedCount);
-                    finishCustomerImport(importedCount, now);
-                };
-                reader.readAsText(file);
-            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
-                if (!XLSX) { alert('XLSX库未加载，请刷新页面重试'); return; }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    console.log('Excel文件读取完成');
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        console.log('数据长度:', data.length);
-                        const workbook = XLSX.read(data, {type: 'array'});
-                        console.log('工作表:', workbook.SheetNames);
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                        console.log('解析行数:', jsonData.length);
-                        
-                        for (let i = 1; i < jsonData.length; i++) {
-                            const row = jsonData[i];
-                            if (!row || row.length < 2) continue;
-                            const customer = String(row[0]).trim();
-                            const qty = parseFloat(row[1]);
-                            
-                            if (customer && qty && qty > 0) {
-                                addSignedCustomerToProduct(productName, warehouse, customer, qty, now);
-                                importedCount++;
-                            }
-                        }
-                        console.log('Excel导入完成，数量:', importedCount);
-                        finishCustomerImport(importedCount, now);
-                    } catch (err) {
-                        alert('Excel解析失败: ' + err.message);
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            } else {
-                alert('请选择CSV或Excel文件');
-            }
-        }
-        
-        function addSignedCustomerToProduct(productName, warehouse, customer, qty, timestamp) {
-            let targetProducts = products.filter(p => p.name === productName);
-            if (warehouse) {
-                targetProducts = targetProducts.filter(p => {
-                    const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                    return baseWh === warehouse;
-                });
-            }
-            
-            if (targetProducts.length > 0) {
-                const product = targetProducts[0];
-                if (!product.signedCustomers) product.signedCustomers = [];
-                
-                const existingIdx = product.signedCustomers.findIndex(c => c.customer === customer);
-                if (existingIdx >= 0) {
-                    product.signedCustomers[existingIdx].quantity += qty;
-                } else {
-                    product.signedCustomers.push({ customer, quantity: qty });
-                }
-                product.signed = product.signedCustomers.reduce((s, c) => s + c.quantity, 0);
-                product.lastUpdate = timestamp;
-            }
-        }
-        
-        function finishCustomerImport(count, timestamp) {
-            if (count > 0) {
-                localStorage.setItem('hoshine_lastUpdate', timestamp);
-                saveData();
-                document.getElementById('importCustomerModal').classList.remove('active');
-                alert('✅ 成功导入 ' + count + ' 条已签单客户记录！');
-                renderProducts();
-                initFilters();
-            } else {
-                alert('未找到有效数据，请检查文件格式');
-            }
-            // 重置文件输入
-            document.getElementById('customerFileInput').value = '';
-        }
-        
-        // 手动录入模式函数
-        function showSignedCustomerImportModal() {
-            toggleImportMode();
-            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
-            document.getElementById('importCustomerProduct').innerHTML = '<option value="">请选择产品</option>' + 
-                productNames.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('importCustomerProductManual').innerHTML = '<option value="">请选择产品</option>' + 
-                productNames.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('importCustomerWarehouse').innerHTML = '<option value="">全部仓库</option>';
-            document.getElementById('importCustomerWarehouseManual').innerHTML = '<option value="">全部仓库</option>';
-            document.getElementById('importCustomerModal').classList.add('active');
-        }
-        
-        // 原有函数保留兼容
-        function showSignedCustomerImportModalOld() {
-            // 初始化产品下拉框
-            const productNames = [...new Set(products.map(p => p.name).filter(Boolean))].sort();
-            document.getElementById('importCustomerProduct').innerHTML = '<option value="">请选择产品</option>' + 
-                productNames.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('importCustomerWarehouse').innerHTML = '<option value="">全部仓库</option>';
-            document.getElementById('importCustomerModal').classList.add('active');
-            renderImportCustomerTable();
-        }
-
-        function renderImportCustomerTable() {
-            const product = document.getElementById('importCustomerProductManual').value;
-            const warehouse = document.getElementById('importCustomerWarehouseManual').value;
-            
-            if (product) {
-                let filtered = products.filter(p => p.name === product);
-                if (warehouse) {
-                    filtered = filtered.filter(p => {
-                        const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                        return baseWh === warehouse;
-                    });
-                }
-                const warehouses = [...new Set(filtered.map(p => {
-                    const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                    return baseWh;
-                }))].sort();
-                document.getElementById('importCustomerWarehouseManual').innerHTML = '<option value="">全部仓库</option>' + 
-                    warehouses.map(w => `<option value="${w}" ${w === warehouse ? 'selected' : ''}>${w}</option>`).join('');
-            }
-            
-            const tbody = document.getElementById('importCustomerTableBody');
-            const rowCount = tbody.querySelectorAll('tr').length || 3;
-            let html = '';
-            for (let i = 0; i < Math.max(rowCount, 3); i++) {
-                html += `<tr>
-                    <td><input type="text" class="customer-name" placeholder="请输入客户名称"></td>
-                    <td><input type="number" class="customer-qty" placeholder="请输入吨数" min="0" step="0.01"></td>
-                    <td><input type="text" class="customer-note" placeholder="备注(可选)"></td>
-                    <td><button class="btn-delete" style="padding:6px 12px;" onclick="this.closest('tr').remove()">删除</button></td>
-                </tr>`;
-            }
-            tbody.innerHTML = html;
-        }
-
-        function addImportCustomerRow() {
-            const tbody = document.getElementById('importCustomerTableBody');
-            const html = `<tr>
-                <td><input type="text" class="customer-name" placeholder="请输入客户名称"></td>
-                <td><input type="number" class="customer-qty" placeholder="请输入吨数" min="0" step="0.01"></td>
-                <td><input type="text" class="customer-note" placeholder="备注(可选)"></td>
-                <td><button class="btn-delete" style="padding:6px 12px;" onclick="this.closest('tr').remove()">删除</button></td>
-            </tr>`;
-            tbody.insertAdjacentHTML('beforeend', html);
-        }
-
-        function saveImportCustomers() {
-            const productName = document.getElementById('importCustomerProductManual').value;
-            const warehouse = document.getElementById('importCustomerWarehouseManual').value;
-            
-            if (!productName) { alert('请选择产品'); return; }
-            
-            const rows = document.querySelectorAll('#importCustomerTableBody tr');
-            let savedCount = 0;
-            const now = new Date().toISOString();
-            
-            rows.forEach(row => {
-                const customer = row.querySelector('.customer-name').value.trim();
-                const qty = parseFloat(row.querySelector('.customer-qty').value);
-                
-                if (customer && qty && qty > 0) {
-                    let targetProducts = products.filter(p => p.name === productName);
-                    if (warehouse) {
-                        targetProducts = targetProducts.filter(p => {
-                            const baseWh = (p.warehouse || '').replace('在途仓', '').replace('在途', '').replace(/仓库$/, '').replace(/仓$/, '').replace('印度', '').trim();
-                            return baseWh === warehouse;
-                        });
-                    }
-                    
-                    if (targetProducts.length > 0) {
-                        const product = targetProducts[0];
-                        if (!product.signedCustomers) product.signedCustomers = [];
-                        
-                        const existingIdx = product.signedCustomers.findIndex(c => c.customer === customer);
-                        if (existingIdx >= 0) {
-                            product.signedCustomers[existingIdx].quantity += qty;
-                        } else {
-                            product.signedCustomers.push({ customer, quantity: qty });
-                        }
-                        product.signed = product.signedCustomers.reduce((s, c) => s + c.quantity, 0);
-                        product.lastUpdate = now;
-                        savedCount++;
-                    }
-                }
-            });
-            
-            if (savedCount > 0) {
-                localStorage.setItem('hoshine_lastUpdate', now);
-                saveData();
-                document.getElementById('importCustomerModal').classList.remove('active');
-                alert('✅ 成功导入 ' + savedCount + ' 条已签单客户记录！');
-                renderProducts();
-                initFilters();
-            } else {
-                alert('请输入有效的客户名称和数量');
-            }
-        }
-    </script>
+</body>
+</html>
